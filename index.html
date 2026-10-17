@@ -4,29 +4,33 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Maria Driscoll</title>
-<meta name="description" content="Maria Driscoll: customer success and go-to-market leader with 15+ years across public health, medical technology, executive consulting and B2B technology. She builds the dashboards, AI automations and tools her teams run on.">
+<meta name="description" content="Maria Driscoll: marketing and customer success leader with 15+ years across public health, medical technology, executive consulting and B2B technology. She builds the dashboards, AI automations and tools her teams run on.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
   color-scheme:light;
-  --paper:#f2f4f1; --surface:#ffffff; --ink:#1c2326; --ink-2:#3e4c50; --muted:#5e6e71;
-  --rule:#d5dcd9; --spruce:#0e5e5a; --spruce-soft:#e2efec; --lane:#e9b92e; --signal:#c8402f;
-  --b0:#e4e9e6; --b1:#5fb8ac; --b2:#3a9c91; --b3:#1d7f76; --b4:#08615a;
-  --font:"Schibsted Grotesk","Segoe UI",system-ui,sans-serif;
+  --paper:#f7f8fb; --surface:#ffffff; --ink:#26272a; --ink-2:#45474c; --muted:#686a70;
+  --rule:#dfe1e6; --spruce:#2443a6; --spruce-soft:#edf2fb; --spruce-deep:#1a2f78; --lane:#bb7d77; --signal:#a4635c;
+  --violet:#bb7d77; --field:#3f5bb1;
+  --b0:#e8ebf2; --b1:#8fa0d8; --b2:#6b81c4; --b3:#3f5bb1; --b4:#2443a6;
+  --font:"Inter","Segoe UI",system-ui,sans-serif; --serif:"Instrument Serif",Georgia,serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   color-scheme:dark;
-  --paper:#0f1a19; --surface:#152423; --ink:#e6ecea; --ink-2:#bcc9c6; --muted:#8fa19d;
-  --rule:#26403c; --spruce:#8fd3c9; --spruce-soft:#1b3330; --signal:#e4705f;
-  --b0:#1d3532; --b1:#16675f; --b2:#2a8a80; --b3:#4fb0a5; --b4:#7fd4c9;
+  --paper:#17181b; --surface:#1d1e22; --ink:#ececee; --ink-2:#c4c6cc; --muted:#9a9ca3;
+  --rule:#30323a; --spruce:#9fb0ee; --spruce-soft:#232838; --spruce-deep:#0f1530; --signal:#dba49e; --violet:#dba49e;
+  --field:#7d92da;
+  --b0:#2a2c33; --b1:#3a50a6; --b2:#5068bf; --b3:#7d92da; --b4:#b0bff0;
 }}
 :root[data-theme="dark"]{
   color-scheme:dark;
-  --paper:#0f1a19; --surface:#152423; --ink:#e6ecea; --ink-2:#bcc9c6; --muted:#8fa19d;
-  --rule:#26403c; --spruce:#8fd3c9; --spruce-soft:#1b3330; --signal:#e4705f;
-  --b0:#1d3532; --b1:#16675f; --b2:#2a8a80; --b3:#4fb0a5; --b4:#7fd4c9;
+  --paper:#17181b; --surface:#1d1e22; --ink:#ececee; --ink-2:#c4c6cc; --muted:#9a9ca3;
+  --rule:#30323a; --spruce:#9fb0ee; --spruce-soft:#232838; --spruce-deep:#0f1530; --signal:#dba49e; --violet:#dba49e;
+  --field:#7d92da;
+  --b0:#2a2c33; --b1:#3a50a6; --b2:#5068bf; --b3:#7d92da; --b4:#b0bff0;
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -38,13 +42,15 @@ a:focus-visible{outline:2px solid var(--spruce);outline-offset:3px;border-radius
 @media (min-width:700px){.wrap{padding:0 32px}}
 
 /* ---------- top ---------- */
-.top{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;padding-top:28px}
-.name{font-weight:700;font-size:18px;letter-spacing:-.01em}
+.top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;padding-top:28px}
+.name{display:inline-flex;align-items:center;gap:12px;font-family:var(--serif);font-size:24px;line-height:1}
+.mono-mark{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border:1px solid var(--ink);
+  font-family:var(--serif);font-style:italic;font-size:19px;letter-spacing:-.04em;color:var(--spruce)}
 .top nav{display:flex;gap:20px;flex-wrap:wrap;font-size:16px}
 
 /* ---------- hero ---------- */
 .hero{padding:clamp(48px,9vw,104px) 0 0}
-h1{font-size:clamp(40px,7.4vw,86px);line-height:.98;letter-spacing:-.035em;font-weight:800;margin:0;max-width:15ch}
+h1{font-family:var(--serif);font-size:clamp(44px,7.2vw,92px);line-height:1;letter-spacing:-.012em;font-weight:400;margin:0;max-width:19ch;text-wrap:balance}
 .intro{font-size:clamp(18px,2.2vw,21px);color:var(--ink-2);max-width:58ch;margin:28px 0 0}
 
 /* the strip: one square per crew-day from the demo dashboard */
@@ -68,15 +74,15 @@ h1{font-size:clamp(40px,7.4vw,86px);line-height:.98;letter-spacing:-.035em;font-
 .key i{display:inline-block;width:11px;height:11px;border-radius:2px}
 
 /* ---------- work ---------- */
-h2{font-size:clamp(28px,3.6vw,38px);letter-spacing:-.025em;line-height:1.1;margin:0}
+h2{font-family:var(--serif);font-weight:400;font-size:clamp(34px,4.4vw,50px);letter-spacing:-.005em;line-height:1.05;margin:0}
 .section{padding:clamp(72px,10vw,120px) 0 0}
 .section > .wrap > p.sub{color:var(--ink-2);max-width:60ch;margin:12px 0 0}
 .project{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(24px,4vw,56px);align-items:start;
   padding:48px 0;border-top:1px solid var(--rule)}
 .project:first-of-type{margin-top:36px}
 @media (max-width:860px){.project{grid-template-columns:1fr}}
-.project h3{font-size:clamp(24px,2.6vw,30px);letter-spacing:-.02em;line-height:1.12;margin:0 0 6px}
-.project .what{color:var(--muted);font-size:16px;margin:0 0 18px}
+.project h3{font-family:var(--serif);font-weight:400;font-size:clamp(30px,3.2vw,38px);letter-spacing:0;line-height:1.08;margin:0 0 8px}
+.project .what{font-family:var(--mono);color:var(--spruce);font-size:12px;letter-spacing:.16em;text-transform:uppercase;margin:0 0 18px}
 .project p{margin:0 0 14px;color:var(--ink-2);max-width:60ch}
 .project p strong{color:var(--ink);font-weight:600}
 .skills{font-size:15.5px;color:var(--muted)}
@@ -87,7 +93,7 @@ h2{font-size:clamp(28px,3.6vw,38px);letter-spacing:-.025em;line-height:1.1;margi
 .go + .go2{margin-left:14px}
 .go2{font-weight:600}
 .shot{display:block;border-radius:12px;overflow:hidden;border:1px solid var(--rule);background:var(--surface);
-  box-shadow:0 18px 40px -24px rgba(16,40,38,.35)}
+  box-shadow:0 18px 40px -24px rgba(26,47,120,.32)}
 .shot img{display:block;width:100%;height:auto}
 
 /* ---------- experience ---------- */
@@ -95,7 +101,7 @@ h2{font-size:clamp(28px,3.6vw,38px);letter-spacing:-.025em;line-height:1.1;margi
 .career li{display:grid;grid-template-columns:9.5rem minmax(0,1fr);gap:8px 32px;padding:22px 0;border-top:1px solid var(--rule)}
 .career li:last-child{border-bottom:1px solid var(--rule)}
 @media (max-width:640px){.career li{grid-template-columns:1fr}}
-.career .yrs{color:var(--muted);font-size:16px;font-variant-numeric:tabular-nums;padding-top:3px}
+.career .yrs{font-family:var(--mono);color:var(--muted);font-size:13px;letter-spacing:.04em;padding-top:5px}
 .career h3{font-size:20px;letter-spacing:-.01em;margin:0}
 .career .org{color:var(--spruce);font-weight:600;font-size:16px;margin:2px 0 8px}
 .career p{margin:0;color:var(--ink-2);max-width:64ch}
@@ -117,7 +123,7 @@ h2{font-size:clamp(28px,3.6vw,38px);letter-spacing:-.025em;line-height:1.1;margi
 
 /* ---------- contact ---------- */
 .contact{padding:clamp(72px,10vw,120px) 0 64px}
-.contact .big{font-size:clamp(28px,4.4vw,48px);font-weight:800;letter-spacing:-.03em;line-height:1.08;margin:0 0 18px;max-width:20ch}
+.contact .big{font-family:var(--serif);font-size:clamp(34px,5vw,58px);font-weight:400;letter-spacing:-.005em;line-height:1.05;margin:0 0 18px;max-width:20ch}
 .contact .avail{font-size:clamp(18px,2vw,20px);color:var(--ink-2);max-width:56ch;margin:0 0 24px}
 .contact .links{display:flex;gap:24px;flex-wrap:wrap;font-size:19px;font-weight:600}
 .fine{margin-top:56px;padding-top:20px;border-top:1px solid var(--rule);font-size:14px;color:var(--muted)}
@@ -127,16 +133,16 @@ h2{font-size:clamp(28px,3.6vw,38px);letter-spacing:-.025em;line-height:1.1;margi
 <body>
 
 <div class="wrap top">
-  <span class="name">Maria Driscoll</span>
+  <span class="name"><span class="mono-mark" aria-hidden="true">MD</span>Maria Driscoll</span>
   <nav aria-label="Sections"><a href="#work">Work</a><a href="#experience">Experience</a><a href="#how">How I work</a><a href="#contact">Contact</a></nav>
 </div>
 
 <header class="hero">
   <div class="wrap">
-    <h1>I help people adopt new ways of working, and build the tools that prove they have.</h1>
-    <p class="intro">Customer success and go-to-market leader with more than 15 years in public health, medical
-      technology, executive consulting and B2B technology. The thread through all of it is behaviour change: getting
-      busy, sceptical professionals to try something new and keep using it. These days I also build the tools that
+    <h1>Marketing and customer success leader who builds the tools her teams run on.</h1>
+    <p class="intro">More than 15 years across marketing, business development and customer success, in public
+      health, medical technology, executive consulting and B2B technology. The thread through all of it is behaviour
+      change: getting busy, sceptical professionals to try something new and keep using it. These days I also build the tools that
       run that work, from adoption dashboards to AI agents, and I make them honest about what the data does and
       doesn't say.</p>
 
@@ -350,8 +356,8 @@ h2{font-size:clamp(28px,3.6vw,38px);letter-spacing:-.025em;line-height:1.1;margi
 <footer class="contact" id="contact">
   <div class="wrap">
     <p class="big">Looking for someone who can lead the work and build the tools for it?</p>
-    <p class="avail">Open to full-time roles, and available for fractional customer success and go-to-market work with
-      startups and growing companies.</p>
+    <p class="avail">Available for fractional marketing, customer success and go-to-market work, and open to consulting
+      engagements with startups and growing companies.</p>
     <div class="links">
       <a href="mailto:edwards.maria@gmail.com">edwards.maria@gmail.com</a>
       <a href="https://www.linkedin.com/in/maria-driscoll">LinkedIn</a>

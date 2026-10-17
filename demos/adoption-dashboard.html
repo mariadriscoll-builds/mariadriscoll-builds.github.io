@@ -4,51 +4,51 @@
 <title>Client Adoption Dashboard (demo)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* Portfolio demo theme. Heat ramps contrast-checked against their surfaces
    in both modes (lightest step >= 2:1). */
 :root{
   color-scheme:light;
   /* palette */
-  --c-blue:#0e5e5a; --c-blue-bright:#8fd3c9; --c-blue-dark:#08413e;
-  --c-blue-tint:#e6f1ef; --c-navy:#132826; --c-navy-soft:#24403d;
-  --c-white:#ffffff; --c-grey:#e4e8e6; --c-grey-line:#cfd6d3; --c-grey-text:#55666a;
-  --p-amber:#e0a419; --p-red:#c8402f; --p-green:#2f9e6a;
+  --c-blue:#2443a6; --c-blue-bright:#9fb0ee; --c-blue-dark:#1a2f78;
+  --c-blue-tint:#edf2fb; --c-navy:#2b2c30; --c-navy-soft:#3a3c43;
+  --c-white:#ffffff; --c-grey:#e6e8ee; --c-grey-line:#d6dae3; --c-grey-text:#5d6068;
+  --p-amber:#e0a419; --p-red:#a4635c; --p-green:#2f9e6a;
   /* type */
-  --font-brand:"Schibsted Grotesk",system-ui,sans-serif;
-  --font-product:"Schibsted Grotesk","Segoe UI",system-ui,sans-serif;
+  --font-brand:"Inter",system-ui,sans-serif;
+  --font-product:"Inter","Segoe UI",system-ui,sans-serif;
   --font-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
   /* semantic */
   --surface-1:var(--c-white); --plane:var(--c-blue-tint);
   --ink:#000; --ink-2:var(--c-grey-text); --muted:#8a939d;
   --grid:var(--c-grey); --rule:var(--c-grey-line); --ring:var(--c-grey-line);
-  --band:#f4f7f6;
+  --band:#f4f6fb;
   /* field ramp - brand blue hue */
-  --b0:#eef1ef; --b1:#5fb8ac; --b2:#3a9c91; --b3:#1d7f76; --b4:#08615a;
+  --b0:#e8ebf2; --b1:#8fa0d8; --b2:#6b81c4; --b3:#3f5bb1; --b4:#2443a6;
   /* office ramp - second sequential hue */
-  --u1:#a08fe3; --u2:#8069d4; --u3:#5f47b9;
+  --u1:#a9abb3; --u2:#7d8089; --u3:#4f525a;
   --warn:var(--p-amber); --crit:var(--p-red);
   --on-deep:#fff;
   /* Status ladder - customer (filled) > paid trial (tinted) > free trial (outline).
      Every pair contrast-checked against the white card: 7.31 / 6.03 / 6.01 text,
      7.31 / 4.06 border-or-fill vs surface. */
-  --chip-cust-bg:#0e5e5a; --chip-cust-fg:#ffffff;
+  --chip-cust-bg:#2443a6; --chip-cust-fg:#ffffff;
   --chip-paid-bg:#fdf0d5; --chip-paid-bd:#b0700f; --chip-paid-fg:#8a4b00;
-  --chip-free-bd:#cfd6d3; --chip-free-fg:#55666a;
-  --shadow-1:0 1px 2px rgba(19,40,38,.06),0 1px 1px rgba(19,40,38,.04);
+  --chip-free-bd:#d6dae3; --chip-free-fg:#5d6068;
+  --shadow-1:0 1px 2px rgba(30,32,40,.06),0 1px 1px rgba(30,32,40,.04);
   --ease:cubic-bezier(.2,.6,.2,1);
 }
 @media (prefers-color-scheme:dark){
  :root:where(:not([data-theme="light"])){
   color-scheme:dark;
-  --surface-1:var(--c-navy); --plane:#0d1c1b;
+  --surface-1:var(--c-navy); --plane:#17181b;
   --ink:#fff; --ink-2:#b7c2cc; --muted:#8a99a6;
-  --grid:#2c4643; --rule:var(--c-navy-soft); --ring:var(--c-navy-soft);
-  --band:#1a3331;
-  --b0:#24403d; --b1:#16675f; --b2:#2a8a80; --b3:#4fb0a5; --b4:#7fd4c9;
-  --u1:#5a43b0; --u2:#7b63d0; --u3:#a08ff0;
-  --chip-cust-bg:#8fd3c9; --chip-cust-fg:#06201e;
+  --grid:#33363e; --rule:var(--c-navy-soft); --ring:var(--c-navy-soft);
+  --band:#22242a;
+  --b0:#3a3c43; --b1:#3a50a6; --b2:#5068bf; --b3:#7d92da; --b4:#b0bff0;
+  --u1:#55585f; --u2:#7d8089; --u3:#b5b7be;
+  --chip-cust-bg:#9fb0ee; --chip-cust-fg:#10162e;
   --chip-paid-bg:#3a3222; --chip-paid-bd:#a9762a; --chip-paid-fg:#f0b968;
   --chip-free-bd:#45566a; --chip-free-fg:#b7c2cc;
   --on-deep:#08131a;
@@ -57,13 +57,13 @@
 }
 :root[data-theme="dark"]{
   color-scheme:dark;
-  --surface-1:var(--c-navy); --plane:#0d1c1b;
+  --surface-1:var(--c-navy); --plane:#17181b;
   --ink:#fff; --ink-2:#b7c2cc; --muted:#8a99a6;
-  --grid:#2c4643; --rule:var(--c-navy-soft); --ring:var(--c-navy-soft);
-  --band:#1a3331;
-  --b0:#24403d; --b1:#16675f; --b2:#2a8a80; --b3:#4fb0a5; --b4:#7fd4c9;
-  --u1:#5a43b0; --u2:#7b63d0; --u3:#a08ff0;
-  --chip-cust-bg:#8fd3c9; --chip-cust-fg:#06201e;
+  --grid:#33363e; --rule:var(--c-navy-soft); --ring:var(--c-navy-soft);
+  --band:#22242a;
+  --b0:#3a3c43; --b1:#3a50a6; --b2:#5068bf; --b3:#7d92da; --b4:#b0bff0;
+  --u1:#55585f; --u2:#7d8089; --u3:#b5b7be;
+  --chip-cust-bg:#9fb0ee; --chip-cust-fg:#10162e;
   --chip-paid-bg:#3a3222; --chip-paid-bd:#a9762a; --chip-paid-fg:#f0b968;
   --chip-free-bd:#45566a; --chip-free-fg:#b7c2cc;
   --on-deep:#08131a;
@@ -96,7 +96,7 @@ button:hover{color:var(--ink);border-color:var(--c-blue)}
 .brandbar button{background:transparent;color:var(--c-blue-bright);
  border-color:var(--c-navy-soft);transition:all var(--ease) 200ms}
 .brandbar button:hover{color:var(--c-white);border-color:var(--c-blue-bright);
- background:rgba(143,211,201,.14)}
+ background:rgba(159,176,238,.14)}
 .tile-when{font-size:10px;letter-spacing:.06em;text-transform:uppercase;
  color:var(--muted);margin-bottom:6px;font-weight:600}
 .tiles-note{font-size:12.5px;color:var(--ink-2);margin:-18px 0 24px 2px}
@@ -200,7 +200,7 @@ td.cell.blip{background:var(--b0);box-shadow:inset 0 0 0 1.5px var(--b2)}
 .cell .v{font-size:11px;font-variant-numeric:tabular-nums;color:var(--ink-2);opacity:.85}
 td.cell.b2 .v,td.cell.b3 .v,td.cell.b4 .v,
 td.cell.u2 .v,td.cell.u3 .v{color:var(--on-deep);opacity:1;font-weight:600}
-td.cell.u1 .v{color:#1d1240;opacity:1;font-weight:600}
+td.cell.u1 .v{color:#1c1d20;opacity:1;font-weight:600}
 .badge{position:absolute;top:-4px;right:-4px;width:14px;height:14px;border-radius:50%;
  font-size:9px;line-height:14px;font-weight:700;color:#0b0b0b;
  box-shadow:0 0 0 1.5px var(--surface-1)}
@@ -233,6 +233,8 @@ footer a{color:var(--c-blue)}
 :root[data-theme="dark"] .tile-v{color:var(--c-blue-bright)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tile-v{color:var(--c-blue-bright)}}
 :root[data-theme="dark"] footer a{color:var(--c-blue-bright)}
+:root[data-theme="dark"] td.cell.u1 .v{color:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) td.cell.u1 .v{color:#fff}}
 </style></head><body>
 <div class="wrap">
 

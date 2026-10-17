@@ -7,23 +7,30 @@
 <meta name="description" content="Portfolio case study: scheduled AI agents that keep a customer-success team's records current, and the rules that make them trustworthy.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
   color-scheme:light;
-  --paper:#f2f4f1; --surface:#ffffff; --ink:#1c2326; --ink-2:#3e4c50; --muted:#5e6e71;
-  --rule:#d5dcd9; --spruce:#0e5e5a; --spruce-soft:#e2efec; --lane:#e9b92e; --signal:#c8402f; --violet:#6a54c4;
-  --font:"Schibsted Grotesk","Segoe UI",system-ui,sans-serif;
+  --paper:#f7f8fb; --surface:#ffffff; --ink:#26272a; --ink-2:#45474c; --muted:#686a70;
+  --rule:#dfe1e6; --spruce:#2443a6; --spruce-soft:#edf2fb; --spruce-deep:#1a2f78; --lane:#bb7d77; --signal:#a4635c;
+  --violet:#bb7d77; --field:#3f5bb1;
+  --b0:#e8ebf2; --b1:#8fa0d8; --b2:#6b81c4; --b3:#3f5bb1; --b4:#2443a6;
+  --font:"Inter","Segoe UI",system-ui,sans-serif; --serif:"Instrument Serif",Georgia,serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   color-scheme:dark;
-  --paper:#0f1a19; --surface:#152423; --ink:#e6ecea; --ink-2:#bcc9c6; --muted:#8fa19d;
-  --rule:#26403c; --spruce:#8fd3c9; --spruce-soft:#1b3330; --signal:#e4705f; --violet:#a08fe3;
+  --paper:#17181b; --surface:#1d1e22; --ink:#ececee; --ink-2:#c4c6cc; --muted:#9a9ca3;
+  --rule:#30323a; --spruce:#9fb0ee; --spruce-soft:#232838; --spruce-deep:#0f1530; --signal:#dba49e; --violet:#dba49e;
+  --field:#7d92da;
+  --b0:#2a2c33; --b1:#3a50a6; --b2:#5068bf; --b3:#7d92da; --b4:#b0bff0;
 }}
 :root[data-theme="dark"]{
   color-scheme:dark;
-  --paper:#0f1a19; --surface:#152423; --ink:#e6ecea; --ink-2:#bcc9c6; --muted:#8fa19d;
-  --rule:#26403c; --spruce:#8fd3c9; --spruce-soft:#1b3330; --signal:#e4705f; --violet:#a08fe3;
+  --paper:#17181b; --surface:#1d1e22; --ink:#ececee; --ink-2:#c4c6cc; --muted:#9a9ca3;
+  --rule:#30323a; --spruce:#9fb0ee; --spruce-soft:#232838; --spruce-deep:#0f1530; --signal:#dba49e; --violet:#dba49e;
+  --field:#7d92da;
+  --b0:#2a2c33; --b1:#3a50a6; --b2:#5068bf; --b3:#7d92da; --b4:#b0bff0;
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.6 var(--font);-webkit-font-smoothing:antialiased}
@@ -31,9 +38,9 @@ a{color:var(--spruce);text-underline-offset:3px}
 a:focus-visible{outline:2px solid var(--spruce);outline-offset:2px}
 .wrap{max-width:900px;margin:0 auto;padding:28px 16px 80px}
 .note{font-size:14px;color:var(--ink-2);margin:0 0 40px}
-h1{font-size:clamp(36px,6vw,58px);line-height:1.02;letter-spacing:-.03em;margin:0 0 16px;font-weight:800}
+h1{font-family:var(--serif);font-size:clamp(44px,7vw,72px);line-height:1;letter-spacing:-.01em;margin:0 0 16px;font-weight:400}
 .lede{font-size:20px;color:var(--ink-2);margin:0 0 40px;max-width:58ch}
-h2{font-size:26px;letter-spacing:-.015em;line-height:1.2;margin:56px 0 12px}
+h2{font-family:var(--serif);font-weight:400;font-size:34px;letter-spacing:0;line-height:1.15;margin:56px 0 12px}
 p{max-width:68ch}
 .figure{background:var(--surface);border:1px solid var(--rule);border-radius:14px;padding:22px 18px 14px;margin:20px 0 8px}
 .figure svg{display:block;width:100%;height:auto}

@@ -7,23 +7,30 @@
 <meta name="description" content="Portfolio demo: a gated ROI calculator for contractors, with the two-stage lead capture behind it.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
   color-scheme:light;
-  --paper:#f2f4f1; --surface:#ffffff; --ink:#1c2326; --ink-2:#3e4c50; --muted:#5e6e71;
-  --rule:#d5dcd9; --spruce:#0e5e5a; --spruce-deep:#0a3f3c; --lane:#e9b92e; --signal:#c8402f;
-  --field:#1d7f76; --font:"Schibsted Grotesk","Segoe UI",system-ui,sans-serif;
+  --paper:#f7f8fb; --surface:#ffffff; --ink:#26272a; --ink-2:#45474c; --muted:#686a70;
+  --rule:#dfe1e6; --spruce:#2443a6; --spruce-soft:#edf2fb; --spruce-deep:#1a2f78; --lane:#bb7d77; --signal:#a4635c;
+  --violet:#bb7d77; --field:#3f5bb1;
+  --b0:#e8ebf2; --b1:#8fa0d8; --b2:#6b81c4; --b3:#3f5bb1; --b4:#2443a6;
+  --font:"Inter","Segoe UI",system-ui,sans-serif; --serif:"Instrument Serif",Georgia,serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   color-scheme:dark;
-  --paper:#0f1a19; --surface:#152423; --ink:#e6ecea; --ink-2:#bcc9c6; --muted:#8fa19d;
-  --rule:#26403c; --spruce:#8fd3c9; --spruce-deep:#06201e; --signal:#e4705f; --field:#4fb0a5;
+  --paper:#17181b; --surface:#1d1e22; --ink:#ececee; --ink-2:#c4c6cc; --muted:#9a9ca3;
+  --rule:#30323a; --spruce:#9fb0ee; --spruce-soft:#232838; --spruce-deep:#0f1530; --signal:#dba49e; --violet:#dba49e;
+  --field:#7d92da;
+  --b0:#2a2c33; --b1:#3a50a6; --b2:#5068bf; --b3:#7d92da; --b4:#b0bff0;
 }}
 :root[data-theme="dark"]{
   color-scheme:dark;
-  --paper:#0f1a19; --surface:#152423; --ink:#e6ecea; --ink-2:#bcc9c6; --muted:#8fa19d;
-  --rule:#26403c; --spruce:#8fd3c9; --spruce-deep:#06201e; --signal:#e4705f; --field:#4fb0a5;
+  --paper:#17181b; --surface:#1d1e22; --ink:#ececee; --ink-2:#c4c6cc; --muted:#9a9ca3;
+  --rule:#30323a; --spruce:#9fb0ee; --spruce-soft:#232838; --spruce-deep:#0f1530; --signal:#dba49e; --violet:#dba49e;
+  --field:#7d92da;
+  --b0:#2a2c33; --b1:#3a50a6; --b2:#5068bf; --b3:#7d92da; --b4:#b0bff0;
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.55 var(--font);-webkit-font-smoothing:antialiased}
@@ -33,7 +40,7 @@ a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(-
 .note{font-size:14px;color:var(--ink-2);margin:0 0 36px;max-width:70ch}
 .layout{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:40px;align-items:start}
 @media (max-width:860px){.layout{grid-template-columns:1fr}}
-h1{font-size:clamp(34px,5.5vw,54px);line-height:1.02;letter-spacing:-.025em;margin:0 0 14px;font-weight:800}
+h1{font-family:var(--serif);font-size:clamp(40px,6vw,64px);line-height:1.02;letter-spacing:-.01em;margin:0 0 14px;font-weight:400}
 .lede{font-size:19px;color:var(--ink-2);margin:0 0 28px;max-width:46ch}
 .panel{background:var(--surface);border:1px solid var(--rule);border-radius:14px;padding:24px}
 label{display:block;font-weight:600;font-size:15px}
@@ -49,7 +56,7 @@ button{font:inherit;font-weight:700;background:var(--spruce);color:var(--surface
 .slider output{font-weight:700;font-variant-numeric:tabular-nums;color:var(--spruce)}
 input[type=range]{width:100%;accent-color:var(--spruce);margin-top:8px}
 .result{margin-top:8px;padding-top:20px;border-top:1px solid var(--rule)}
-.big{font-size:clamp(40px,8vw,64px);font-weight:800;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
+.big{font-size:clamp(40px,8vw,64px);font-weight:700;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
 .big-l{color:var(--ink-2);margin:8px 0 18px;max-width:48ch}
 .bar{display:flex;height:16px;border-radius:5px;overflow:hidden;gap:2px;background:var(--rule)}
 .bar i{display:block;height:100%;transition:width .25s}
