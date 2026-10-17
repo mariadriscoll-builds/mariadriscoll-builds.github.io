@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Client Account Records (demo)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:light;--blue:#2443a6;--navy:#2b2c30;--bg:#fff;--panel:#f4f6fb;--line:#e1e4ec;
+--ink:#26272a;--mut:#5d6068;--faint:#8a8c93;--red:#b4443c;--amb:#b45309;--grn:#15803d;
+--redbg:#fef2f2;--redln:#fecaca;--ambbg:#fffbeb;--ambln:#fde68a;
+--milestone:#2443a6;--engage:#bb7d77;--commercial:#b45309;--comms:#686a70;--fault:#b4443c}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14.5px/1.5 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;padding:20px 20px 64px}
+.picker{display:flex;flex-wrap:wrap;gap:6px;padding:10px 0 12px;border-bottom:2px solid var(--navy);margin-bottom:18px;
+position:sticky;top:0;background:rgba(255,255,255,.96);backdrop-filter:blur(6px);z-index:5}
+[title]{cursor:help}
+
+details.cadx{margin-top:7px}
+details.cadx>summary{cursor:pointer;color:var(--blue);font-weight:600;font-size:11px;
+text-transform:uppercase;letter-spacing:.05em;user-select:none}
+details.cadx>summary:hover{text-decoration:underline}
+details.cadx[open]>summary{margin-bottom:5px}
+details.cadx{line-height:1.5}
+ul.stepnotes{margin:4px 0 0;padding-left:18px;font-size:12.5px;color:var(--mut)}
+ul.stepnotes li{margin:0 0 5px}
+ul.stepnotes b{color:var(--ink)}
+.cb{border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 12px;font-size:12.5px;font-weight:550;
+cursor:pointer;color:var(--mut);font-family:inherit;transition:.12s;white-space:nowrap}
+.cb:hover{border-color:var(--faint)}
+
+.pgrp{display:inline-flex;flex-wrap:wrap;align-items:center;gap:4px;padding-right:10px;margin-right:4px;border-right:1px solid var(--line)}
+.pgrp:last-child{border-right:none}
+.pgrp .pl{font-size:9.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--faint);font-weight:700;margin-right:2px}
+.picker{row-gap:6px;position:static!important;padding:6px 0 8px!important}
+.picker .cb{padding:3px 9px;font-size:12px}
+.picker .cb .n{margin-left:4px;padding:0 5px}
+h2.sec{scroll-margin-top:12px}
+.cb.on{background:var(--navy);color:#fff;border-color:transparent}
+.cb .n{display:inline-block;margin-left:6px;font-size:10.5px;background:rgba(220,38,38,.12);color:var(--red);
+border-radius:999px;padding:1px 6px;font-weight:700}
+.cb.on .n{background:rgba(255,255,255,.22);color:#fff}
+h1{font-size:23px;margin:0 0 2px;letter-spacing:-.02em}
+.sub{color:var(--mut);font-size:13px;margin-bottom:14px}
+.stamp{font-size:11.5px;color:var(--faint)}
+.revw{display:inline-block;font-size:11.5px;font-weight:600;border-radius:999px;padding:2px 10px;margin:4px 0 2px}
+.revw.ok{color:var(--grn);background:rgba(21,128,61,.08);border:1px solid rgba(21,128,61,.3)}
+.revw.no{color:var(--amb);background:var(--ambbg);border:1px solid var(--ambln)}
+.revw .since{color:var(--amb)}
+
+.nowbar{display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 16px}
+.nb{display:flex;align-items:center;gap:7px;background:var(--panel);border:1px solid var(--line);
+    border-radius:999px;padding:6px 13px;font-size:12.5px;line-height:1.35}
+.nb .k{color:var(--faint);font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+.nb.bad{border-color:#b4403a;background:rgba(180,64,58,.10)}
+.nb.bad .k{color:#e08a85}
+.nb.warnb{border-color:#a8791f;background:rgba(168,121,31,.10)}
+.nb.warnb .k{color:#d6ab55}
+.nb.okb{border-color:#2f7d4f;background:rgba(47,125,79,.10)}
+.nb.okb .k{color:#79c396}
+.nb .soon{font-weight:600}
+details.secx>summary{list-style:none;cursor:pointer}
+details.secx>summary::-webkit-details-marker{display:none}
+
+details.secx>summary h2.sec::before{content:'\25B8';font-size:16px;line-height:1;color:var(--blue)}
+details.secx[open]>summary h2.sec::before{content:'\25BE'}
+details.secx>summary h2.sec::after{order:1}
+details.secx>summary h2.sec:hover{color:var(--blue)}
+.secbtn{order:2;text-transform:none;letter-spacing:0;font-size:12px;font-weight:600;color:var(--blue);
+  border:1px solid var(--blue);border-radius:999px;padding:3px 11px;background:#fff;white-space:nowrap}
+details.secx>summary:hover .secbtn{background:var(--blue);color:#fff}
+.secbtn .c{display:none}
+details.secx[open] .secbtn .o{display:none}
+details.secx[open] .secbtn .c{display:inline}
+[data-jump]{cursor:pointer}
+.nb[data-jump]:hover,.fact[data-jump]:hover{filter:brightness(.96);text-decoration:none}
+.nb[data-jump]::after{content:'\2193';font-size:11px;opacity:.55;margin-left:2px}
+h2.sec{scroll-margin-top:72px}
+h2.sec{font-size:11.5px;text-transform:uppercase;letter-spacing:.09em;color:var(--faint);font-weight:700;
+margin:26px 0 9px;display:flex;align-items:center;gap:10px}
+h2.sec::after{content:"";flex:1;height:1px;background:var(--line)}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th{text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--faint);font-weight:700;
+padding:0 10px 7px;border-bottom:1px solid var(--line)}
+td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--mut)}
+tr:last-child td{border-bottom:none}
+td.k{color:var(--ink);font-weight:600;width:190px}
+.prov{display:block;font-size:10.5px;color:var(--faint);margin-top:3px}
+.prov .aged{color:var(--amb);font-weight:600}
+.null{color:var(--faint);font-style:italic}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.fact{background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:8px 10px}
+.fact.warn{background:var(--redbg);border-color:var(--redln)}
+.fact.amb{background:var(--ambbg);border-color:var(--ambln)}
+.facts.pri{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.facts.pri .fact{padding:10px 12px}
+.fact .l{font-size:9.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--faint);font-weight:700}
+.fact .v{font-size:14px;font-weight:650;margin-top:2px;color:var(--ink);letter-spacing:-.01em}
+.fact .n{font-size:11px;color:var(--mut);margin-top:1px}
+.strip{border:1px solid var(--line);border-radius:10px;padding:11px 13px 12px;margin-top:8px;background:#fff}
+.strip .h{font-size:9.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--faint);font-weight:700;margin-bottom:9px;display:flex}
+.strip .h .tot{margin-left:auto;text-transform:none;letter-spacing:0;font-size:11px;color:var(--mut);font-weight:600}
+.steps{display:flex;gap:4px}
+.step{flex:1;text-align:center;position:relative;min-width:0}
+.step::before{content:"";position:absolute;top:8px;left:-50%;width:100%;height:2px;background:var(--line);z-index:0}
+.step:first-child::before{display:none}
+.step.done::before{background:var(--blue)}
+.radio{position:relative;z-index:1;display:block;width:17px;height:17px;border-radius:50%;margin:0 auto 6px;border:2.5px solid var(--line);background:#fff}
+.step.done .radio{border-color:var(--blue);background:radial-gradient(circle,var(--blue) 0 42%,#fff 46% 100%)}
+.step.partial .radio{border-color:var(--amb);background:linear-gradient(90deg,var(--amb) 0 50%,#fff 50% 100%)}
+.step.not_reached .radio,.step.never_held .radio{border-color:var(--red);border-style:dashed}
+.step.scheduled .radio{border-color:var(--blue);border-style:dotted}
+.step.skipped .radio{border-color:var(--faint);background:repeating-linear-gradient(45deg,var(--faint) 0 2px,#fff 2px 4px)}
+.step .lab{font-size:10.5px;font-weight:600;color:var(--ink);line-height:1.25;word-break:break-word}
+.step.not_reached .lab,.step.never_held .lab{color:var(--red)}
+.step.partial .lab{color:var(--amb)}
+.step .dt{font-size:10px;color:var(--faint);margin-top:1px}
+.panels{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.panel{border-radius:11px;padding:13px 15px;border:1px solid}
+.panel.us{background:var(--redbg);border-color:var(--redln)}
+.panel.them{background:var(--ambbg);border-color:var(--ambln)}
+.panel h3{margin:0 0 8px;font-size:13.5px;display:flex;align-items:center}
+.panel h3 .ct{margin-left:auto;font-size:11px;font-weight:700;background:rgba(255,255,255,.75);padding:2px 8px;border-radius:999px}
+.panel.us h3{color:#991b1b}.panel.them h3{color:#92400e}
+.panel ul{margin:0;padding:0;list-style:none}
+.panel li{padding:7px 0;border-top:1px solid rgba(0,0,0,.07);font-size:12.5px;color:var(--mut)}
+.panel li:first-child{border-top:none}
+.panel li b{color:var(--ink);display:block;font-size:13px;margin-bottom:1px}
+.panel li em{font-style:normal;color:var(--faint);font-size:11px;display:block;margin-top:2px}
+
+.panel li.clamp{cursor:pointer}
+.panel li.clamp em{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.panel li.clamp.open em{display:block;-webkit-line-clamp:none;overflow:visible}
+.panel li .more{display:none;font-size:10.5px;font-weight:700;color:var(--blue);margin-top:3px;
+ user-select:none;letter-spacing:.01em}
+.panel li.clamp .more{display:block}
+.panel li.clamp .more::after{content:"More \25BE"}
+.panel li.clamp.open .more::after{content:"Less \25B4"}
+.panel li.clamp:hover .more{text-decoration:underline}
+.panel details{margin-top:2px;border-top:1px solid rgba(0,0,0,.07)}
+.panel details summary{cursor:pointer;list-style:none;padding:7px 0 2px;font-size:11.5px;font-weight:700;
+  color:var(--faint);user-select:none}
+.panel details summary::-webkit-details-marker{display:none}
+.panel details summary::before{content:'\25B8 ';display:inline-block;transition:transform .12s;font-size:10px}
+.panel details[open] summary::before{transform:rotate(90deg)}
+.panel details summary:hover{color:var(--mut)}
+.panel details li b{font-weight:600;color:var(--faint);text-decoration:line-through;
+  text-decoration-color:rgba(0,0,0,.25)}
+.panel details ul{margin-top:2px}
+
+
+.filters{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;align-items:center}
+.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:4px 11px;font-size:12px;
+ font-weight:550;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:inherit;transition:.12s}
+.chip .dot{width:8px;height:8px;border-radius:50%;background:currentColor}
+.chip[data-c=all]{color:var(--ink)}
+.chip[data-c=milestone]{color:var(--milestone)}
+.chip[data-c=engage]{color:var(--engage)}
+.chip[data-c=commercial]{color:var(--commercial)}
+.chip[data-c=comms]{color:var(--comms)}
+.chip[data-c=fault]{color:var(--fault)}
+.chip.on{border-color:transparent}
+.chip.on .dot{background:rgba(255,255,255,.9)}
+.chip[data-c=all].on{background:var(--ink);color:#fff}
+.chip[data-c=milestone].on{background:var(--milestone);color:#fff}
+.chip[data-c=engage].on{background:var(--engage);color:#fff}
+.chip[data-c=commercial].on{background:var(--commercial);color:#fff}
+.chip[data-c=comms].on{background:var(--comms);color:#fff}
+.chip[data-c=fault].on{background:var(--fault);color:#fff}
+.count{margin-left:auto;font-size:11.5px;color:var(--faint)}
+
+.tl{position:relative;padding-left:154px}
+.tl::before{content:"";position:absolute;left:136px;top:6px;bottom:6px;width:2px;background:var(--line)}
+.ev{position:relative;padding:0 0 15px 20px}
+.ev .date{position:absolute;left:-154px;top:0;width:136px;text-align:right;padding-right:20px;
+ font-size:12px;font-weight:600;color:var(--mut);font-variant-numeric:tabular-nums;white-space:nowrap}
+.ev::before{content:"";position:absolute;left:-7px;top:5px;width:10px;height:10px;border-radius:50%;
+ background:#fff;border:2.5px solid var(--comms);z-index:1}
+.ev.milestone::before{border-color:var(--milestone);width:13px;height:13px;left:-8.5px;top:3.5px}
+.ev.engage::before{border-color:var(--engage)}
+.ev.commercial::before{border-color:var(--commercial)}
+.ev.fault::before{border-color:var(--fault);background:var(--fault)}
+.ev.fault .t{color:var(--fault)}
+.ev .t{font-weight:640;font-size:13.5px}
+.ev.milestone .t{color:var(--milestone)}
+.ev .d{color:var(--mut);font-size:12.5px;margin-top:2px}
+.ev details.full{margin-top:3px;font-size:12px;color:var(--mut)}
+.ev details.full summary{cursor:pointer;color:var(--engage);font-size:11.5px;list-style:revert}
+.ev details.full div{margin-top:4px;padding:6px 9px;border-left:2px solid var(--line,#ddd);white-space:pre-wrap}
+.ev .flag{display:inline-block;margin-top:4px;font-size:12px;color:var(--red);font-weight:550}
+.ev.hide{display:none}
+
+.cgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:7px}
+.cg{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:7px 10px;min-width:0}
+.cg .l{font-size:9.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--faint);font-weight:700}
+.cg .v{font-size:13px;font-weight:600;color:var(--ink);margin-top:1px;word-break:break-word;line-height:1.35}
+.cg .prov{margin-top:2px}
+.cg .sub2{font-size:11px;color:var(--mut);margin-top:1px}
+.cg.warn{background:var(--redbg);border-color:var(--redln)}
+.cwarn{background:var(--redbg);border:1px solid var(--redln);border-left:3px solid var(--red);
+ border-radius:8px;padding:9px 12px;font-size:12px;color:#991b1b;margin:0 0 10px;line-height:1.5}
+details.tail{margin-top:9px}
+details.tail summary{cursor:pointer;list-style:none;font-size:11px;font-weight:700;color:var(--blue);
+ user-select:none;padding:3px 0}
+details.tail summary::-webkit-details-marker{display:none}
+details.tail summary::before{content:'\25B8 ';font-size:10px;display:inline-block;transition:transform .12s}
+details.tail[open] summary::before{transform:rotate(90deg)}
+details.tail summary:hover{text-decoration:underline}
+details.tail table{margin-top:5px}
+.tlnote{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--faint);
+ border-radius:8px;padding:9px 12px;font-size:12px;color:var(--mut);margin:0 0 12px}
+@media(max-width:800px){.tl{padding-left:0}.tl::before{left:5px}
+ .ev{padding-left:22px}.ev .date{position:static;width:auto;text-align:left;padding:0 0 2px}}
+.pill{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:999px;white-space:nowrap;margin-left:4px}
+.p-red{background:#fee2e2;color:#991b1b}.p-amb{background:#fef3c7;color:#92400e}
+.p-grn{background:#dcfce7;color:#14532d}.p-gry{background:#eef1f5;color:#475569}
+.watch{background:var(--ambbg);border:1px solid var(--ambln);border-radius:10px;padding:11px 14px;font-size:13px;color:#92400e}
+.watch li{margin:4px 0}
+.note{background:var(--panel);border-left:3px solid var(--blue);border-radius:8px;padding:9px 12px;font-size:12.5px;color:var(--mut);margin-top:8px}
+footer{margin-top:30px;padding-top:14px;border-top:1px solid var(--line);font-size:11.5px;color:var(--faint);line-height:1.6}
+@media(max-width:780px){.panels{grid-template-columns:1fr}td.k{width:auto}}
+.demo-note{margin:0 0 12px;padding:10px 14px;background:#edf2fb;border:1px solid #d6dcef;border-radius:8px;font-size:13.5px;color:#45474c}
+.demo-note a{color:var(--blue)}
+#view table{display:block;max-width:100%;overflow-x:auto}
+</style></head><body><div class="wrap">
+<div class="demo-note">Portfolio demo by Maria Driscoll. The page, its layout and its rules are the production build; every client, person, address, price and date is fictional, and the clients match the <a href="adoption-dashboard.html">adoption dashboard</a> demo. <a href="../index.html">Back to the portfolio</a></div>
+<div class="picker" id="picker"></div>
+<div id="view"></div>
+<footer><b>Client Account Records</b> — the sales and account view, rendered from
+one JSON record per account.
+Hardware appears as <b>inventory</b> (type, state) and <b>condition</b> (working / broken / spare / unknown). Telemetry, hours and usage live on the
+<a href="adoption-dashboard.html">client adoption dashboard</a>. <b>Unknown condition means nothing evidences one</b> &mdash; it is never upgraded
+to Working because no fault has been reported.
+Facts show when they were last confirmed — <span style="color:#b45309;font-weight:600">amber</span> means over 30 days ago.
+In production this page is regenerated after each daily update.</footer>
+</div>
+<script>
+const DATA = {"belltide": {"schema": "account-record/1", "updated": "2025-07-14", "updated_by": "daily-client-memory-pass", "journey_terminal_states": ["customer_care", "client_lost"], "unit_states": ["on_site", "replacement_part_owed", "awaiting_shipment", "in_transit_to_them", "in_transit_to_us", "recovered", "retired"], "unit_names_authority": "fleet config", "unit_conditions": {"working": "in service and reporting", "broken": "a named fault on a named unit", "spare": "held as backup, not deployed", "unknown": "nothing currently evidences a condition - the honest default", "_rule": "condition carries {v, src, on} and is never promoted to 'working' because a unit has not been reported broken. Let the 'on' date age: it is the only warning that something needs re-checking."}, "client": "Belltide Asphalt", "slug": "belltide", "aliases": ["Belltide"], "identity": {"legal_entity": {"v": "Belltide Asphalt LLC", "src": "signed agreement", "on": "2025-03-01"}, "region": {"v": "North Georgia", "src": "project locations", "on": "2025-03-01"}, "state_province": {"v": "Georgia", "src": "registered address", "on": "2025-03-01"}, "poc": {"v": "Tom Ashby, VP Operations", "src": "kickoff call", "on": "2025-03-01"}, "registered_address": {"v": "42 Mill Pond Rd, Calder, GA 30000", "src": "signed agreement", "on": "2025-03-01"}, "bill_to": {"v": "42 Mill Pond Rd, Calder, GA 30000", "src": "signed agreement", "on": "2025-03-01"}, "email_domain": "belltide.example"}, "commercial": {"status": {"v": "Client - paying (Contract 109, Mar 2025 - Feb 2026)", "src": "contracts tracker", "on": "2025-06-30"}, "agreement_signed": {"v": "2025-02-03", "src": "e-signature record", "on": "2025-02-03"}, "signatory": {"v": "Tom Ashby", "src": "e-signature record", "on": "2025-02-03"}, "terms": {"v": "$1,650 USD/mo per crew", "src": "contracts tracker", "on": "2025-06-30"}, "trial_start": {"v": "2025-02-17", "src": "first telemetry + onsite install", "on": "2025-02-17"}, "trial_end": {"v": "2025-03-14", "src": "contracts tracker", "on": "2025-06-30"}, "billing_started": {"v": "2025-03-01", "src": "contracts tracker", "on": "2025-06-30"}, "contract": {"v": "Contract 109 - Mar 2025 to Feb 2026", "src": "contracts tracker", "on": "2025-06-30"}, "engagement_type": {"v": "Client", "src": "contracts tracker", "on": "2025-06-30"}, "licences": {"v": 1, "src": "contracts tracker", "on": "2025-06-30"}, "tablets_contracted": {"v": 2, "src": "contracts tracker", "on": "2025-06-30"}, "currency": {"v": "USD", "src": "contracts tracker", "on": "2025-06-30"}, "recurring": {"v": true, "src": "contracts tracker", "on": "2025-06-30"}, "card_on_file": {"v": "No - pays by ACH against invoice", "src": "billing system", "on": "2025-06-30"}, "ap_contact": {"v": "payables@belltide.example", "src": "client email", "on": "2025-06-30"}, "decision_path": {"v": "Tom decides and signs", "src": "discovery call notes", "on": "2025-06-30"}}, "journey": [{"stage": "agreement_signed", "state": "done", "date": "2025-02-03"}, {"stage": "trial_started", "state": "done", "date": "2025-02-17"}, {"stage": "halfway_review", "state": "done", "date": "2025-03-03"}, {"stage": "trial_wrapup", "state": "done", "date": "2025-03-14"}, {"stage": "converted", "state": "done", "date": "2025-03-14"}, {"stage": "customer_care", "state": "done", "date": "2025-04-02"}], "training": [{"session": "kickoff", "state": "done", "date": "2025-02-10"}, {"session": "training_1", "state": "done", "date": "2025-02-17"}, {"session": "training_2", "state": "done", "date": "2025-03-03", "note": "doubled as the halfway review"}, {"session": "training_3", "state": "never_held", "date": null, "note": "Lena asked to defer until the hardware is sorted"}], "cadence": {"agreed": true, "interval": "monthly", "next": {"n": 4, "date": "2025-07-16", "time_client": "2:00 PM ET", "time_local": "2:00 PM ET"}, "note": "Monthly, agreed by Tom 2025-04-02."}, "units": [{"name": "Curlew", "id": "#111", "gen": "Gen 2", "state": "on_site", "fitted": "2025-02-17", "serial": "7710031", "note": "", "kind": "tablet", "condition": {"v": "working", "src": "adoption ledger", "on": "2025-07-11"}, "last_active": {"on": "2025-07-11", "worked": "2025-07-11", "src": "adoption ledger", "as_of": "2025-07-11"}}, {"name": "Merlin", "id": "#112", "gen": "Gen 2", "state": "on_site", "fitted": "2025-02-17", "serial": "7710032", "note": "Silent since early June. Crew running on Curlew alone.", "kind": "tablet", "condition": {"v": "broken", "src": "Lena Kowalczyk email: 'won't power past the boot screen'", "on": "2025-06-05"}, "last_active": {"on": "2025-06-02", "worked": "2025-06-02", "src": "adoption ledger", "as_of": "2025-07-11"}}], "open_loops": {"we_owe": [{"item": "Ship a replacement for Merlin and a return label for the faulty unit", "since": "2025-06-05", "state": "open", "owner": "Felix Brandt", "note": "Replacement built; waiting on the client's receiving address for the new yard."}, {"item": "Explain the week-long field gap in mid-June to Tom", "since": "2025-06-25", "state": "open", "owner": "Maria Driscoll", "note": "Office stayed active all week; field data stopped. Likely the uplink, not the crew."}, {"item": "Book the deferred third training session", "since": "2025-04-02", "state": "blocked_on_them", "owner": "Maria Driscoll", "note": "", "blocker": "Lena to pick a date once Merlin is replaced"}], "they_owe": [{"item": "Receiving address for the new equipment yard", "since": "2025-06-05", "state": "open", "owner": null, "note": "Asked twice; Tom says this week."}]}, "projects": {"first": {"name": "SR 60 widening", "start": "2025-02-17", "shifts": "day"}, "others": ["Calder airport apron"]}, "deliverables": [{"item": "roles_and_responsibilities_sheet", "received": "2025-02-10"}, {"item": "fleet_details_sheet", "received": "2025-02-12"}], "proof_points": [{"claim": "Lena caught a cold-load pattern from the temperature map in the first month", "on": "2025-03-20", "src": "March review recording", "defensible": true}], "contacts": [{"name": "Tom Ashby", "role": "VP Operations", "email": "tom.ashby@belltide.example", "phone": "(555) 010-3101", "tag": "champion", "note": "Decides fast; expects the same."}, {"name": "Lena Kowalczyk", "role": "QC Lead", "email": "lena.kowalczyk@belltide.example", "phone": "(555) 010-3104", "tag": "proactive", "note": "Reported the Merlin fault herself."}], "watch": ["A paying client running on half its hardware: the replacement is the whole relationship right now."], "timeline": [{"date": "2025-02-03", "cat": "commercial", "title": "Agreement signed"}, {"date": "2025-02-17", "cat": "milestone", "title": "Trial starts"}, {"date": "2025-03-14", "cat": "milestone", "title": "Converted"}, {"date": "2025-06-02", "cat": "fault", "title": "Merlin stops reporting", "detail": "Last pass 2025-06-02.", "flag": "Fault reported by the client, not caught by us. The dashboard now flags a box that disappears."}, {"date": "2025-06-18", "cat": "fault", "title": "Field dark for a week, office active", "date_end": "2025-06-24"}], "reviewed": {"by": "Maria Driscoll", "on": "2025-07-14"}}, "corvane": {"schema": "account-record/1", "updated": "2025-07-14", "updated_by": "daily-client-memory-pass", "journey_terminal_states": ["customer_care", "client_lost"], "unit_states": ["on_site", "replacement_part_owed", "awaiting_shipment", "in_transit_to_them", "in_transit_to_us", "recovered", "retired"], "unit_names_authority": "fleet config", "unit_conditions": {"working": "in service and reporting", "broken": "a named fault on a named unit", "spare": "held as backup, not deployed", "unknown": "nothing currently evidences a condition - the honest default", "_rule": "condition carries {v, src, on} and is never promoted to 'working' because a unit has not been reported broken. Let the 'on' date age: it is the only warning that something needs re-checking."}, "client": "Corvane Civil", "slug": "corvane", "aliases": ["Corvane"], "identity": {"legal_entity": {"v": "Corvane Civil Ltd.", "src": "signed agreement", "on": "2025-03-01"}, "region": {"v": "Northern Kentucky", "src": "project locations", "on": "2025-03-01"}, "state_province": {"v": "Kentucky", "src": "registered address", "on": "2025-03-01"}, "poc": {"v": "Victor Szabo, Operations Director", "src": "kickoff call", "on": "2025-03-01"}, "registered_address": {"v": "18 Ferry St, Corvane, KY 41000", "src": "signed agreement", "on": "2025-03-01"}, "bill_to": {"v": "18 Ferry St, Corvane, KY 41000", "src": "signed agreement", "on": "2025-03-01"}, "email_domain": "corvane.example"}, "commercial": {"status": {"v": "Paid trial - week 5", "src": "contracts tracker", "on": "2025-06-30"}, "agreement_signed": {"v": "2025-06-02", "src": "e-signature record", "on": "2025-06-02"}, "signatory": {"v": "Victor Szabo", "src": "e-signature record", "on": "2025-06-02"}, "terms": {"v": "$1,650 USD/mo per crew (trial rate)", "src": "contracts tracker", "on": "2025-06-30"}, "trial_start": {"v": "2025-06-09", "src": "first telemetry + onsite install", "on": "2025-06-09"}, "trial_end": {"v": "2025-08-08", "src": "contracts tracker", "on": "2025-06-30"}, "billing_started": {"v": "2025-06-01", "src": "contracts tracker", "on": "2025-06-30"}, "contract": {"v": "Trial agreement T-121", "src": "contracts tracker", "on": "2025-06-30"}, "engagement_type": {"v": "Paid Trial", "src": "contracts tracker", "on": "2025-06-30"}, "licences": {"v": 1, "src": "contracts tracker", "on": "2025-06-30"}, "tablets_contracted": {"v": 2, "src": "contracts tracker", "on": "2025-06-30"}, "currency": {"v": "USD", "src": "contracts tracker", "on": "2025-06-30"}, "recurring": {"v": true, "src": "contracts tracker", "on": "2025-06-30"}, "card_on_file": {"v": "Yes - card on file for the trial", "src": "billing system", "on": "2025-06-30"}, "ap_contact": {"v": "Carla Brennan", "src": "client email", "on": "2025-06-30"}, "decision_path": {"v": "Victor decides; board approval over $25k", "src": "discovery call notes", "on": "2025-06-30"}}, "journey": [{"stage": "agreement_signed", "state": "done", "date": "2025-06-02"}, {"stage": "trial_started", "state": "done", "date": "2025-06-09"}, {"stage": "halfway_review", "state": "not_reached", "date": null, "note": "Booked 2025-07-09 - moved by client to 2025-07-16."}, {"stage": "trial_wrapup", "state": "not_reached", "date": null}, {"stage": "converted", "state": "not_reached", "date": null}, {"stage": "customer_care", "state": "not_reached", "date": null}], "training": [{"session": "kickoff", "state": "done", "date": "2025-06-04"}, {"session": "training_1", "state": "done", "date": "2025-06-09"}, {"session": "training_2", "state": "not_started", "date": null, "note": "booked 2025-07-16 with the halfway review"}], "cadence": {"agreed": false, "interval": null, "note": "Trial account; cadence comes after conversion."}, "units": [{"name": "Tern", "id": "#171", "gen": "Gen 2", "state": "on_site", "fitted": "2025-06-09", "serial": "7710091", "note": "", "kind": "tablet", "condition": {"v": "working", "src": "adoption ledger", "on": "2025-07-11"}, "last_active": {"on": "2025-07-11", "worked": "2025-07-11", "src": "adoption ledger", "as_of": "2025-07-11"}}, {"name": "Whimbrel", "id": "#172", "gen": "Gen 2", "state": "on_site", "fitted": "2025-06-09", "serial": "7710092", "note": "Missing-data flags in week one; seems settled, but nobody has confirmed.", "kind": "tablet", "condition": {"v": "unknown", "src": "early uploads missing; not re-checked since", "on": "2025-06-20"}, "last_active": {"on": "2025-07-11", "worked": "2025-07-11", "src": "adoption ledger", "as_of": "2025-07-11"}}], "open_loops": {"we_owe": [{"item": "Confirm Whimbrel's uploads are complete since the uplink change", "since": "2025-06-20", "state": "open", "owner": "Felix Brandt", "note": ""}, {"item": "Halfway review deck", "since": "2025-07-08", "state": "open", "owner": "Maria Driscoll", "note": ""}], "they_owe": [{"item": "Fleet details sheet", "since": "2025-06-04", "state": "open", "owner": null, "note": ""}]}, "projects": {"first": {"name": "Ferry St bridge approaches", "start": "2025-06-09", "shifts": "day"}, "others": []}, "deliverables": [{"item": "roles_and_responsibilities_sheet", "received": "2025-06-04"}, {"item": "fleet_details_sheet", "received": null}], "proof_points": [], "contacts": [{"name": "Victor Szabo", "role": "Operations Director", "email": "victor.szabo@corvane.example", "phone": "(555) 010-9101", "tag": "champion", "note": ""}, {"name": "Carla Brennan", "role": "Office Manager", "email": "carla.brennan@corvane.example", "phone": null, "tag": "proactive", "note": "Runs the portal day to day."}], "watch": ["Early missing-data flags: settle the question before the halfway review, not during it."], "timeline": [{"date": "2025-06-02", "cat": "commercial", "title": "Trial agreement signed"}, {"date": "2025-06-09", "cat": "milestone", "title": "Trial starts"}, {"date": "2025-06-10", "cat": "fault", "title": "Missing data on early shifts", "detail": "Four shifts; uplink changed 2025-06-18."}], "reviewed": {"by": "Maria Driscoll", "on": "2025-07-14"}}, "dunmere": {"schema": "account-record/1", "updated": "2025-07-14", "updated_by": "daily-client-memory-pass", "journey_terminal_states": ["customer_care", "client_lost"], "unit_states": ["on_site", "replacement_part_owed", "awaiting_shipment", "in_transit_to_them", "in_transit_to_us", "recovered", "retired"], "unit_names_authority": "fleet config", "unit_conditions": {"working": "in service and reporting", "broken": "a named fault on a named unit", "spare": "held as backup, not deployed", "unknown": "nothing currently evidences a condition - the honest default", "_rule": "condition carries {v, src, on} and is never promoted to 'working' because a unit has not been reported broken. Let the 'on' date age: it is the only warning that something needs re-checking."}, "client": "Dunmere Materials", "slug": "dunmere", "aliases": ["Dunmere"], "identity": {"legal_entity": {"v": "Dunmere Materials Co.", "src": "signed agreement", "on": "2025-03-01"}, "region": {"v": "Central Kentucky", "src": "project locations", "on": "2025-03-01"}, "state_province": {"v": "Kentucky", "src": "registered address", "on": "2025-03-01"}, "poc": {"v": "Jamal Carter, Plant & Paving Manager", "src": "kickoff call", "on": "2025-03-01"}, "registered_address": {"v": "5 Limestone Way, Orrin, KY 40000", "src": "signed agreement", "on": "2025-03-01"}, "bill_to": {"v": "5 Limestone Way, Orrin, KY 40000", "src": "signed agreement", "on": "2025-03-01"}, "email_domain": "dunmere.example"}, "commercial": {"status": {"v": "Free trial - extended once", "src": "contracts tracker", "on": "2025-06-30"}, "agreement_signed": {"v": "2025-04-28", "src": "e-signature record", "on": "2025-04-28"}, "signatory": {"v": "Jamal Carter", "src": "e-signature record", "on": "2025-04-28"}, "terms": {"v": "No charge during trial", "src": "contracts tracker", "on": "2025-06-30"}, "trial_start": {"v": "2025-05-05", "src": "first telemetry + onsite install", "on": "2025-05-05"}, "trial_end": {"v": "2025-07-25", "src": "contracts tracker", "on": "2025-06-30"}, "billing_started": {"v": null, "src": "contracts tracker", "on": "2025-06-30"}, "contract": {"v": "Trial letter T-118", "src": "contracts tracker", "on": "2025-06-30"}, "engagement_type": {"v": "Free Trial", "src": "contracts tracker", "on": "2025-06-30"}, "licences": {"v": 1, "src": "contracts tracker", "on": "2025-06-30"}, "tablets_contracted": {"v": 1, "src": "contracts tracker", "on": "2025-06-30"}, "currency": {"v": "CAD", "src": "contracts tracker", "on": "2025-06-30"}, "recurring": {"v": false, "src": "contracts tracker", "on": "2025-06-30"}, "card_on_file": {"v": "No", "src": "billing system", "on": "2025-06-30"}, "ap_contact": {"v": "n/a", "src": "client email", "on": "2025-06-30"}, "decision_path": {"v": "Jamal decides alone", "src": "discovery call notes", "on": "2025-06-30"}}, "journey": [{"stage": "agreement_signed", "state": "done", "date": "2025-04-28"}, {"stage": "trial_started", "state": "done", "date": "2025-05-05"}, {"stage": "halfway_review", "state": "done", "date": "2025-06-04"}, {"stage": "trial_wrapup", "state": "not_reached", "date": null}, {"stage": "converted", "state": "not_reached", "date": null}, {"stage": "customer_care", "state": "not_reached", "date": null}], "training": [{"session": "kickoff", "state": "done", "date": "2025-04-30"}, {"session": "training_1", "state": "partial", "date": "2025-05-05", "note": "install only; crew was paving elsewhere"}, {"session": "training_2", "state": "never_held", "date": null, "note": "two dates offered, neither confirmed"}], "cadence": {"agreed": false, "interval": null, "note": "None. Trial still unconverted."}, "units": [{"name": "Avocet", "id": "#151", "gen": "Gen 2", "state": "on_site", "fitted": "2025-05-05", "serial": "7710071", "note": "Hardware fine. The crew switches it on and doesn't use it.", "kind": "tablet", "condition": {"v": "working", "src": "adoption ledger: connects most days, never a real shift", "on": "2025-07-11"}, "last_active": {"on": "2025-07-04", "worked": null, "src": "adoption ledger", "as_of": "2025-07-11"}}], "open_loops": {"we_owe": [{"item": "Offer an on-site training day instead of another call", "since": "2025-07-08", "state": "open", "owner": "Maria Driscoll", "note": "Fifteen days of blips: this is a training problem, not a hardware ticket."}], "they_owe": [{"item": "Confirm a date for the second training", "since": "2025-06-04", "state": "blocked_on_them", "owner": null, "note": "", "blocker": "Jamal 'checking the crew schedule' since June"}]}, "projects": {"first": {"name": "Orrin quarry access road", "start": "2025-05-05", "shifts": "day"}, "others": []}, "deliverables": [{"item": "roles_and_responsibilities_sheet", "received": null}, {"item": "fleet_details_sheet", "received": "2025-04-30"}], "proof_points": [], "contacts": [{"name": "Jamal Carter", "role": "Plant & Paving Manager", "email": "jamal.carter@dunmere.example", "phone": "(555) 010-7101", "tag": "champion", "note": "Interested but stretched thin."}], "watch": ["A free trial that never got its training. Decide by month-end: train on site or close it out."], "timeline": [{"date": "2025-04-28", "cat": "commercial", "title": "Trial letter signed"}, {"date": "2025-05-05", "cat": "milestone", "title": "Unit installed"}, {"date": "2025-06-27", "cat": "commercial", "title": "Trial extended to 2025-07-25"}], "reviewed": {"by": "Maria Driscoll", "on": "2025-07-14"}}, "harrow-ridge": {"schema": "account-record/1", "updated": "2025-07-14", "updated_by": "daily-client-memory-pass", "journey_terminal_states": ["customer_care", "client_lost"], "unit_states": ["on_site", "replacement_part_owed", "awaiting_shipment", "in_transit_to_them", "in_transit_to_us", "recovered", "retired"], "unit_names_authority": "fleet config", "unit_conditions": {"working": "in service and reporting", "broken": "a named fault on a named unit", "spare": "held as backup, not deployed", "unknown": "nothing currently evidences a condition - the honest default", "_rule": "condition carries {v, src, on} and is never promoted to 'working' because a unit has not been reported broken. Let the 'on' date age: it is the only warning that something needs re-checking."}, "client": "Harrow Ridge Paving", "slug": "harrow-ridge", "aliases": ["Harrow Ridge", "HRP"], "identity": {"legal_entity": {"v": "Harrow Ridge Paving Co.", "src": "signed agreement", "on": "2025-03-01"}, "region": {"v": "Central Ohio", "src": "project locations", "on": "2025-03-01"}, "state_province": {"v": "Ohio", "src": "registered address", "on": "2025-03-01"}, "poc": {"v": "Dana Whitlock, Director of Quality", "src": "kickoff call", "on": "2025-03-01"}, "registered_address": {"v": "1180 Quarry Lane, Westfield, OH 43000", "src": "signed agreement", "on": "2025-03-01"}, "bill_to": {"v": "1180 Quarry Lane, Westfield, OH 43000", "src": "signed agreement", "on": "2025-03-01"}, "email_domain": "harrowridge.example", "parent_group": {"v": "Ridgeline Materials Group", "src": "public filings", "on": "2025-03-01"}}, "commercial": {"status": {"v": "Client - paying (Contract 104, Jan 2025 - Dec 2025)", "src": "contracts tracker", "on": "2025-06-30"}, "agreement_signed": {"v": "2024-11-18", "src": "e-signature record", "on": "2024-11-18"}, "signatory": {"v": "Graham Whitlock", "src": "e-signature record", "on": "2024-11-18"}, "terms": {"v": "$1,650 USD/mo per crew", "src": "contracts tracker", "on": "2025-06-30"}, "trial_start": {"v": "2024-12-02", "src": "first telemetry + onsite install", "on": "2024-12-02"}, "trial_end": {"v": "2025-01-10", "src": "contracts tracker", "on": "2025-06-30"}, "billing_started": {"v": "2025-01-01", "src": "contracts tracker", "on": "2025-06-30"}, "contract": {"v": "Contract 104 - Jan 2025 to Dec 2025", "src": "contracts tracker", "on": "2025-06-30"}, "engagement_type": {"v": "Client", "src": "contracts tracker", "on": "2025-06-30"}, "licences": {"v": 2, "src": "contracts tracker", "on": "2025-06-30"}, "tablets_contracted": {"v": 4, "src": "contracts tracker", "on": "2025-06-30"}, "currency": {"v": "USD", "src": "contracts tracker", "on": "2025-06-30"}, "recurring": {"v": true, "src": "contracts tracker", "on": "2025-06-30"}, "card_on_file": {"v": "Yes - corporate card, auto-charged monthly", "src": "billing system", "on": "2025-06-30"}, "ap_contact": {"v": "ap@harrowridge.example, (555) 010-2210", "src": "client email", "on": "2025-06-30"}, "decision_path": {"v": "Dana recommends; Graham (COO) signs", "src": "discovery call notes", "on": "2025-06-30"}}, "journey": [{"stage": "agreement_signed", "state": "done", "date": "2024-11-18"}, {"stage": "trial_started", "state": "done", "date": "2024-12-02"}, {"stage": "halfway_review", "state": "done", "date": "2024-12-16"}, {"stage": "trial_wrapup", "state": "done", "date": "2025-01-10"}, {"stage": "converted", "state": "done", "date": "2025-01-10"}, {"stage": "customer_care", "state": "done", "date": "2025-02-05"}], "training": [{"session": "kickoff", "state": "done", "date": "2024-11-25"}, {"session": "training_1", "state": "done", "date": "2024-12-02", "note": "on site with both crews"}, {"session": "training_2", "state": "done", "date": "2024-12-16", "note": "reports and portal"}, {"session": "training_3", "state": "done", "date": "2025-03-12", "note": "season-start refresher"}], "cadence": {"agreed": true, "interval": "monthly", "next": {"n": 6, "date": "2025-07-22", "time_client": "10:00 AM ET", "time_local": "10:00 AM ET"}, "note": "Monthly review, agreed by Dana in writing 2025-02-05. Priya joins when the agenda covers data."}, "units": [{"name": "Kestrel", "id": "#101", "gen": "Gen 2", "state": "on_site", "fitted": "2024-12-02", "serial": "7710021", "note": "", "kind": "tablet", "condition": {"v": "working", "src": "adoption ledger + shift reports", "on": "2025-07-11"}, "last_active": {"on": "2025-07-10", "worked": "2025-07-10", "src": "adoption ledger", "as_of": "2025-07-11"}}, {"name": "Heron", "id": "#102", "gen": "Gen 2", "state": "on_site", "fitted": "2024-12-02", "serial": "7710022", "note": "", "kind": "tablet", "condition": {"v": "working", "src": "adoption ledger + shift reports", "on": "2025-07-11"}, "last_active": {"on": "2025-07-10", "worked": "2025-07-10", "src": "adoption ledger", "as_of": "2025-07-11"}}, {"name": "Osprey", "id": "#103", "gen": "Gen 2", "state": "on_site", "fitted": "2025-03-10", "serial": "7710023", "note": "", "kind": "tablet", "condition": {"v": "working", "src": "adoption ledger + shift reports", "on": "2025-07-11"}, "last_active": {"on": "2025-07-11", "worked": "2025-07-11", "src": "adoption ledger", "as_of": "2025-07-11"}}, {"name": "Plover", "id": "#104", "gen": "Gen 2", "state": "on_site", "fitted": "2025-03-10", "serial": "7710024", "note": "", "kind": "tablet", "condition": {"v": "working", "src": "adoption ledger + shift reports", "on": "2025-07-11"}, "last_active": {"on": "2025-07-11", "worked": "2025-07-11", "src": "adoption ledger", "as_of": "2025-07-11"}}], "open_loops": {"we_owe": [{"item": "Send the June results summary ahead of the July review", "since": "2025-07-08", "state": "open", "owner": "Maria Driscoll", "note": "Due before 2025-07-22."}, {"item": "Quote a third-crew licence for the autumn programme", "since": "2025-06-24", "state": "open", "owner": "Desmond Pike", "note": "Dana asked on the June review; expansion lead."}, {"item": "Fix the report preset that drops the night-shift header", "since": "2025-06-10", "state": "done", "owner": "Iris Calder", "note": "Shipped 2025-06-27, Dana confirmed."}], "they_owe": [{"item": "Names of the two new crew leads for training", "since": "2025-07-08", "state": "open", "owner": null, "note": "Dana to send before the July review."}]}, "projects": {"first": {"name": "Route 9 resurfacing", "start": "2024-12-02", "shifts": "day"}, "others": ["Westfield bypass", "County Rd 14"]}, "deliverables": [{"item": "roles_and_responsibilities_sheet", "received": "2024-11-25"}, {"item": "fleet_details_sheet", "received": "2024-11-25"}, {"item": "mix_designs", "received": "2024-12-01"}], "proof_points": [{"claim": "Bonus capture up on the Route 9 job after crews started using pass maps daily", "on": "2025-05-20", "src": "client's own lot results, shared on the May review", "defensible": true}, {"claim": "Dana: 'this is the first season we've known what happened before the lab told us.'", "on": "2025-06-17", "src": "June review recording", "defensible": true}], "contacts": [{"name": "Dana Whitlock", "role": "Director of Quality", "email": "dana.whitlock@harrowridge.example", "phone": "(555) 010-2201", "tag": "champion", "note": "Runs the monthly review; wants data before opinions."}, {"name": "Graham Whitlock", "role": "COO", "email": "graham.whitlock@harrowridge.example", "phone": null, "tag": "signing_authority", "note": "Signs renewals; joins one review a quarter."}, {"name": "Priya Raman", "role": "QC Manager", "email": "priya.raman@harrowridge.example", "phone": "(555) 010-2205", "tag": "proactive", "note": "Heaviest portal user; raises issues early."}, {"name": "Marcus Ferreira", "role": "Crew 2 foreman", "email": null, "phone": "(555) 010-2207", "tag": "field", "note": "Prefers text over email."}], "watch": ["Renewal in December: start the conversation at the September review, with the season's results."], "timeline": [{"date": "2024-10-14", "cat": "engage", "title": "Discovery call", "detail": "Dana and Graham; bonus capture was the stated pain."}, {"date": "2024-11-18", "cat": "commercial", "title": "Agreement signed", "detail": "One crew to start."}, {"date": "2024-12-02", "cat": "milestone", "title": "Trial starts", "detail": "On-site install and first training."}, {"date": "2025-01-10", "cat": "milestone", "title": "Converted to paying client"}, {"date": "2025-03-10", "cat": "commercial", "title": "Second crew added", "detail": "Expansion from the first review."}, {"date": "2025-06-17", "cat": "engage", "title": "June review", "detail": "Third-crew question raised."}], "reviewed": {"by": "Maria Driscoll", "on": "2025-07-14"}}, "lowmere": {"schema": "account-record/1", "updated": "2025-07-14", "updated_by": "daily-client-memory-pass", "journey_terminal_states": ["customer_care", "client_lost"], "unit_states": ["on_site", "replacement_part_owed", "awaiting_shipment", "in_transit_to_them", "in_transit_to_us", "recovered", "retired"], "unit_names_authority": "fleet config", "unit_conditions": {"working": "in service and reporting", "broken": "a named fault on a named unit", "spare": "held as backup, not deployed", "unknown": "nothing currently evidences a condition - the honest default", "_rule": "condition carries {v, src, on} and is never promoted to 'working' because a unit has not been reported broken. Let the 'on' date age: it is the only warning that something needs re-checking."}, "client": "Lowmere Contracting", "slug": "lowmere", "aliases": ["Lowmere"], "identity": {"legal_entity": {"v": "Lowmere Contracting Ltd.", "src": "signed agreement", "on": "2025-03-01"}, "region": {"v": "Southwestern Ontario", "src": "project locations", "on": "2025-03-01"}, "state_province": {"v": "Ontario", "src": "registered address", "on": "2025-03-01"}, "poc": {"v": "Patrick Doyle, Paving Manager", "src": "kickoff call", "on": "2025-03-01"}, "registered_address": {"v": "61 Orchard Line, Lowmere, ON N0B 0B0", "src": "signed agreement", "on": "2025-03-01"}, "bill_to": {"v": "61 Orchard Line, Lowmere, ON N0B 0B0", "src": "signed agreement", "on": "2025-03-01"}, "email_domain": "lowmere.example"}, "commercial": {"status": {"v": "Client - paying (Contract 107, Mar 2025 - Feb 2026)", "src": "contracts tracker", "on": "2025-06-30"}, "agreement_signed": {"v": "2025-02-10", "src": "e-signature record", "on": "2025-02-10"}, "signatory": {"v": "Nadia Haddad", "src": "e-signature record", "on": "2025-02-10"}, "terms": {"v": "$2,150 CAD/mo per crew", "src": "contracts tracker", "on": "2025-06-30"}, "trial_start": {"v": "2025-02-24", "src": "first telemetry + onsite install", "on": "2025-02-24"}, "trial_end": {"v": "2025-03-21", "src": "contracts tracker", "on": "2025-06-30"}, "billing_started": {"v": "2025-03-01", "src": "contracts tracker", "on": "2025-06-30"}, "contract": {"v": "Contract 107 - Mar 2025 to Feb 2026", "src": "contracts tracker", "on": "2025-06-30"}, "engagement_type": {"v": "Client", "src": "contracts tracker", "on": "2025-06-30"}, "licences": {"v": 1, "src": "contracts tracker", "on": "2025-06-30"}, "tablets_contracted": {"v": 2, "src": "contracts tracker", "on": "2025-06-30"}, "currency": {"v": "CAD", "src": "contracts tracker", "on": "2025-06-30"}, "recurring": {"v": true, "src": "contracts tracker", "on": "2025-06-30"}, "card_on_file": {"v": "Yes - corporate card", "src": "billing system", "on": "2025-06-30"}, "ap_contact": {"v": "payables@lowmere.example", "src": "client email", "on": "2025-06-30"}, "decision_path": {"v": "Patrick recommends; Nadia signs", "src": "discovery call notes", "on": "2025-06-30"}}, "journey": [{"stage": "agreement_signed", "state": "done", "date": "2025-02-10"}, {"stage": "trial_started", "state": "done", "date": "2025-02-24"}, {"stage": "halfway_review", "state": "done", "date": "2025-03-07"}, {"stage": "trial_wrapup", "state": "done", "date": "2025-03-21"}, {"stage": "converted", "state": "done", "date": "2025-03-21"}, {"stage": "customer_care", "state": "done", "date": "2025-04-16"}], "training": [{"session": "kickoff", "state": "done", "date": "2025-02-12"}, {"session": "training_1", "state": "done", "date": "2025-02-24"}, {"session": "training_2", "state": "done", "date": "2025-03-07"}], "cadence": {"agreed": true, "interval": "monthly", "next": {"n": 4, "date": "2025-07-21", "time_client": "1:00 PM ET", "time_local": "1:00 PM ET"}, "note": "Monthly since April."}, "units": [{"name": "Sanderling", "id": "#191", "gen": "Gen 2", "state": "on_site", "fitted": "2025-02-24", "serial": "7710111", "note": "", "kind": "tablet", "condition": {"v": "working", "src": "adoption ledger", "on": "2025-07-11"}, "last_active": {"on": "2025-07-11", "worked": "2025-07-11", "src": "adoption ledger", "as_of": "2025-07-11"}}, {"name": "Corncrake", "id": "#192", "gen": "Gen 2", "state": "on_site", "fitted": "2025-02-24", "serial": "7710112", "note": "", "kind": "tablet", "condition": {"v": "working", "src": "adoption ledger", "on": "2025-07-11"}, "last_active": {"on": "2025-07-11", "worked": "2025-07-11", "src": "adoption ledger", "as_of": "2025-07-11"}}], "open_loops": {"we_owe": [{"item": "French-language crew card for the new Quebec crew", "since": "2025-07-02", "state": "open", "owner": "Maria Driscoll", "note": "Requested by Patrick; crew starts in August."}], "they_owe": []}, "projects": {"first": {"name": "Orchard Line rehab", "start": "2025-02-24", "shifts": "day"}, "others": ["Hwy 7 shoulders"]}, "deliverables": [{"item": "roles_and_responsibilities_sheet", "received": "2025-02-12"}, {"item": "fleet_details_sheet", "received": "2025-02-12"}], "proof_points": [{"claim": "Three office users active most working days since April", "on": "2025-07-11", "src": "adoption ledger", "defensible": true}], "contacts": [{"name": "Patrick Doyle", "role": "Paving Manager", "email": "patrick.doyle@lowmere.example", "phone": "(555) 010-1201", "tag": "champion", "note": ""}, {"name": "Nadia Haddad", "role": "Operations VP", "email": "nadia.haddad@lowmere.example", "phone": null, "tag": "economic_buyer", "note": ""}, {"name": "Sam Okafor", "role": "QC Technician", "email": "sam.okafor@lowmere.example", "phone": null, "tag": "proactive", "note": ""}], "watch": [], "timeline": [{"date": "2025-02-10", "cat": "commercial", "title": "Agreement signed"}, {"date": "2025-03-21", "cat": "milestone", "title": "Converted"}, {"date": "2025-07-02", "cat": "engage", "title": "Expansion: second crew planned for August"}], "reviewed": {"by": "Maria Driscoll", "on": "2025-07-14"}}, "marrow-creek": {"schema": "account-record/1", "updated": "2025-07-14", "updated_by": "daily-client-memory-pass", "journey_terminal_states": ["customer_care", "client_lost"], "unit_states": ["on_site", "replacement_part_owed", "awaiting_shipment", "in_transit_to_them", "in_transit_to_us", "recovered", "retired"], "unit_names_authority": "fleet config", "unit_conditions": {"working": "in service and reporting", "broken": "a named fault on a named unit", "spare": "held as backup, not deployed", "unknown": "nothing currently evidences a condition - the honest default", "_rule": "condition carries {v, src, on} and is never promoted to 'working' because a unit has not been reported broken. Let the 'on' date age: it is the only warning that something needs re-checking."}, "client": "Marrow Creek Construction", "slug": "marrow-creek", "aliases": ["Marrow Creek"], "identity": {"legal_entity": {"v": "Marrow Creek Construction Ltd.", "src": "signed agreement", "on": "2025-03-01"}, "region": {"v": "Northeast Ohio", "src": "project locations", "on": "2025-03-01"}, "state_province": {"v": "Ohio", "src": "registered address", "on": "2025-03-01"}, "poc": {"v": "Kofi Mensah, Project Manager", "src": "kickoff call", "on": "2025-03-01"}, "registered_address": {"v": "300 Creekside Blvd, Harlan Mills, OH 44000", "src": "signed agreement", "on": "2025-03-01"}, "bill_to": {"v": "300 Creekside Blvd, Harlan Mills, OH 44000", "src": "signed agreement", "on": "2025-03-01"}, "email_domain": "marrowcreek.example"}, "commercial": {"status": {"v": "Client - paying (Contract 101, Oct 2024 - Sep 2025)", "src": "contracts tracker", "on": "2025-06-30"}, "agreement_signed": {"v": "2024-09-20", "src": "e-signature record", "on": "2024-09-20"}, "signatory": {"v": "Rita Vasquez", "src": "e-signature record", "on": "2024-09-20"}, "terms": {"v": "$1,650 USD/mo per crew", "src": "contracts tracker", "on": "2025-06-30"}, "trial_start": {"v": "2024-09-30", "src": "first telemetry + onsite install", "on": "2024-09-30"}, "trial_end": {"v": "2024-10-25", "src": "contracts tracker", "on": "2025-06-30"}, "billing_started": {"v": "2024-10-01", "src": "contracts tracker", "on": "2025-06-30"}, "contract": {"v": "Contract 101 - Oct 2024 to Sep 2025", "src": "contracts tracker", "on": "2025-06-30"}, "engagement_type": {"v": "Client", "src": "contracts tracker", "on": "2025-06-30"}, "licences": {"v": 1, "src": "contracts tracker", "on": "2025-06-30"}, "tablets_contracted": {"v": 1, "src": "contracts tracker", "on": "2025-06-30"}, "currency": {"v": "USD", "src": "contracts tracker", "on": "2025-06-30"}, "recurring": {"v": true, "src": "contracts tracker", "on": "2025-06-30"}, "card_on_file": {"v": "No - cheque against invoice", "src": "billing system", "on": "2025-06-30"}, "ap_contact": {"v": "accounts@marrowcreek.example", "src": "client email", "on": "2025-06-30"}, "decision_path": {"v": "Rita (GM) decides", "src": "discovery call notes", "on": "2025-06-30"}}, "journey": [{"stage": "agreement_signed", "state": "done", "date": "2024-09-20"}, {"stage": "trial_started", "state": "done", "date": "2024-09-30"}, {"stage": "halfway_review", "state": "done", "date": "2024-10-11"}, {"stage": "trial_wrapup", "state": "done", "date": "2024-10-25"}, {"stage": "converted", "state": "done", "date": "2024-10-25"}, {"stage": "customer_care", "state": "done", "date": "2024-11-20"}], "training": [{"session": "kickoff", "state": "done", "date": "2024-09-23"}, {"session": "training_1", "state": "done", "date": "2024-09-30"}, {"session": "training_2", "state": "done", "date": "2024-10-11"}], "cadence": {"agreed": true, "interval": "monthly", "note": "Agreed 2024-11-20, but the last two monthly calls were cancelled by the client."}, "units": [{"name": "Shrike", "id": "#131", "gen": "Gen 2", "state": "on_site", "fitted": "2024-09-30", "serial": "7710051", "note": "Could be off, unplugged or simply unused. Nobody has looked.", "kind": "tablet", "condition": {"v": "unknown", "src": "no data since late May; unit not checked", "on": "2025-05-26"}, "last_active": {"on": "2025-05-26", "worked": "2025-05-26", "src": "adoption ledger", "as_of": "2025-07-11"}}], "open_loops": {"we_owe": [{"item": "Call Rita this week: six weeks dark on field and office", "since": "2025-07-08", "state": "open", "owner": "Maria Driscoll", "note": "Renewal is in September. Do not wait for the next scheduled call."}, {"item": "Confirm the unit is still installed and powered", "since": "2025-07-08", "state": "open", "owner": "Felix Brandt", "note": "Rules out hardware before the conversation."}], "they_owe": [{"item": "Reschedule the cancelled June review", "since": "2025-06-12", "state": "blocked_on_them", "owner": null, "note": "", "blocker": "Kofi has not replied to two emails"}]}, "projects": {"first": {"name": "Harlan Mills main street", "start": "2024-09-30", "shifts": "day"}, "others": []}, "deliverables": [{"item": "roles_and_responsibilities_sheet", "received": "2024-09-23"}, {"item": "fleet_details_sheet", "received": "2024-09-25"}], "proof_points": [], "contacts": [{"name": "Rita Vasquez", "role": "General Manager", "email": "rita.vasquez@marrowcreek.example", "phone": "(555) 010-5101", "tag": "economic_buyer", "note": "Signed; not involved day to day."}, {"name": "Kofi Mensah", "role": "Project Manager", "email": "kofi.mensah@marrowcreek.example", "phone": "(555) 010-5103", "tag": "champion", "note": "Was the champion; has gone quiet since May."}], "watch": ["Both halves dark since late May: the adoption-failure pattern, two months before renewal."], "timeline": [{"date": "2024-09-20", "cat": "commercial", "title": "Agreement signed"}, {"date": "2025-05-26", "cat": "fault", "title": "Last field data", "flag": "No hardware fault reported. Silence on both halves is a relationship problem until proven otherwise."}, {"date": "2025-06-12", "cat": "comms", "title": "June review cancelled by client"}], "reviewed": {"by": "Maria Driscoll", "on": "2025-07-14"}}, "pellbrook": {"schema": "account-record/1", "updated": "2025-07-14", "updated_by": "daily-client-memory-pass", "journey_terminal_states": ["customer_care", "client_lost"], "unit_states": ["on_site", "replacement_part_owed", "awaiting_shipment", "in_transit_to_them", "in_transit_to_us", "recovered", "retired"], "unit_names_authority": "fleet config", "unit_conditions": {"working": "in service and reporting", "broken": "a named fault on a named unit", "spare": "held as backup, not deployed", "unknown": "nothing currently evidences a condition - the honest default", "_rule": "condition carries {v, src, on} and is never promoted to 'working' because a unit has not been reported broken. Let the 'on' date age: it is the only warning that something needs re-checking."}, "client": "Pellbrook Asphalt", "slug": "pellbrook", "aliases": ["Pellbrook"], "identity": {"legal_entity": {"v": "Pellbrook Asphalt Corp.", "src": "signed agreement", "on": "2025-03-01"}, "region": {"v": "Middle Tennessee", "src": "project locations", "on": "2025-03-01"}, "state_province": {"v": "Tennessee", "src": "registered address", "on": "2025-03-01"}, "poc": {"v": "Grace Nakamura, VP Quality", "src": "kickoff call", "on": "2025-03-01"}, "registered_address": {"v": "210 Tannery Row, Pellbrook, TN 37100", "src": "signed agreement", "on": "2025-03-01"}, "bill_to": {"v": "210 Tannery Row, Pellbrook, TN 37100", "src": "signed agreement", "on": "2025-03-01"}, "email_domain": "pellbrook.example", "parent_group": {"v": "Ridgeline Materials Group", "src": "public filings", "on": "2025-03-01"}}, "commercial": {"status": {"v": "Client - paying (Contract 103, Dec 2024 - Nov 2025)", "src": "contracts tracker", "on": "2025-06-30"}, "agreement_signed": {"v": "2024-11-04", "src": "e-signature record", "on": "2024-11-04"}, "signatory": {"v": "Ines Moreau", "src": "e-signature record", "on": "2024-11-04"}, "terms": {"v": "$1,650 USD/mo per crew", "src": "contracts tracker", "on": "2025-06-30"}, "trial_start": {"v": "2024-11-11", "src": "first telemetry + onsite install", "on": "2024-11-11"}, "trial_end": {"v": "2024-12-06", "src": "contracts tracker", "on": "2025-06-30"}, "billing_started": {"v": "2024-12-01", "src": "contracts tracker", "on": "2025-06-30"}, "contract": {"v": "Contract 103 - Dec 2024 to Nov 2025", "src": "contracts tracker", "on": "2025-06-30"}, "engagement_type": {"v": "Client", "src": "contracts tracker", "on": "2025-06-30"}, "licences": {"v": 2, "src": "contracts tracker", "on": "2025-06-30"}, "tablets_contracted": {"v": 3, "src": "contracts tracker", "on": "2025-06-30"}, "currency": {"v": "USD", "src": "contracts tracker", "on": "2025-06-30"}, "recurring": {"v": true, "src": "contracts tracker", "on": "2025-06-30"}, "card_on_file": {"v": "Yes - corporate card", "src": "billing system", "on": "2025-06-30"}, "ap_contact": {"v": "ap@pellbrook.example", "src": "client email", "on": "2025-06-30"}, "decision_path": {"v": "Grace recommends; Ines (CFO) signs", "src": "discovery call notes", "on": "2025-06-30"}}, "journey": [{"stage": "agreement_signed", "state": "done", "date": "2024-11-04"}, {"stage": "trial_started", "state": "done", "date": "2024-11-11"}, {"stage": "halfway_review", "state": "done", "date": "2024-11-22"}, {"stage": "trial_wrapup", "state": "done", "date": "2024-12-06"}, {"stage": "converted", "state": "done", "date": "2024-12-06"}, {"stage": "customer_care", "state": "done", "date": "2025-01-15"}], "training": [{"session": "kickoff", "state": "done", "date": "2024-11-06"}, {"session": "training_1", "state": "done", "date": "2024-11-11"}, {"session": "training_2", "state": "done", "date": "2024-11-22"}, {"session": "training_3", "state": "done", "date": "2025-04-08", "note": "Crew 2 onboarding"}], "cadence": {"agreed": true, "interval": "monthly", "next": {"n": 7, "date": "2025-07-17", "time_client": "11:00 AM CT", "time_local": "12:00 PM ET"}, "note": "Monthly since January."}, "units": [{"name": "Bittern", "id": "#161", "gen": "Gen 2", "state": "on_site", "fitted": "2024-11-11", "serial": "7710081", "note": "", "kind": "tablet", "condition": {"v": "working", "src": "adoption ledger", "on": "2025-07-11"}, "last_active": {"on": "2025-07-11", "worked": "2025-07-11", "src": "adoption ledger", "as_of": "2025-07-11"}}, {"name": "Gannet", "id": "#162", "gen": "Gen 2", "state": "on_site", "fitted": "2024-11-11", "serial": "7710082", "note": "", "kind": "tablet", "condition": {"v": "working", "src": "adoption ledger", "on": "2025-07-11"}, "last_active": {"on": "2025-07-11", "worked": "2025-07-11", "src": "adoption ledger", "as_of": "2025-07-11"}}, {"name": "Fulmar", "id": "#163", "gen": "Gen 2", "state": "on_site", "fitted": "2025-04-08", "serial": "7710083", "note": "", "kind": "tablet", "condition": {"v": "working", "src": "adoption ledger", "on": "2025-07-11"}, "last_active": {"on": "2025-07-11", "worked": "2025-07-11", "src": "adoption ledger", "as_of": "2025-07-11"}}, {"name": "spare temperature sensor", "id": null, "gen": null, "state": "in_transit_to_them", "fitted": null, "serial": null, "note": "Shipped 2025-07-10; arrives this week.", "kind": "part"}], "open_loops": {"we_owe": [{"item": "Turn on shift reports for the Tannery Row project", "since": "2025-06-30", "state": "open", "owner": "Iris Calder", "note": "Field data is landing but no report goes out: reports were never configured for this job."}, {"item": "Share the group-level summary for Ridgeline's quality meeting", "since": "2025-07-01", "state": "open", "owner": "Maria Driscoll", "note": "Same parent group as Harrow Ridge; a chance to expand across the group."}], "they_owe": [{"item": "Confirm who receives Crew 2's reports", "since": "2025-06-30", "state": "open", "owner": null, "note": ""}]}, "projects": {"first": {"name": "Tannery Row", "start": "2024-11-11", "shifts": "day"}, "others": ["Hwy 41 overlay", "Pellbrook industrial park"]}, "deliverables": [{"item": "roles_and_responsibilities_sheet", "received": "2024-11-06"}, {"item": "fleet_details_sheet", "received": "2024-11-06"}, {"item": "mix_designs", "received": "2024-11-08"}], "proof_points": [{"claim": "Grace presented their results to the parent group's quality council", "on": "2025-05-28", "src": "Grace, May review", "defensible": true}], "contacts": [{"name": "Grace Nakamura", "role": "VP Quality", "email": "grace.nakamura@pellbrook.example", "phone": "(555) 010-8101", "tag": "champion", "note": "Connected to the group's quality council."}, {"name": "Ines Moreau", "role": "CFO", "email": "ines.moreau@pellbrook.example", "phone": null, "tag": "economic_buyer", "note": ""}, {"name": "Ben Halloran", "role": "Crew 1 foreman", "email": null, "phone": "(555) 010-8105", "tag": "field", "note": ""}], "watch": ["Group expansion path via Grace: keep the results story tidy."], "timeline": [{"date": "2024-11-04", "cat": "commercial", "title": "Agreement signed"}, {"date": "2025-04-08", "cat": "commercial", "title": "Crew 2 added"}, {"date": "2025-05-28", "cat": "milestone", "title": "Results shown to the parent group"}], "reviewed": {"by": "Maria Driscoll", "on": "2025-07-14"}}, "quillan": {"schema": "account-record/1", "updated": "2025-07-14", "updated_by": "daily-client-memory-pass", "journey_terminal_states": ["customer_care", "client_lost"], "unit_states": ["on_site", "replacement_part_owed", "awaiting_shipment", "in_transit_to_them", "in_transit_to_us", "recovered", "retired"], "unit_names_authority": "fleet config", "unit_conditions": {"working": "in service and reporting", "broken": "a named fault on a named unit", "spare": "held as backup, not deployed", "unknown": "nothing currently evidences a condition - the honest default", "_rule": "condition carries {v, src, on} and is never promoted to 'working' because a unit has not been reported broken. Let the 'on' date age: it is the only warning that something needs re-checking."}, "client": "Quillan Roadworks", "slug": "quillan", "aliases": ["Quillan"], "identity": {"legal_entity": {"v": "Quillan Roadworks Inc.", "src": "signed agreement", "on": "2025-03-01"}, "region": {"v": "East Tennessee", "src": "project locations", "on": "2025-03-01"}, "state_province": {"v": "Tennessee", "src": "registered address", "on": "2025-03-01"}, "poc": {"v": "Leon Baptiste, Paving Superintendent", "src": "kickoff call", "on": "2025-03-01"}, "registered_address": {"v": "9 Foundry St, Ashby Falls, TN 37000", "src": "signed agreement", "on": "2025-03-01"}, "bill_to": {"v": "9 Foundry St, Ashby Falls, TN 37000", "src": "signed agreement", "on": "2025-03-01"}, "email_domain": "quillan.example"}, "commercial": {"status": {"v": "Paid trial - day 47 of 60", "src": "contracts tracker", "on": "2025-06-30"}, "agreement_signed": {"v": "2025-05-02", "src": "e-signature record", "on": "2025-05-02"}, "signatory": {"v": "Hannah Ostrowski", "src": "e-signature record", "on": "2025-05-02"}, "terms": {"v": "$1,650 USD/mo per crew (trial rate)", "src": "contracts tracker", "on": "2025-06-30"}, "trial_start": {"v": "2025-05-05", "src": "first telemetry + onsite install", "on": "2025-05-05"}, "trial_end": {"v": "2025-07-04", "src": "contracts tracker", "on": "2025-06-30"}, "billing_started": {"v": "2025-05-01", "src": "contracts tracker", "on": "2025-06-30"}, "contract": {"v": "Trial agreement T-112", "src": "contracts tracker", "on": "2025-06-30"}, "engagement_type": {"v": "Paid Trial", "src": "contracts tracker", "on": "2025-06-30"}, "licences": {"v": 1, "src": "contracts tracker", "on": "2025-06-30"}, "tablets_contracted": {"v": 2, "src": "contracts tracker", "on": "2025-06-30"}, "currency": {"v": "USD", "src": "contracts tracker", "on": "2025-06-30"}, "recurring": {"v": true, "src": "contracts tracker", "on": "2025-06-30"}, "card_on_file": {"v": "Yes - card on file for the trial", "src": "billing system", "on": "2025-06-30"}, "ap_contact": {"v": "Hannah Ostrowski", "src": "client email", "on": "2025-06-30"}, "decision_path": {"v": "Leon champions; Hannah (owner) signs", "src": "discovery call notes", "on": "2025-06-30"}}, "journey": [{"stage": "agreement_signed", "state": "done", "date": "2025-05-02"}, {"stage": "trial_started", "state": "done", "date": "2025-05-05"}, {"stage": "halfway_review", "state": "done", "date": "2025-06-06"}, {"stage": "trial_wrapup", "state": "not_reached", "date": null, "note": "Booked for 2025-07-18 after a two-week extension for weather."}, {"stage": "converted", "state": "not_reached", "date": null}, {"stage": "customer_care", "state": "not_reached", "date": null}], "training": [{"session": "kickoff", "state": "done", "date": "2025-05-02"}, {"session": "training_1", "state": "done", "date": "2025-05-05"}, {"session": "training_2", "state": "partial", "date": "2025-05-27", "note": "crew lead absent; repeated on site 2025-06-09"}, {"session": "training_3", "state": "done", "date": "2025-06-09", "note": "on-site re-run; usage climbed from here"}], "cadence": {"agreed": false, "interval": null, "note": "Not discussed yet. Raise at the wrap-up if they convert."}, "units": [{"name": "Lapwing", "id": "#121", "gen": "Gen 2", "state": "on_site", "fitted": "2025-05-05", "serial": "7710041", "note": "", "kind": "tablet", "condition": {"v": "working", "src": "adoption ledger", "on": "2025-07-11"}, "last_active": {"on": "2025-07-11", "worked": "2025-07-11", "src": "adoption ledger", "as_of": "2025-07-11"}}, {"name": "Godwit", "id": "#122", "gen": "Gen 2", "state": "on_site", "fitted": "2025-05-05", "serial": "7710042", "note": "", "kind": "tablet", "condition": {"v": "working", "src": "adoption ledger", "on": "2025-07-11"}, "last_active": {"on": "2025-07-11", "worked": "2025-07-11", "src": "adoption ledger", "as_of": "2025-07-11"}}], "open_loops": {"we_owe": [{"item": "Prepare the trial wrap-up: before and after usage, plus their own results", "since": "2025-07-08", "state": "open", "owner": "Maria Driscoll", "note": "Wrap-up 2025-07-18."}, {"item": "Ask Leon for a short case-study quote", "since": "2025-07-08", "state": "not_started", "owner": "Maria Driscoll", "note": "Only after the wrap-up."}], "they_owe": [{"item": "Their June lot results for the wrap-up comparison", "since": "2025-07-08", "state": "open", "owner": null, "note": "Hannah agreed to share."}]}, "projects": {"first": {"name": "Foundry St reconstruction", "start": "2025-05-05", "shifts": "day"}, "others": []}, "deliverables": [{"item": "roles_and_responsibilities_sheet", "received": "2025-05-02"}, {"item": "fleet_details_sheet", "received": null}], "proof_points": [{"claim": "Usage went from blips to full shifts within two weeks of the on-site re-training", "on": "2025-06-23", "src": "adoption ledger", "defensible": true}], "contacts": [{"name": "Leon Baptiste", "role": "Paving Superintendent", "email": "leon.baptiste@quillan.example", "phone": "(555) 010-4101", "tag": "champion", "note": "Won over on site, not on calls."}, {"name": "Hannah Ostrowski", "role": "Owner", "email": "hannah@quillan.example", "phone": null, "tag": "economic_buyer", "note": "Wants a cost-per-ton answer at wrap-up."}], "watch": ["Conversion hinges on the wrap-up numbers; bring their results, not ours."], "timeline": [{"date": "2025-05-02", "cat": "commercial", "title": "Trial agreement signed"}, {"date": "2025-05-05", "cat": "milestone", "title": "Trial starts"}, {"date": "2025-05-27", "cat": "engage", "title": "Second training, crew lead absent", "flag": "Usage stayed at blips for three more weeks."}, {"date": "2025-06-09", "cat": "engage", "title": "On-site re-training", "detail": "Both boxes on full shifts from here."}], "reviewed": {"by": "Maria Driscoll", "on": "2025-07-14"}}, "tessaly": {"schema": "account-record/1", "updated": "2025-07-14", "updated_by": "daily-client-memory-pass", "journey_terminal_states": ["customer_care", "client_lost"], "unit_states": ["on_site", "replacement_part_owed", "awaiting_shipment", "in_transit_to_them", "in_transit_to_us", "recovered", "retired"], "unit_names_authority": "fleet config", "unit_conditions": {"working": "in service and reporting", "broken": "a named fault on a named unit", "spare": "held as backup, not deployed", "unknown": "nothing currently evidences a condition - the honest default", "_rule": "condition carries {v, src, on} and is never promoted to 'working' because a unit has not been reported broken. Let the 'on' date age: it is the only warning that something needs re-checking."}, "client": "Tessaly Paving", "slug": "tessaly", "aliases": ["Tessaly"], "identity": {"legal_entity": {"v": "Tessaly Paving Inc.", "src": "signed agreement", "on": "2025-03-01"}, "region": {"v": "Metro Atlanta", "src": "project locations", "on": "2025-03-01"}, "state_province": {"v": "Georgia", "src": "registered address", "on": "2025-03-01"}, "poc": {"v": "Owen Pritchard, Night Operations Manager", "src": "kickoff call", "on": "2025-03-01"}, "registered_address": {"v": "77 Kiln Rd, Brayford, GA 30100", "src": "signed agreement", "on": "2025-03-01"}, "bill_to": {"v": "77 Kiln Rd, Brayford, GA 30100", "src": "signed agreement", "on": "2025-03-01"}, "email_domain": "tessaly.example"}, "commercial": {"status": {"v": "Client - paying (Contract 106, Feb 2025 - Jan 2026)", "src": "contracts tracker", "on": "2025-06-30"}, "agreement_signed": {"v": "2025-01-08", "src": "e-signature record", "on": "2025-01-08"}, "signatory": {"v": "Sofia Lindqvist", "src": "e-signature record", "on": "2025-01-08"}, "terms": {"v": "$1,650 USD/mo per crew", "src": "contracts tracker", "on": "2025-06-30"}, "trial_start": {"v": "2025-01-13", "src": "first telemetry + onsite install", "on": "2025-01-13"}, "trial_end": {"v": "2025-02-07", "src": "contracts tracker", "on": "2025-06-30"}, "billing_started": {"v": "2025-02-01", "src": "contracts tracker", "on": "2025-06-30"}, "contract": {"v": "Contract 106 - Feb 2025 to Jan 2026", "src": "contracts tracker", "on": "2025-06-30"}, "engagement_type": {"v": "Client", "src": "contracts tracker", "on": "2025-06-30"}, "licences": {"v": 1, "src": "contracts tracker", "on": "2025-06-30"}, "tablets_contracted": {"v": 2, "src": "contracts tracker", "on": "2025-06-30"}, "currency": {"v": "USD", "src": "contracts tracker", "on": "2025-06-30"}, "recurring": {"v": true, "src": "contracts tracker", "on": "2025-06-30"}, "card_on_file": {"v": "Yes - corporate card", "src": "billing system", "on": "2025-06-30"}, "ap_contact": {"v": "ap@tessaly.example", "src": "client email", "on": "2025-06-30"}, "decision_path": {"v": "Owen recommends; Sofia signs", "src": "discovery call notes", "on": "2025-06-30"}}, "journey": [{"stage": "agreement_signed", "state": "done", "date": "2025-01-08"}, {"stage": "trial_started", "state": "done", "date": "2025-01-13"}, {"stage": "halfway_review", "state": "done", "date": "2025-01-24"}, {"stage": "trial_wrapup", "state": "done", "date": "2025-02-07"}, {"stage": "converted", "state": "done", "date": "2025-02-07"}, {"stage": "customer_care", "state": "done", "date": "2025-03-05"}], "training": [{"session": "kickoff", "state": "done", "date": "2025-01-09"}, {"session": "training_1", "state": "done", "date": "2025-01-13", "note": "night shift, on site"}, {"session": "training_2", "state": "done", "date": "2025-01-24"}], "cadence": {"agreed": true, "interval": "monthly", "next": {"n": 5, "date": "2025-07-24", "time_client": "4:00 PM ET", "time_local": "4:00 PM ET"}, "note": "Late-afternoon slot so the night crew lead can join."}, "units": [{"name": "Petrel", "id": "#141", "gen": "Gen 2", "state": "on_site", "fitted": "2025-01-13", "serial": "7710061", "note": "", "kind": "tablet", "condition": {"v": "working", "src": "adoption ledger", "on": "2025-07-11"}, "last_active": {"on": "2025-07-11", "worked": "2025-07-11", "src": "adoption ledger", "as_of": "2025-07-11"}}, {"name": "Dunlin", "id": "#142", "gen": "Gen 2", "state": "on_site", "fitted": "2025-01-13", "serial": "7710062", "note": "Uploads lag on long shifts; several reports flagged incomplete.", "kind": "tablet", "condition": {"v": "working", "src": "adoption ledger", "on": "2025-07-11"}, "last_active": {"on": "2025-07-11", "worked": "2025-07-11", "src": "adoption ledger", "as_of": "2025-07-11"}}], "open_loops": {"we_owe": [{"item": "Find out why a quarter of night-shift reports arrive incomplete", "since": "2025-06-20", "state": "open", "owner": "Iris Calder", "note": "Pattern across the season; the crew is using it, the data is not all landing."}, {"item": "Send Owen a plain-language note on what 'incomplete' means for his reports", "since": "2025-06-20", "state": "done", "owner": "Maria Driscoll", "note": "Sent 2025-06-23."}], "they_owe": []}, "projects": {"first": {"name": "I-85 night resurfacing", "start": "2025-01-13", "shifts": "night"}, "others": ["Brayford ring road"]}, "deliverables": [{"item": "roles_and_responsibilities_sheet", "received": "2025-01-09"}, {"item": "fleet_details_sheet", "received": "2025-01-09"}], "proof_points": [{"claim": "Night crew adopted the pass map without a reminder after week two", "on": "2025-02-07", "src": "adoption ledger", "defensible": true}], "contacts": [{"name": "Owen Pritchard", "role": "Night Operations Manager", "email": "owen.pritchard@tessaly.example", "phone": "(555) 010-6101", "tag": "champion", "note": "Best reached after 3 PM."}, {"name": "Sofia Lindqvist", "role": "President", "email": "sofia@tessaly.example", "phone": null, "tag": "signing_authority", "note": ""}], "watch": ["Incomplete-data flags are ours to fix; don't let them read as the crew's fault."], "timeline": [{"date": "2025-01-08", "cat": "commercial", "title": "Agreement signed"}, {"date": "2025-02-07", "cat": "milestone", "title": "Converted"}, {"date": "2025-06-20", "cat": "fault", "title": "Incomplete-report pattern raised with engineering"}], "reviewed": {"by": "Maria Driscoll", "on": "2025-07-14"}}, "wrenfield": {"schema": "account-record/1", "updated": "2025-07-14", "updated_by": "daily-client-memory-pass", "journey_terminal_states": ["customer_care", "client_lost"], "unit_states": ["on_site", "replacement_part_owed", "awaiting_shipment", "in_transit_to_them", "in_transit_to_us", "recovered", "retired"], "unit_names_authority": "fleet config", "unit_conditions": {"working": "in service and reporting", "broken": "a named fault on a named unit", "spare": "held as backup, not deployed", "unknown": "nothing currently evidences a condition - the honest default", "_rule": "condition carries {v, src, on} and is never promoted to 'working' because a unit has not been reported broken. Let the 'on' date age: it is the only warning that something needs re-checking."}, "client": "Wrenfield Paving", "slug": "wrenfield", "aliases": ["Wrenfield"], "identity": {"legal_entity": {"v": "Wrenfield Paving Inc.", "src": "signed agreement", "on": "2025-03-01"}, "region": {"v": "Eastern Ontario", "src": "project locations", "on": "2025-03-01"}, "state_province": {"v": "Ontario", "src": "registered address", "on": "2025-03-01"}, "poc": {"v": "Eli Thornton, Quality Manager", "src": "kickoff call", "on": "2025-03-01"}, "registered_address": {"v": "4 Granary Rd, Wrenfield, ON K0A 0A0", "src": "signed agreement", "on": "2025-03-01"}, "bill_to": {"v": "4 Granary Rd, Wrenfield, ON K0A 0A0", "src": "signed agreement", "on": "2025-03-01"}, "email_domain": "wrenfield.example"}, "commercial": {"status": {"v": "Free trial - not started in the field", "src": "contracts tracker", "on": "2025-06-30"}, "agreement_signed": {"v": "2025-05-12", "src": "e-signature record", "on": "2025-05-12"}, "signatory": {"v": "Eli Thornton", "src": "e-signature record", "on": "2025-05-12"}, "terms": {"v": "No charge during trial", "src": "contracts tracker", "on": "2025-06-30"}, "trial_start": {"v": null, "src": "first telemetry + onsite install", "on": null}, "trial_end": {"v": "2025-08-15", "src": "contracts tracker", "on": "2025-06-30"}, "billing_started": {"v": null, "src": "contracts tracker", "on": "2025-06-30"}, "contract": {"v": "Trial letter T-119", "src": "contracts tracker", "on": "2025-06-30"}, "engagement_type": {"v": "Free Trial", "src": "contracts tracker", "on": "2025-06-30"}, "licences": {"v": 1, "src": "contracts tracker", "on": "2025-06-30"}, "tablets_contracted": {"v": 1, "src": "contracts tracker", "on": "2025-06-30"}, "currency": {"v": "CAD", "src": "contracts tracker", "on": "2025-06-30"}, "recurring": {"v": false, "src": "contracts tracker", "on": "2025-06-30"}, "card_on_file": {"v": "No", "src": "billing system", "on": "2025-06-30"}, "ap_contact": {"v": "n/a", "src": "client email", "on": "2025-06-30"}, "decision_path": {"v": "Eli recommends; Mei Chen signs", "src": "discovery call notes", "on": "2025-06-30"}}, "journey": [{"stage": "agreement_signed", "state": "done", "date": "2025-05-12"}, {"stage": "trial_started", "state": "not_reached", "date": null, "note": "Office onboarded 2025-05-20; no field data yet."}, {"stage": "halfway_review", "state": "not_reached", "date": null}, {"stage": "trial_wrapup", "state": "not_reached", "date": null}, {"stage": "converted", "state": "not_reached", "date": null}, {"stage": "customer_care", "state": "not_reached", "date": null}], "training": [{"session": "kickoff", "state": "done", "date": "2025-05-20", "note": "portal only"}, {"session": "training_1", "state": "not_started", "date": null, "note": "waits on the unit reaching a job"}], "cadence": {"agreed": false, "interval": null, "note": ""}, "units": [{"name": "Redshank", "id": "#181", "gen": "Gen 2", "state": "in_transit_to_them", "fitted": null, "serial": "7710101", "note": "Customs cleared 2025-05-16. Whether it reached a roller is unconfirmed.", "kind": "tablet", "condition": {"v": "unknown", "src": "shipped; arrival on a job not confirmed", "on": "2025-05-16"}, "last_active": {"on": null, "worked": null, "src": "adoption ledger", "as_of": "2025-07-11"}}], "open_loops": {"we_owe": [{"item": "Confirm the unit reached a job and is fitted", "since": "2025-06-15", "state": "open", "owner": "Maria Driscoll", "note": "32 days of portal activity and no field data: check delivery before calling it a usage problem."}], "they_owe": [{"item": "Name the first project and crew", "since": "2025-05-20", "state": "blocked_on_them", "owner": null, "note": "", "blocker": "Eli waiting on the season schedule"}]}, "projects": {"first": {"name": null, "start": null, "shifts": null}, "others": []}, "deliverables": [{"item": "roles_and_responsibilities_sheet", "received": "2025-05-20"}, {"item": "fleet_details_sheet", "received": null}], "proof_points": [], "contacts": [{"name": "Eli Thornton", "role": "Quality Manager", "email": "eli.thornton@wrenfield.example", "phone": "(555) 010-1101", "tag": "champion", "note": "Uses the portal daily to plan."}, {"name": "Mei Chen", "role": "President", "email": null, "phone": null, "tag": "signing_authority", "note": "never contacted"}], "watch": ["Keen office, no field data. Most likely the box never left the yard."], "timeline": [{"date": "2025-05-12", "cat": "commercial", "title": "Trial letter signed"}, {"date": "2025-05-16", "cat": "milestone", "title": "Unit cleared customs"}, {"date": "2025-05-20", "cat": "engage", "title": "Portal onboarding"}], "reviewed": {"by": "Maria Driscoll", "on": "2025-07-14"}}};
+const ORDER = ["belltide", "corvane", "dunmere", "harrow-ridge", "lowmere", "marrow-creek", "pellbrook", "quillan", "tessaly", "wrenfield"];
+const TODAY = new Date('2025-07-14');
+
+const v = x => (x && typeof x === 'object' && 'v' in x) ? x.v : x;
+const esc = s => String(s==null?'':s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const days = d => { if(!d) return null; const t=new Date(d); return isNaN(t)?null:Math.round((TODAY-t)/864e5); };
+
+function prov(x){
+  if(!x || typeof x!=='object' || !('src' in x)) return '';
+  const a = days(x.on), aged = a!=null && a>30;
+  return '<span class="prov">' + esc(x.src||'') +
+    (x.on ? ' · <span class="'+(aged?'aged':'')+'">confirmed '+esc(x.on)+(a!=null?' ('+a+'d ago)':'')+'</span>' : '') + '</span>';
+}
+function cell(x){
+  const val = v(x);
+  if(val===null||val===undefined||val==='') return '<span class="null">not established</span>';
+  const s = (val===true?'Yes':val===false?'No':String(val));
+  return esc(s).replace(/\n/g,'<br>') + prov(x);
+}
+function title(s){ return String(s).replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase()); }
+
+function strip(label, items, keyName){
+  if(!items || !items.length) return '';
+  const done = items.filter(i=>['done','partial'].includes(i.state)).length;
+  return '<div class="strip"><div class="h">'+label+'<span class="tot">'+done+' of '+items.length+'</span></div><div class="steps">'
+    + items.map(i=>'<div class="step '+esc(i.state)+'"><span class="radio"></span><div class="lab">'
+        + esc(title(i[keyName]||'')) + '</div><div class="dt">' + esc(i.date||title(i.state)) + '</div></div>').join('')
+    + '</div>'
+    
+    + (items.some(i=>i.note)
+        ? '<details class="cadx"><summary>Notes</summary><ul class="stepnotes">'
+          + items.filter(i=>i.note).map(i=>'<li><b>'+esc(title(i[keyName]||''))+'</b> — '+esc(i.note)+'</li>').join('')
+          + '</ul></details>' : '')
+    + '</div>';
+}
+
+function loops(o){
+  if(!o) return '';
+  const isDone = i => i.state === 'done';
+  const li = i => '<li><b>'+esc(i.item||'')+'</b>'
+      + (i.state?'<span class="pill '+(['blocked_on_them','open'].includes(i.state)?'p-red':i.state==='done'?'p-grn':'p-amb')+'">'+esc(title(i.state))+'</span>':'')
+      + (i.since?'<em>since '+esc(i.since)+(i.blocker?' \u00B7 blocked on: '+esc(i.blocker):'')+(i.note?' \u00B7 '+esc(i.note):'')+'</em>'
+                :(i.note?'<em>'+esc(i.note)+'</em>':''))
+      + '<span class="more"></span></li>';
+  const side = (arr,cls,head)=>{
+    const all = arr||[], live = all.filter(i=>!isDone(i)), fin = all.filter(isDone);
+    return '<div class="panel '+cls+'"><h3>'+head+'<span class="ct">'+live.length+'</span></h3><ul>'
+      + (live.map(li).join('') || '<li class="null">nothing outstanding</li>') + '</ul>'
+      + (fin.length ? '<details><summary>'+fin.length+' done</summary><ul>'
+                      + fin.map(li).join('') + '</ul></details>' : '')
+      + '</div>';
+  };
+  return '<h2 class="sec">Open loops</h2><div class="panels">'
+    + side(o.we_owe,'us','\uD83D\uDCE6 We owe them') + side(o.they_owe,'them','\u23F3 They owe us') + '</div>';
+}
+
+
+var MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function isoParts(s){
+  var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(s||''));
+  return m ? {y:+m[1], m:+m[2], d:+m[3]} : null;
+}
+function evDate(e){
+  var a = isoParts(e.date), b = isoParts(e.date_end);
+  if(!a) return esc(e.date_label || e.date || '');
+  var pre = e.approx ? '\u2248\u202f' : '';
+  if(b && (b.m !== a.m || b.d !== a.d)){
+    if(b.m === a.m && b.y === a.y) return pre + MON[a.m-1]+' '+a.d+'\u2013'+b.d+', '+a.y;
+    return pre + MON[a.m-1]+' '+a.d+' \u2013 '+MON[b.m-1]+' '+b.d+', '+b.y;
+  }
+  return pre + MON[a.m-1]+' '+a.d+', '+a.y;
+}
+
+var BRIEF_MAX = 220;
+function brief(s){
+  s = String(s||'').replace(/\s+/g,' ').trim();
+  s = s.replace(/^SET BY HAND[^.]*\.\s*/i,'');
+  if(!s) return '';
+  var parts = s.split(/(?<=[.!?])\s+(?=[A-Z0-9\u26A0\u2705\u274C])/);
+  var out = parts[0];
+  if(parts.length > 1 && (out + ' ' + parts[1]).length <= BRIEF_MAX) out += ' ' + parts[1];
+  if(out.length > BRIEF_MAX){
+    out = out.slice(0, BRIEF_MAX);
+    var sp = out.lastIndexOf(' ');
+    if(sp > BRIEF_MAX*0.6) out = out.slice(0, sp);
+    out = out.replace(/[\s,;:\-\u2013\u2014]+$/,'') + '\u2026';
+  } else if(out.length < s.length && !/[.!?]$/.test(out)) out += '\u2026';
+  return out;
+}
+function derive(d){
+  var out = [];
+  (d.journey||[]).forEach(function(j){
+    if(j.date && j.state!=='not_reached')
+      out.push({date:j.date, cat:'milestone', title:title(j.stage), detail:brief(j.note), _full:j.note||'', _dv:1});
+  });
+  (d.training||[]).forEach(function(t){
+    if(t.date) out.push({date:t.date, cat:'engage',
+      title:title(t.session)+(t.state&&t.state!=='done'?' \u2014 '+title(t.state):''),
+      detail:brief(t.note), _full:t.note||'', _dv:1});
+  });
+  var c = d.commercial||{};
+  [['agreement_signed','Supply Agreement signed'],['trial_start','Trial started'],
+   ['trial_end','Trial ended'],['billing_started','Billing started']].forEach(function(p){
+    var f = c[p[0]]; var v = f && (f.v!==undefined?f.v:f);
+    if(isoParts(v)) out.push({date:v, cat:'commercial', title:p[1],
+      detail:(f&&f.src)?brief('Source: '+f.src):'', _full:(f&&f.src)?('Source: '+f.src):'', _dv:1});
+  });
+  out.sort(function(a,b){ return a.date < b.date ? -1 : a.date > b.date ? 1 : 0; });
+  return out;
+}
+function timeline(d){
+  var evs = (d.timeline||[]).slice(), derived = false;
+  if(!evs.length){ evs = derive(d); derived = true; }
+  if(!evs.length) return '';
+  evs.sort(function(a,b){
+    var x=a.date||a.date_label||'', y=b.date||b.date_label||'';
+    return x<y?-1:x>y?1:0;
+  });
+  var cats=['milestone','engage','commercial','comms','fault'];
+  var labels={milestone:'Milestone',engage:'Engagement',commercial:'Commercial',
+              comms:'Correspondence',fault:'Hardware fault'};
+  var present = cats.filter(function(c){ return evs.some(function(e){ return (e.cat||'comms')===c; }); });
+  var h = '<h2 class="sec">Account timeline</h2>';
+  if(derived) h += '<div class="tlnote"><b>Derived, not curated.</b> This account has no hand-written '
+    + 'timeline yet, so these entries are built from dated facts already in the record \u2014 journey '
+    + 'stages, training sessions and commercial dates. They are accurate but thin: no narrative, no flags. '
+    + 'Add a <code>timeline</code> array to the record to replace this.</div>';
+  h += '<div class="filters">'
+     + '<button class="chip on" data-c="all"><span class="dot"></span>All</button>'
+     + present.map(function(c){ return '<button class="chip on" data-c="'+c+'"><span class="dot"></span>'
+         + labels[c] + '</button>'; }).join('')
+     + '<span class="count"></span></div><div class="tl">';
+  h += evs.map(function(e){
+    var c = cats.indexOf(e.cat)>=0 ? e.cat : 'comms';
+    return '<div class="ev '+c+'"><div class="date">'+evDate(e)+'</div>'
+      + '<div class="t">'+esc(e.title||'')+'</div>'
+      + (e.detail?'<div class="d">'+esc(e.detail)+'</div>':'')
+      
+      + (e._full && e._full.replace(/\s+/g,' ').trim() !== (e.detail||'')
+          ? '<details class="full"><summary>Full note</summary><div>'+esc(e._full)+'</div></details>' : '')
+      + (e.flag?'<span class="flag">'+esc(e.flag)+'</span>':'')
+      + '</div>';
+  }).join('');
+  return h + '</div>';
+}
+
+function measureLoop(li){
+  var em = li.querySelector('em');
+  if(!em || li.dataset.measured === '1') return;
+  if(li.offsetParent === null) return;          // hidden: measure later
+  li.dataset.measured = '1';
+  li.classList.add('clamp');
+  if(em.scrollHeight - em.clientHeight < 2){    // fits in two lines already
+    li.classList.remove('clamp');
+    return;
+  }
+  li.addEventListener('click', function(ev){
+    if(ev.target.closest('a')) return;
+    li.classList.toggle('open');
+  });
+}
+function wireLoops(){
+  var root = document.getElementById('view');
+  var lis = Array.prototype.slice.call(root.querySelectorAll('.panel li'));
+  lis.forEach(measureLoop);
+  Array.prototype.slice.call(root.querySelectorAll('.panel details')).forEach(function(dt){
+    dt.addEventListener('toggle', function(){
+      if(dt.open) Array.prototype.slice.call(dt.querySelectorAll('li')).forEach(measureLoop);
+    });
+  });
+}
+
+function wireTimeline(){
+  var root = document.getElementById('view');
+  var chips = Array.prototype.slice.call(root.querySelectorAll('.chip'));
+  var evs = Array.prototype.slice.call(root.querySelectorAll('.ev'));
+  var cnt = root.querySelector('.count');
+  if(!chips.length) return;
+  var cats = ['milestone','engage','commercial','comms','fault'];
+  function catOf(el){
+    for(var i=0;i<cats.length;i++) if(el.classList.contains(cats[i])) return cats[i];
+    return 'comms';
+  }
+  function draw(){
+    var on = {};
+    chips.forEach(function(c){ if(c.dataset.c!=='all' && c.classList.contains('on')) on[c.dataset.c]=1; });
+    var shown = 0;
+    evs.forEach(function(e){
+      var ok = !!on[catOf(e)];
+      e.classList.toggle('hide', !ok);
+      if(ok) shown++;
+    });
+    var all = chips.filter(function(c){ return c.dataset.c!=='all'; });
+    var allOn = all.every(function(c){ return c.classList.contains('on'); });
+    chips.forEach(function(c){ if(c.dataset.c==='all') c.classList.toggle('on', allOn); });
+    if(cnt) cnt.textContent = shown + ' of ' + evs.length + ' events';
+  }
+  chips.forEach(function(c){
+    c.addEventListener('click', function(){
+      if(c.dataset.c==='all'){
+        var turnOn = !c.classList.contains('on');
+        chips.forEach(function(x){ x.classList.toggle('on', turnOn); });
+      } else { c.classList.toggle('on'); }
+      draw();
+    });
+  });
+  draw();
+}
+
+
+
+var C_PRIMARY = ['status','terms','currency','engagement_type','licences','tablets_contracted',
+                 'recurring','agreement_signed','signatory','docusign_envelope','trial_start',
+                 'trial_end','billing_started','card_on_file','ap_contact'];
+
+
+function cLicences(c){
+  var lic = v(c.licences), tab = v(c.tablets_contracted), rec = v(c.recurring);
+  if(lic===null && tab===null && rec===null) return null;
+  var bits = [];
+  if(lic!==null && lic!==undefined) bits.push(lic + ' licence' + (Number(lic)===1?'':'s'));
+  if(tab!==null && tab!==undefined) bits.push(tab + ' tablet' + (Number(tab)===1?'':'s'));
+  var sub = rec===true ? 'Recurring' : rec===false ? 'Not recurring' : null;
+  return {label:'Licences & tablets', value: bits.join(' · ') || null, sub: sub,
+          prov: c.licences || c.tablets_contracted || c.recurring};
+}
+function cAgreement(c){
+  var date = v(c.agreement_signed), sig = v(c.signatory), env = v(c.docusign_envelope);
+  var signed = !!(date || sig || env);
+  if(!signed) return {label:'Agreement signed', value:null, sub:null, prov:c.agreement_signed};
+  
+  return {label:'Agreement signed',
+          value: date ? ('Yes · ' + date) : 'Yes — date not recorded',
+          sub: sig ? esc(sig) : '<span class="null">signatory not recorded</span>',
+          raw: true, prov: c.agreement_signed || c.signatory};
+}
+function commercial(c){
+  c = c || {};
+  var keys = Object.keys(c);
+  if(!keys.length) return '';
+  var h = '<h2 class="sec">Commercial</h2>';
+  keys.filter(function(k){ return k.charAt(0)==='_'; }).forEach(function(k){
+    var f = c[k], val = v(f);
+    h += '<div class="cwarn"><b>' + esc(title(k.replace(/^_/,''))) + ':</b> ' + esc(String(val))
+       + (f && f.src ? ' <span class="prov">' + esc(f.src) + '</span>' : '') + '</div>';
+  });
+  
+  var ORDER = ['status','terms','currency','engagement_type', cLicences, cAgreement,
+               'trial_start','trial_end','billing_started','card_on_file','ap_contact'];
+  var tiles = [];
+  ORDER.forEach(function(spec){
+    if(typeof spec === 'function'){
+      var t = spec(c);
+      if(t) tiles.push(t);
+      return;
+    }
+    if(!(spec in c)) return;
+    var val = v(c[spec]);
+    var empty = (val===null || val===undefined || val==='');
+    tiles.push({label:title(spec),
+                value: empty ? null : (val===true?'Yes':val===false?'No':String(val)),
+                sub:null, prov:c[spec],
+                bad: (spec==='card_on_file' && (empty || /^no/i.test(String(val))))
+                  || (spec==='billing_started' && empty)});
+  });
+  h += '<div class="cgrid">' + tiles.map(function(t){
+    var shown = (t.value===null || t.value===undefined || t.value==='')
+      ? '<span class="null">not established</span>'
+      : (t.raw ? t.value : esc(t.value));
+    return '<div class="cg'+(t.bad?' warn':'')+'"><div class="l">'+esc(t.label)+'</div>'
+         + '<div class="v">'+shown+'</div>'
+         + (t.sub ? '<div class="sub2">'+(t.raw?t.sub:esc(t.sub))+'</div>' : '')
+         + prov(t.prov) + '</div>';
+  }).join('') + '</div>';
+  var tail = {};
+  keys.forEach(function(k){
+    if(k.charAt(0)!=='_' && C_PRIMARY.indexOf(k)<0) tail[k] = c[k];
+  });
+  var n = Object.keys(tail).length;
+  if(n) h += '<details class="tail"><summary>'+n+' more commercial field'+(n>1?'s':'')
+           + ' — contract references, billing notes, decision path</summary>'
+           + tbl(tail, []) + '</details>';
+  return h;
+}
+
+function tbl(obj, skip){
+  const rows = Object.keys(obj||{}).filter(k=>!(skip||[]).includes(k) && !k.startsWith('_'));
+  if(!rows.length) return '';
+  return '<table><tbody>' + rows.map(k=>'<tr><td class="k">'+esc(title(k))+'</td><td>'+cell(obj[k])+'</td></tr>').join('') + '</tbody></table>';
+}
+
+function render(slug){
+  const d = DATA[slug]; if(!d) return;
+  const c = d.commercial||{}, i = d.identity||{};
+  const outstanding = a => (a||[]).filter(x=>x.state!=='done').length;
+  const owed = outstanding((d.open_loops||{}).we_owe), theirs = outstanding((d.open_loops||{}).they_owe);
+  let h = '';
+  h += '<h1>'+esc(d.client)+'</h1><div class="sub">'
+     + (d.aliases&&d.aliases.length?esc(d.aliases.join(' · '))+' · ':'')
+     + esc(v(i.region)||'') + '</div>'
+     + '<div class="stamp">Record updated '+esc(d.updated||'')+(d.updated_by?' · '+esc(d.updated_by):'')+'</div>'
+     
+     + (function(){ const r=d.reviewed;
+         if(!r||!r.on) return '<div class="revw no">Not yet reviewed by Maria</div>';
+         const since = d.updated && d.updated > r.on;
+         return '<div class="revw ok">✓ Reviewed by '+esc(r.by||'Maria')+' on '+esc(r.on)
+           + (since?' <span class="since">· updated since your review ('+esc(d.updated)+')</span>':'')+'</div>'; })();
+
+  
+  h += (function(){
+    const chips = [];
+    
+    const fmtdate = iso => { const a = isoParts(iso);
+      return a ? MON[a.m-1]+' '+a.d+', '+a.y : String(iso||''); };
+    const ord = n => { const t=['th','st','nd','rd'], v=n%100;
+      return n + (t[(v-20)%10] || t[v] || t[0]); };
+
+    
+    const tb = (d.units||[]).filter(u=>u.kind==='tablet' && !['retired','recovered','in_transit_to_us'].includes(u.state));
+    const cond = u => (u.condition && u.condition.v) || 'unknown';
+    const broken = tb.filter(u=>cond(u)==='broken');
+    if(broken.length){
+      const names = broken.map(u=>u.name).filter(Boolean);
+      const oldest = broken.map(u=>u.condition&&u.condition.on).filter(Boolean).sort()[0];
+      chips.push('<div class="nb bad" data-jump="sec-units"><span class="k">Hardware</span><span>'
+        + esc(names.join(', ') || (broken.length+' broken'))
+        + ' broken' + (oldest ? ' · seen ' + esc(fmtdate(oldest)) : '') + '</span></div>');
+    } else if(tb.length){
+      const k = tb.filter(u=>cond(u)==='unknown').length;
+      const w = tb.filter(u=>cond(u)==='working').length;
+      if(k===tb.length)
+        chips.push('<div class="nb warnb" data-jump="sec-units"><span class="k">Hardware</span><span>'
+          + tb.length + ' tablet' + (tb.length>1?'s':'') + ', condition unknown</span></div>');
+      else
+        chips.push('<div class="nb okb" data-jump="sec-units"><span class="k">Hardware</span><span>'
+          + w + ' of ' + tb.length + ' working'
+          + (k? ' · ' + k + ' unknown':'') + '</span></div>');
+    }
+
+    const owedp = (d.units||[]).filter(u=>u.kind==='part' &&
+      ['replacement_part_owed','awaiting_shipment','in_transit_to_them'].includes(u.state));
+    if(owedp.length)
+      chips.push('<div class="nb warnb" data-jump="sec-units"><span class="k">Owed</span><span>'
+        + owedp.length + ' part' + (owedp.length>1?'s':'') + ' to send</span></div>');
+
+    const cand = [];
+    const cn = (d.cadence||{}).next;
+    if(cn && cn.date) cand.push([cn.date, (cn.n?ord(cn.n)+' ':'')+'care call']);
+    (d.training||[]).forEach(t=>{
+      if(t && t.state==='scheduled' && t.date) cand.push([t.date, t.session||'training']);
+    });
+    (d.journey||[]).forEach(j=>{
+      if(j && j.date && j.state!=='done' && j.state!=='skipped')
+        cand.push([j.date, String(j.stage||'').replace(/_/g,' ')]);
+    });
+    const today = new Date().toISOString().slice(0,10);
+    const fut = cand.filter(x=>x[0]>=today).sort((a,b)=>a[0]<b[0]?-1:1);
+    if(fut.length){
+      const d0 = fut[0][0];
+      const days = Math.round((new Date(d0) - new Date(today))/86400000);
+      const soon = days<=7;
+      chips.push('<div class="nb '+(soon?'warnb':'')+'"><span class="k">Next</span><span'
+        + (soon?' class="soon"':'') + '>' + esc(fut[0][1]) + ' · ' + esc(fmtdate(d0))
+        + (days===0?' · today':days===1?' · tomorrow':' · in '+days+' days') + '</span></div>');
+    } else {
+      chips.push('<div class="nb warnb"><span class="k">Next</span><span>nothing scheduled</span></div>');
+    }
+
+    return chips.length ? '<div class="nowbar">'+chips.join('')+'</div>' : '';
+  })();
+
+  
+  const trunc = (x,n) => { x = String(x==null?'':x).split('\n')[0];
+    if(x.length<=n) return x; let y = x.slice(0,n); const sp = y.lastIndexOf(' ');
+    if(sp > n*0.6) y = y.slice(0,sp); return y.replace(/[\s,;:\-–—]+$/,'') + '…'; };
+  const held = (d.units||[]).filter(u=>u.kind==='tablet' && !['retired','recovered','in_transit_to_us'].includes(u.state));
+  const cv = u => (u.condition && u.condition.v) || 'unknown';
+  const owedS = s=>['replacement_part_owed','awaiting_shipment','in_transit_to_them'].includes(s);
+  const owedU = (d.units||[]).filter(u=>(u.kind==='part'||u.kind==='tablet') && owedS(u.state));
+  const tabVal = (function(){
+    if(!held.length) return 'none on site';
+    const n = s => held.filter(u=>cv(u)===s).length;
+    const b=n('broken'), w=n('working'), k=n('unknown');
+    if(b) return b+' of '+held.length+' broken';
+    if(w===held.length) return held.length+' working';
+    if(k===held.length) return held.length+', condition unknown';
+    return w+' of '+held.length+' working';
+  })();
+  const tabSub = held.map(u=>u.name+' — '+cv(u)).join(' · ');
+  const pri = [
+    ['Tablets', tabVal, tabSub, held.some(u=>cv(u)==='broken'||cv(u)==='unknown')],
+    ['Hardware owed', owedU.length ? owedU.length+(owedU.length>1?' items':' item') : 'nothing',
+       owedU.map(u=>u.name).join(' · ') || null, owedU.length>0?'amb':false],
+    ['Open loops', (owed+theirs), owed+' ours · '+theirs+' theirs', false]
+  ];
+  const com = [
+    ['Engagement', v(c.engagement_type), v(c.contract)],
+    ['Payment status', v(c.status), null],
+    ['Rate', v(c.terms), v(c.currency)],
+    ['Billing from', v(c.billing_started)||'not started', v(c.recurring)===true?'recurring':v(c.recurring)===false?'not recurring':null],
+    ['Card on file', v(c.card_on_file)||'no', null]
+  ];
+  const tile = (t,warn) => '<div class="fact'+(warn===true?' warn':warn==='amb'?' amb':'')+'"'
+      + ((t[0]==='Tablets'||t[0]==='Hardware owed')?' data-jump="sec-units"':'')+'><div class="l">'+t[0]+'</div><div class="v">'
+      + esc(t[1]==null?'—':trunc(t[1],60)) + '</div>'
+      + (t[2]?'<div class="n">'+esc(trunc(t[2],110))+'</div>':'') + '</div>';
+  h += '<h2 class="sec">At a glance</h2><div class="facts pri">'
+     + pri.map(t=>tile(t,t[3])).join('') + '</div><div class="facts" style="margin-top:8px">'
+     + com.map(t=>tile(t,(t[0]==='Card on file' && (!t[1]||/^no/i.test(String(t[1])))) || (t[0]==='Billing from' && t[1]==='not started'))).join('')
+     + '</div>';
+
+  h += strip('Account journey', d.journey, 'stage');
+  h += strip('Training', d.training, 'session');
+  
+  if(d.cadence){
+    const c = d.cadence;
+    const ord = n => { const s=['th','st','nd','rd'], v=n%100;
+                       return n + (s[(v-20)%10] || s[v] || s[0]); };
+    let bits = [];
+    bits.push(c.agreed ? esc(c.interval||'agreed')
+                       : '<span class="null">'+esc(c.interval? c.interval+', not agreed' : 'not agreed')+'</span>');
+    const nx = c.next;
+    if(nx && nx.date){
+      const dt = new Date(nx.date+'T12:00:00');
+      const when = isNaN(dt) ? esc(nx.date)
+        : dt.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+      const late = !isNaN(dt) && dt < TODAY;
+      bits.push('<b>next:</b> ' + (nx.n?esc(ord(nx.n))+' call, ':'') + esc(when)
+        + (nx.time_client?', '+esc(nx.time_client):'')
+        + (late?' <span class="aged">(date has passed &mdash; confirm it ran)</span>':''));
+    } else {
+      bits.push('<span class="null">nothing booked</span>');
+    }
+    
+    
+    let inv = '';
+    if(c.invite){
+      const iv = c.invite, a = iv.attendees||[];
+      const yes = a.filter(x=>x.status==='accepted').map(x=>x.name);
+      const no  = a.filter(x=>x.status==='declined').map(x=>x.name);
+      const nr  = a.filter(x=>x.status!=='accepted' && x.status!=='declined').map(x=>x.name);
+      const sd = new Date(iv.sent+'T12:00:00');
+      inv = '<div class="prov" style="font-size:12px;margin-top:5px">Invite sent '
+        + esc(isNaN(sd)?iv.sent:sd.toLocaleDateString('en-GB',{day:'numeric',month:'short'}))
+        + (iv.by?' by '+esc(iv.by):'') + ' to ' + esc(a.map(x=>x.name).join(', '))
+        + (yes.length?' &middot; <span style="color:var(--grn);font-weight:600">accepted:</span> '+esc(yes.join(', ')):'')
+        + (no.length?' &middot; <span style="color:var(--red);font-weight:600">declined:</span> '+esc(no.join(', ')):'')
+        + (nr.length?' &middot; no response yet: '+esc(nr.join(', ')):'')
+        + '<br>Our team: ' + esc((iv.by?iv.by+' (organiser)':'')
+            + ((iv.internal||[]).length ? (iv.by?', ':'') + iv.internal.map(x=>x.name+(x.status==='accepted'?' ✓':'')).join(', ') : ''))
+        + (iv.checked?' <span class="null">(checked '+esc(iv.checked)+')</span>':'') + '</div>';
+    }
+    h += '<div class="note"><b>Check-in cadence:</b> ' + bits.join(' &middot; ')
+       + (inv || (c.note ? '<details class="cadx"><summary>why / detail</summary>'
+                   + esc(c.note) + '</details>' : ''))
+       + '</div>';
+  }
+
+  h += loops(d.open_loops);
+  h += timeline(d);
+
+  if((d.units||[]).length){
+    
+    const condLab = {working:'Working', broken:'Broken', spare:'Spare', unknown:'Unknown'};
+    const condPill = {working:'p-grn', broken:'p-red', spare:'p-gry', unknown:'p-gry'};
+    
+    const unitDone = u => ['retired','recovered'].includes(u.state) || (u.kind!=='tablet' && u.state==='on_site');
+    const uHead = '<table><thead><tr><th>Unit</th><th>Type</th><th>Gen</th><th>Fitted</th><th>State</th><th>Condition</th><th>Last on / worked</th><th>Notes</th></tr></thead><tbody>';
+    const uRow = u=>{
+          const idbits=[u.id,(u.serial&&String(u.serial).length>2)?'S/N '+u.serial:null].filter(Boolean).join(' · ');
+          const bad=['replacement_part_owed','awaiting_shipment','in_transit_to_us'].includes(u.state);
+          const moving=u.state==='in_transit_to_them';
+          const kindLab = {tablet:'Tablet', part:'Part', shipment:'Shipment'}[u.kind] || '—';
+          let condCell;
+          if(u.kind!=='tablet' || ['retired','recovered'].includes(u.state)){
+            condCell = '<span class="null">n/a</span>';
+          } else {
+            const cv = (u.condition && u.condition.v) || 'unknown';
+            const on = u.condition && u.condition.on;
+            const a  = days(on), aged = a!=null && a>30;
+            condCell = '<span class="pill '+(condPill[cv]||'p-gry')+'">'+esc(condLab[cv]||cv)+'</span>'
+              + (cv==='unknown'
+                  ? '<span class="prov">no condition evidenced</span>'
+                  : (on ? '<span class="prov"><span class="'+(aged?'aged':'')+'">as of '+esc(on)
+                          +(a!=null?' ('+a+'d ago)':'')+'</span></span>'
+                        : '<span class="prov aged">undated — do not rely on it</span>'));
+          }
+          let laCell;
+          if(u.kind!=='tablet' || ['retired','recovered'].includes(u.state)){
+            laCell = '<span class="null">n/a</span>';
+          } else {
+            const la = u.last_active;
+            const one = (lab,dt)=>{ if(!dt) return '<div class="prov">'+lab+': none seen since the ledger began</div>';
+              const a=days(dt), aged=a!=null && a>7;
+              return '<div class="prov"><span class="'+(aged?'aged':'')+'">'+lab+' '+esc(dt)+(a!=null?' ('+a+'d ago)':'')+'</span></div>'; };
+            laCell = la ? one('On',la.on)+one('Worked',la.worked)
+                          +'<div class="prov" title="'+esc(la.src||'')+'">as of '+esc(la.as_of||'')+'</div>'
+                        : '<span class="prov">not in the field data</span>';
+          }
+          return '<tr><td class="k">'+esc(u.name||'—')+(idbits?'<span class="prov">'+esc(idbits)+'</span>':'')+'</td>'
+          + '<td>'+esc(kindLab)+'</td>'
+          + '<td>'+esc(u.gen||'—')+'</td><td>'+(u.fitted?esc(u.fitted):'<span class="null">—</span>')+'</td>'
+          + '<td><span class="pill '+(moving?'p-amb':bad?'p-red':u.state==='retired'?'p-gry':u.state==='recovered'?'p-grn':'p-gry')+'">'
+          + esc(title(u.state||'')) + '</span></td>'
+          + '<td>'+condCell+'</td>'
+          + '<td>'+laCell+'</td>'
+          + '<td>'+esc(u.note||'')+'</td></tr>';
+        };
+    const uLive = d.units.filter(u=>!unitDone(u)), uFin = d.units.filter(unitDone);
+    h += '<h2 class="sec" id="sec-units">Units held</h2>'
+      + (uLive.length ? uHead + uLive.map(uRow).join('') + '</tbody></table>' : '<div class="prov">Nothing active.</div>')
+      + (uFin.length ? '<details class="cadx"><summary>'+uFin.length+' retired or complete</summary>'
+          + uHead + uFin.map(uRow).join('') + '</tbody></table></details>' : '')
+      + '<div class="prov" style="margin-top:6px">'
+       + '<b>Unknown means nothing evidences a condition</b> '
+      + '— it is never upgraded to Working just because no fault has been reported. '
+      + 'Telemetry and hours remain on the Client Adoption Dashboard.</div>';
+  }
+  if(d.projects){
+    const f=d.projects.first||{}, o=d.projects.others||[];
+    h += '<h2 class="sec">Projects</h2><table><tbody>'
+      + '<tr><td class="k">First project</td><td>'+(v(f.name)?esc(v(f.name)):'<span class="null">none recorded</span>')
+      + '<span class="prov">'+(v(f.start)?'started '+esc(v(f.start)):'start date unknown')
+      + (v(f.shifts)!=null?' · '+esc(v(f.shifts))+' shifts':'')+'</span></td></tr>'
+      + (o.length?'<tr><td class="k">Also seen</td><td>'+o.map(x=>esc(typeof x==='string'?x:v(x))).join('<br>')+'</td></tr>':'')
+      + '</tbody></table>';
+  }
+  
+  const isDirect = (d.journey||[]).length && !(d.journey||[]).some(j=>j.stage==='trial_started');
+  
+  h += '<details class="secx"><summary>' + commercial(isDirect ? Object.fromEntries(Object.entries(c).filter(([k])=>k!=='trial_start' && k!=='trial_end')) : c)
+         .replace('<h2 class="sec">Commercial</h2>', '<h2 class="sec">Commercial<span class="secbtn"><span class="o">Show details ▾</span><span class="c">Hide ▴</span></span></h2></summary>') + '</details>';
+  h += '<details class="secx"><summary><h2 class="sec">Identity<span class="secbtn"><span class="o">Show details ▾</span><span class="c">Hide ▴</span></span></h2></summary>' + tbl(i, []) + '</details>';
+
+  
+  if(false && (d.deliverables||[]).length){
+    h += '<h2 class="sec">Deliverables</h2><table><thead><tr><th>Item</th><th>Received</th><th>Notes</th></tr></thead><tbody>'
+      + d.deliverables.map(x=>'<tr><td class="k">'+esc(title(x.item||''))+'</td><td>'
+        + (x.received?esc(x.received):'<span class="null">not received</span>')+'</td><td>'+esc(x.note||'')+'</td></tr>').join('')
+      + '</tbody></table>';
+  }
+  if((d.proof_points||[]).length){
+    h += '<h2 class="sec">Proof points</h2><table><tbody>'
+      + d.proof_points.map(x=>'<tr><td>'+esc(x.claim||'')
+        + (x.defensible===false?'<span class="pill p-red">NOT DEFENSIBLE</span>':'<span class="pill p-grn">DEFENSIBLE</span>')
+        + '<span class="prov">'+esc(x.src||'')+(x.on?' · '+esc(x.on):'')+(x.caution?' · \u26A0 '+esc(x.caution):'')+'</span></td></tr>').join('')
+      + '</tbody></table>';
+  }
+  if((d.contacts||[]).length){
+    h += '<h2 class="sec">Contacts</h2><table><thead><tr><th>Name</th><th>Role</th><th>Contact</th><th>Notes</th></tr></thead><tbody>'
+      + d.contacts.map(p=>'<tr><td class="k">'+esc(p.name||'')+(p.tag?'<span class="pill p-gry">'+esc(title(p.tag))+'</span>':'')+'</td>'
+        + '<td>'+esc(p.role||p.title||'')+(p.region?'<span class="prov">'+esc(p.region)+'</span>':'')+'</td>'
+        + '<td>'+[p.email,p.phone].filter(Boolean).map(esc).join('<br>')+'</td>'
+        + '<td>'+esc(p.note||p.relationship||'')+'</td></tr>').join('') + '</tbody></table>';
+  }
+  if((d.watch||[]).length){
+    h += '<h2 class="sec">Watch</h2><div class="watch"><ul>'
+      + d.watch.map(w=>'<li>'+esc(typeof w==='string'?w:(w.item||JSON.stringify(w)))+'</li>').join('') + '</ul></div>';
+  }
+  document.getElementById('view').innerHTML = h;
+  wireLoops();
+  wireTimeline();
+  document.querySelectorAll('.cb').forEach(b=>b.classList.toggle('on', b.dataset.s===slug));
+  window.scrollTo(0,0);
+}
+
+
+(function(){
+  const btn = s => { const d = DATA[s], n = ((d.open_loops||{}).we_owe||[]).filter(x=>x.state!=='done').length;
+    return '<button class="cb" data-s="'+s+'">'+esc(d.client)+(n?'<span class="n">'+n+'</span>':'')+'</button>'; };
+  const sp = s => { const x = (DATA[s].identity||{}).state_province; return (x && (x.v!==undefined?x.v:x)) || 'Other'; };
+  const groups = {};
+  ORDER.forEach(s => (groups[sp(s)] = groups[sp(s)] || []).push(s));
+  const names = Object.keys(groups).sort((a,b)=> a==='Other'?1:b==='Other'?-1:a.localeCompare(b));
+  document.getElementById('picker').innerHTML = names.map(g =>
+    '<div class="pgrp"><span class="pl">'+esc(g)+'</span>'+groups[g].map(btn).join('')+'</div>').join('');
+})();
+document.querySelectorAll('.cb').forEach(b=>b.addEventListener('click',()=>render(b.dataset.s)));
+
+document.addEventListener('click', function(e){
+  const j = e.target.closest && e.target.closest('[data-jump]');
+  if(!j) return;
+  const t = document.getElementById(j.dataset.jump);
+  if(t) t.scrollIntoView({behavior:'smooth', block:'start'});
+});
+render(ORDER[0]);
+</script></body></html>
