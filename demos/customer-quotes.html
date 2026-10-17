@@ -1,0 +1,427 @@
+<!doctype html><html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Customer Quotes (demo)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme: light;
+  --c-blue:#2443a6; --c-white:#ffffff; --c-navy:#2b2c30; --c-grey:#e6e6e6;
+  --c-blue-bright:#9fb0ee; --c-blue-dark:#1a2f78; --c-blue-tint:#edf2fb;
+  --c-navy-soft:#3a3c43; --c-grey-line:#d6dae3; --c-grey-text:#5d6068;
+  --amber:#f59e0b; --amber-soft:#fef3cf; --green:#159948; --green-soft:#e8f8ee;
+  --purple:#9a5c56; --purple-soft:#f6e9e7;
+  --shadow-1:0 1px 2px rgba(30,32,40,.08);
+  --shadow-2:0 6px 20px rgba(30,32,40,.12);
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--c-white); color:#000;
+  font-family:Inter, "Segoe UI", system-ui, sans-serif;
+  font-size:16px; line-height:1.5;
+}
+.wrap{max-width:1120px; margin:0 auto; padding:0 20px 64px;}
+h1,h2,h3{font-family:"Instrument Serif", Georgia, serif; font-weight:400; letter-spacing:0; margin:0;}
+.fraggroup h3{font-family:Inter, system-ui, sans-serif; font-weight:600;}
+
+/* header */
+.hero{background:var(--c-navy); color:#fff; margin:0; padding:32px 20px 28px;}
+.hero .inner{max-width:1120px; margin:0 auto;}
+.hero h1{font-size:46px; line-height:1.05; color:#fff;}
+.hero p{margin:8px 0 0; color:#d5d6da; max-width:720px;}
+.meta{display:flex; flex-wrap:wrap; gap:20px; margin-top:16px; font-size:13px; color:#b5b7be;}
+.meta b{color:#fff; font-weight:600;}
+
+/* verify banner */
+.note{background:var(--c-blue-tint); border:1px solid #d6dcef; border-radius:14px; padding:14px 16px; margin:20px 0 4px; font-size:14px; color:#2b3a66;}
+.note b{color:var(--c-navy);}
+
+/* controls */
+.controls{position:sticky; top:0; background:var(--c-white); padding:16px 0 12px; z-index:5; border-bottom:1px solid var(--c-grey);}
+.searchrow{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
+#search{flex:1 1 260px; min-width:200px; padding:10px 14px; border:1px solid var(--c-grey-line); border-radius:10px; font-size:15px; font-family:inherit;}
+#search:focus{outline:2px solid var(--c-blue); outline-offset:1px; border-color:var(--c-blue);}
+.toggle{display:inline-flex; align-items:center; gap:7px; font-size:14px; color:var(--c-grey-text); cursor:pointer; user-select:none; padding:8px 12px; border:1px solid var(--c-grey-line); border-radius:999px; background:#fff;}
+.toggle input{accent-color:var(--c-blue); width:15px; height:15px;}
+.chips{display:flex; flex-wrap:wrap; gap:8px; margin-top:12px;}
+.chip{border:1px solid var(--c-grey-line); background:#fff; color:var(--c-navy); border-radius:999px; padding:7px 14px; font-size:13.5px; cursor:pointer; font-family:inherit; transition:background .12s, color .12s, border-color .12s;}
+.chip:hover{background:var(--c-blue-tint);}
+.chip.active{background:var(--c-blue); border-color:var(--c-blue); color:#fff;}
+.chip .n{opacity:.65; margin-left:6px; font-size:12px;}
+.chip.active .n{opacity:.85;}
+
+.countline{margin:16px 0 4px; font-size:13px; color:var(--c-grey-text);}
+
+/* grid */
+.grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(340px,1fr)); gap:16px; margin-top:8px;}
+.card{background:#fff; border:1px solid var(--c-grey-line); border-radius:14px; padding:20px 20px 16px; box-shadow:var(--shadow-1); display:flex; flex-direction:column; transition:box-shadow .12s;}
+.card:hover{box-shadow:var(--shadow-2);}
+.card.pos{background:#fbfcfd; border-style:dashed;}
+.q{font-size:17px; line-height:1.45; margin:0 0 14px;}
+.q::before{content:"\201C"; color:var(--c-blue); font-weight:700;}
+.q::after{content:"\201D"; color:var(--c-blue); font-weight:700;}
+.attr{margin-top:auto;}
+.who{font-weight:700; color:var(--c-navy); font-size:14.5px;}
+.co{color:var(--c-blue-dark); font-size:14px;}
+.nm{color:var(--c-grey-text); font-size:13px;}
+.src{color:var(--c-grey-text); font-size:12px; margin-top:6px; font-style:italic;}
+.tags{display:flex; flex-wrap:wrap; gap:6px; margin:12px 0 0;}
+.tag{font-size:11px; padding:3px 9px; border-radius:999px; font-weight:600; letter-spacing:.02em;}
+.tag.star{background:#fff7e0; color:#8a5a00; border:1px solid #f2dfa8;}
+.tag.theme{background:var(--c-blue-tint); color:var(--c-blue-dark);}
+.tag.flag-unverified{background:var(--amber-soft); color:#8a5a00;}
+.tag.flag-relayed{background:var(--purple-soft); color:#8a4a44;}
+.tag.flag-paraphrase{background:var(--c-grey); color:#4a545e;}
+.tag.flag-prospect{background:#fdeeee; color:#9c2b2b; border:1px solid #f2c9c9;}
+.tag.flag-signal{background:#eef4fd; color:#2b5c9c; border:1px solid #c9dbf2;}
+.tag.flag-speaker-unconfirmed{background:var(--amber-soft); color:#8a5a00; border:1px solid #f0dcb0;}
+.tag.pos{background:#eef1f3; color:#4a545e;}
+.copy{align-self:flex-start; margin-top:12px; background:none; border:1px solid var(--c-grey-line); color:var(--c-blue-dark); border-radius:8px; padding:6px 12px; font-size:12.5px; cursor:pointer; font-family:inherit;}
+.copy:hover{background:var(--c-blue-tint); border-color:var(--c-blue);}
+.copy.done{background:var(--green-soft); border-color:#b6e6c7; color:var(--green);}
+
+.sectionhdr{margin:36px 0 4px; padding-top:20px; border-top:2px solid var(--c-grey);}
+.sectionhdr h2{font-size:30px; color:var(--c-navy);}
+.sectionhdr p{margin:6px 0 0; font-size:13.5px; color:var(--c-grey-text); max-width:760px;}
+.empty{color:var(--c-grey-text); padding:24px 0; font-style:italic;}
+.fraggroup{margin-top:16px;}
+.fraggroup h3{font-size:15px; color:var(--c-navy); margin-bottom:6px; text-transform:none;}
+.fraglist{margin:0 0 4px; padding-left:20px; color:#3a4650; font-size:14.5px;}
+.fraglist li{margin:4px 0;}
+#fragBlock .sectionhdr h2{color:#8a5a00;}
+.foot{margin-top:40px; font-size:12px; color:var(--c-grey-text); border-top:1px solid var(--c-grey); padding-top:16px;}
+.foot a{color:var(--c-blue)}
+.hero .demo{display:inline-block;margin-bottom:10px;font-size:12px;border:1px solid #9fb0ee;color:#9fb0ee;border-radius:20px;padding:2px 10px}
+@media (max-width:420px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="inner">
+    <span class="demo">demo, all fictional</span>
+    <h1>Customer quotes</h1>
+    <p>Positive customer feedback harvested every week from call recordings, team chat and email, ready for decks, the website, case studies and sales collateral.</p>
+    <div class="meta">
+      <span>Last updated <b id="updated"></b></span>
+      <span><b id="ctotal"></b> customer quotes</span>
+      <span><b id="cstar"></b> starred</span>
+      <span>Source of truth: <b>the quote database</b></span>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="note">
+    <b>Before public use:</b> starred quotes are cleanest for external testimonials. Items tagged <b>unverified</b>, <b>relayed</b>, <b>paraphrase</b>, or <b>speaker unconfirmed</b> need wording and attribution confirmed first. Items tagged <b>prospect at time of call</b> are not customer testimonials, and items tagged <b>buying signal, not a testimonial</b> are demo questions kept for sales context only. This view refreshes with the weekly quote harvest.
+  </div>
+
+  <div class="controls">
+    <div class="searchrow">
+      <input id="search" type="search" placeholder="Search quotes, people, companies, sources...">
+      <label class="toggle"><input type="checkbox" id="starOnly"> Starred only</label>
+      <label class="toggle"><input type="checkbox" id="cleanOnly"> Hide flagged</label>
+    </div>
+    <div class="chips" id="chips"></div>
+  </div>
+
+  <div class="countline" id="countline"></div>
+  <div class="grid" id="grid"></div>
+
+  <div id="fragBlock">
+    <div class="sectionhdr">
+      <h2>Fragments, speaker unconfirmed</h2>
+      <p>Quoted fragments with no attributed speaker. <b>Do not use publicly.</b> Held here so the sentiment is findable until someone confirms the full wording and who said it, at which point they move into the cards above.</p>
+    </div>
+    <div id="fragGrid"></div>
+  </div>
+
+  <div id="posBlock">
+    <div class="sectionhdr">
+      <h2>Our own positioning statements</h2>
+      <p>Said by our own team, not customers. Never presented as testimonials. Kept because they capture how the team frames its service promise, useful for messaging and copy.</p>
+    </div>
+    <div class="grid" id="posGrid"></div>
+  </div>
+
+  <div class="foot">
+    Portfolio demo by Maria Driscoll. In production this page is regenerated from the quote database by the weekly harvest. Every quote, person and company here is fictional. <a href="../index.html">Back to the portfolio</a>
+  </div>
+</div>
+
+<script>
+// ==== DATA (fictional, for the portfolio demo) ====
+const LAST_UPDATED = "2025-07-14";
+const QUOTES = [
+ {
+  "theme": "Service & Support",
+  "star": true,
+  "role": "Director of Clinic Operations",
+  "company": "Brightmoor Dental Group",
+  "name": "Alicia Moreno",
+  "flag": null,
+  "quote": "Every time we've had a question, a real person has answered it the same day. That's not what we're used to from software vendors.",
+  "source": "2025-06-17 Brightmoor - quarterly business review"
+ },
+ {
+  "theme": "Service & Support",
+  "star": true,
+  "role": "Practice Manager",
+  "company": "Halvorsen Physiotherapy",
+  "name": "Greta Lindahl",
+  "flag": null,
+  "quote": "When the booking sync broke, you told us before our front desk noticed. That's the part I'll remember.",
+  "source": "2025-06-25 Halvorsen - incident follow-up call"
+ },
+ {
+  "theme": "Service & Support",
+  "star": false,
+  "role": "Regional Director",
+  "company": "Tidewell Health",
+  "name": "Marcus Osei",
+  "flag": "relayed",
+  "quote": "Whatever else is on the roadmap, your team has been straight with us every time.",
+  "source": "Team chat, relayed by the account executive, 2025-06-27"
+ },
+ {
+  "theme": "Service & Support",
+  "star": false,
+  "role": "IT Manager",
+  "company": "Arden Vision Care",
+  "name": "Paul Varga",
+  "flag": "paraphrase",
+  "quote": "Appreciated a plain-English explanation of the outage instead of a ticket number.",
+  "source": "Call summary, 2025-06-24"
+ },
+ {
+  "theme": "Onboarding",
+  "star": true,
+  "role": "Clinic Manager",
+  "company": "Kestrel Family Clinics",
+  "name": "Naomi Brandt",
+  "flag": null,
+  "quote": "The second session, when you sat with the front desk during a real Monday morning, is when it clicked. They live in it now.",
+  "source": "2025-06-23 Kestrel - onboarding check-in"
+ },
+ {
+  "theme": "Onboarding",
+  "star": false,
+  "role": "Owner and Clinical Director",
+  "company": "Corbel Chiropractic",
+  "name": "Dr. Sean Whitfield",
+  "flag": null,
+  "quote": "We were live across all three locations faster than our last software took to set up one.",
+  "source": "2025-06-20 Corbel - 30-day review"
+ },
+ {
+  "theme": "Onboarding",
+  "star": false,
+  "role": "Operations Lead",
+  "company": "Lumen Rehab Partners",
+  "name": "Rosa Delgado",
+  "flag": "unverified",
+  "quote": "We moved two years of patient bookings over in a weekend and nobody noticed on Monday.",
+  "source": "2025-06-12 Lumen - go-live call (speaker tagging unclear in transcript)"
+ },
+ {
+  "theme": "Training",
+  "star": true,
+  "role": "Front Desk Lead",
+  "company": "Brightmoor Dental Group",
+  "name": "Kyle Jensen",
+  "flag": null,
+  "quote": "Ten minutes of training and the new hires were booking patients. Nobody needed the manual.",
+  "source": "2025-03-12 Brightmoor - new-hire training"
+ },
+ {
+  "theme": "Training",
+  "star": false,
+  "role": "Practice Manager",
+  "company": "Halvorsen Physiotherapy",
+  "name": "Greta Lindahl",
+  "flag": null,
+  "quote": "The one-page cheat sheet is taped next to every front desk. If you can do it in French, our Montreal clinic will use it too.",
+  "source": "2025-07-02 Halvorsen - expansion call"
+ },
+ {
+  "theme": "Training",
+  "star": false,
+  "role": "Billing Coordinator",
+  "company": "Tidewell Health",
+  "name": "Imani Clarke",
+  "flag": "paraphrase",
+  "quote": "Said the short how-to videos were easier to send to new staff than booking another session.",
+  "source": "Weekly summary note, 2025-05-14"
+ },
+ {
+  "theme": "Product & Results",
+  "star": true,
+  "role": "Director of Clinic Operations",
+  "company": "Brightmoor Dental Group",
+  "name": "Alicia Moreno",
+  "flag": null,
+  "quote": "No-shows are down since the reminders went live, and for the first time I can see it by clinic instead of guessing.",
+  "source": "2025-06-17 Brightmoor - quarterly business review"
+ },
+ {
+  "theme": "Product & Results",
+  "star": true,
+  "role": "Regional Director",
+  "company": "Tidewell Health",
+  "name": "Marcus Osei",
+  "flag": null,
+  "quote": "I put our utilisation report in front of the board and nobody asked where the numbers came from. They asked when the other regions get it.",
+  "source": "2025-05-28 Tidewell - board-prep call"
+ },
+ {
+  "theme": "Product & Results",
+  "star": false,
+  "role": "Clinic Manager",
+  "company": "Kestrel Family Clinics",
+  "name": "Naomi Brandt",
+  "flag": null,
+  "quote": "We spotted a scheduling gap on Thursday afternoons in the first month that we'd have argued about for weeks otherwise.",
+  "source": "2025-03-20 Kestrel - monthly review"
+ },
+ {
+  "theme": "Product & Results",
+  "star": false,
+  "role": "Owner and Clinical Director",
+  "company": "Corbel Chiropractic",
+  "name": "Dr. Sean Whitfield",
+  "flag": "signal",
+  "quote": "If the next quarter looks like this one, what would it take to add the two clinics we're opening?",
+  "source": "2025-07-08 Corbel - renewal planning call"
+ },
+ {
+  "theme": "Product & Results",
+  "star": false,
+  "role": "Practice Owner",
+  "company": "Elmstead Physical Therapy",
+  "name": "Dr. Hana Kowal",
+  "flag": "prospect",
+  "quote": "If it does half of what you showed us, it pays for itself the first month.",
+  "source": "2025-04-14 Elmstead - first demo (before signing)"
+ }
+];
+const FRAGMENTS = [
+ {
+  "group": "Kestrel Family Clinics front desk, from an anonymous staff survey",
+  "items": [
+   "\"…so much faster than the old system…\"",
+   "\"…the reminders are the first thing patients mention…\"",
+   "\"…if the waitlist did the same we'd…\""
+  ]
+ }
+];
+const POSITIONING = [
+ "We tell you about a problem before you find it.",
+ "If we can't answer it on the call, you'll have an answer by the end of the next working day."
+];
+// ==== END DATA ====
+
+const THEMES = ["Service & Support","Onboarding","Training","Product & Results"];
+const state = {theme:"All", starOnly:false, cleanOnly:false, q:""};
+
+document.getElementById("updated").textContent = LAST_UPDATED;
+document.getElementById("ctotal").textContent = QUOTES.length;
+document.getElementById("cstar").textContent = QUOTES.filter(q=>q.star).length;
+
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+
+// build chips
+const chipWrap = document.getElementById("chips");
+function chipCount(t){return t==="All"?QUOTES.length:QUOTES.filter(q=>q.theme===t).length;}
+["All",...THEMES].forEach(t=>{
+  const b=document.createElement("button");
+  b.className="chip"+(t==="All"?" active":"");
+  b.innerHTML=esc(t)+' <span class="n">'+chipCount(t)+'</span>';
+  b.onclick=()=>{state.theme=t; [...chipWrap.children].forEach(c=>c.classList.remove("active")); b.classList.add("active"); render();};
+  chipWrap.appendChild(b);
+});
+document.getElementById("search").addEventListener("input",e=>{state.q=e.target.value.toLowerCase(); render();});
+document.getElementById("starOnly").addEventListener("change",e=>{state.starOnly=e.target.checked; render();});
+document.getElementById("cleanOnly").addEventListener("change",e=>{state.cleanOnly=e.target.checked; render();});
+
+function match(q){
+  if(state.theme!=="All" && q.theme!==state.theme) return false;
+  if(state.starOnly && !q.star) return false;
+  if(state.cleanOnly && q.flag) return false;
+  if(state.q){
+    const hay=(q.quote+" "+q.role+" "+q.company+" "+q.name+" "+q.source).toLowerCase();
+    if(!hay.includes(state.q)) return false;
+  }
+  return true;
+}
+
+const flagLabel={unverified:"unverified", relayed:"relayed", paraphrase:"paraphrase", prospect:"prospect at time of call", signal:"buying signal, not a testimonial", "speaker-unconfirmed":"speaker unconfirmed"};
+
+function card(q){
+  const el=document.createElement("div");
+  el.className="card";
+  const tags=[];
+  if(q.star) tags.push('<span class="tag star">star</span>');
+  tags.push('<span class="tag theme">'+esc(q.theme)+'</span>');
+  if(q.flag) tags.push('<span class="tag flag-'+q.flag+'">'+flagLabel[q.flag]+'</span>');
+  const nm = q.name ? '<div class="nm">'+esc(q.name)+'</div>' : '';
+  el.innerHTML =
+    '<div class="q">'+esc(q.quote)+'</div>'+
+    '<div class="attr">'+
+      '<div class="who">'+esc(q.role)+'</div>'+
+      '<div class="co">'+esc(q.company)+'</div>'+
+      nm+
+      '<div class="src">'+esc(q.source)+'</div>'+
+      '<div class="tags">'+tags.join("")+'</div>'+
+    '</div>';
+  const btn=document.createElement("button");
+  btn.className="copy"; btn.textContent="Copy quote";
+  btn.onclick=()=>{
+    const attr = q.name ? (q.role+", "+q.company+" ("+q.name+")") : (q.role+", "+q.company);
+    const txt = '"'+q.quote+'" — '+attr;
+    navigator.clipboard.writeText(txt).then(()=>{btn.textContent="Copied"; btn.classList.add("done"); setTimeout(()=>{btn.textContent="Copy quote"; btn.classList.remove("done");},1400);});
+  };
+  el.appendChild(btn);
+  return el;
+}
+
+function render(){
+  const grid=document.getElementById("grid");
+  grid.innerHTML="";
+  const rows=QUOTES.filter(match);
+  document.getElementById("countline").textContent=rows.length+" of "+QUOTES.length+" quotes shown";
+  if(rows.length===0){grid.innerHTML='<div class="empty">No quotes match these filters.</div>';}
+  else rows.forEach(q=>grid.appendChild(card(q)));
+
+  // positioning block only when viewing All with no star filter
+  const showPos = (state.theme==="All" && !state.starOnly);
+  document.getElementById("posBlock").style.display = showPos ? "" : "none";
+  const showFrag = showPos && !state.cleanOnly;
+  document.getElementById("fragBlock").style.display = showFrag ? "" : "none";
+}
+
+// fragment block
+const fragGrid=document.getElementById("fragGrid");
+FRAGMENTS.forEach(g=>{
+  const el=document.createElement("div");
+  el.className="fraggroup";
+  el.innerHTML='<h3>'+esc(g.group)+'</h3><ul class="fraglist">'+g.items.map(i=>'<li>'+i+'</li>').join("")+'</ul>';
+  fragGrid.appendChild(el);
+});
+
+// positioning cards
+const posGrid=document.getElementById("posGrid");
+POSITIONING.forEach(t=>{
+  const el=document.createElement("div");
+  el.className="card pos";
+  el.innerHTML='<div class="q">'+esc(t)+'</div><div class="attr"><div class="who">Our team</div><div class="tags"><span class="tag pos">not a customer quote</span></div></div>';
+  posGrid.appendChild(el);
+});
+
+render();
+</script>
+</body>
+</html>
+
+
