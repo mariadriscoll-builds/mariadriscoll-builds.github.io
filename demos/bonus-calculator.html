@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bonus Gap Calculator (demo)</title>
+<meta name="description" content="Portfolio demo: a gated ROI calculator for contractors, with the two-stage lead capture behind it.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:light;
+  --paper:#f2f4f1; --surface:#ffffff; --ink:#1c2326; --ink-2:#3e4c50; --muted:#5e6e71;
+  --rule:#d5dcd9; --spruce:#0e5e5a; --spruce-deep:#0a3f3c; --lane:#e9b92e; --signal:#c8402f;
+  --field:#1d7f76; --font:"Schibsted Grotesk","Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  color-scheme:dark;
+  --paper:#0f1a19; --surface:#152423; --ink:#e6ecea; --ink-2:#bcc9c6; --muted:#8fa19d;
+  --rule:#26403c; --spruce:#8fd3c9; --spruce-deep:#06201e; --signal:#e4705f; --field:#4fb0a5;
+}}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --paper:#0f1a19; --surface:#152423; --ink:#e6ecea; --ink-2:#bcc9c6; --muted:#8fa19d;
+  --rule:#26403c; --spruce:#8fd3c9; --spruce-deep:#06201e; --signal:#e4705f; --field:#4fb0a5;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.55 var(--font);-webkit-font-smoothing:antialiased}
+a{color:var(--spruce);text-underline-offset:3px}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--spruce);outline-offset:2px}
+.wrap{max-width:1080px;margin:0 auto;padding:28px 16px 72px}
+.note{font-size:14px;color:var(--ink-2);margin:0 0 36px;max-width:70ch}
+.layout{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:40px;align-items:start}
+@media (max-width:860px){.layout{grid-template-columns:1fr}}
+h1{font-size:clamp(34px,5.5vw,54px);line-height:1.02;letter-spacing:-.025em;margin:0 0 14px;font-weight:800}
+.lede{font-size:19px;color:var(--ink-2);margin:0 0 28px;max-width:46ch}
+.panel{background:var(--surface);border:1px solid var(--rule);border-radius:14px;padding:24px}
+label{display:block;font-weight:600;font-size:15px}
+input[type=email]{width:100%;font:inherit;padding:11px 13px;border:1px solid var(--rule);border-radius:9px;
+  background:var(--paper);color:var(--ink);margin:8px 0 14px}
+.hp{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}
+button{font:inherit;font-weight:700;background:var(--spruce);color:var(--surface);border:0;border-radius:9px;
+  padding:12px 18px;cursor:pointer}
+.small{font-size:13.5px;color:var(--muted);margin:12px 0 0}
+#tool[hidden]{display:none}
+.slider{margin-bottom:22px}
+.slider .top{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.slider output{font-weight:700;font-variant-numeric:tabular-nums;color:var(--spruce)}
+input[type=range]{width:100%;accent-color:var(--spruce);margin-top:8px}
+.result{margin-top:8px;padding-top:20px;border-top:1px solid var(--rule)}
+.big{font-size:clamp(40px,8vw,64px);font-weight:800;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
+.big-l{color:var(--ink-2);margin:8px 0 18px;max-width:48ch}
+.bar{display:flex;height:16px;border-radius:5px;overflow:hidden;gap:2px;background:var(--rule)}
+.bar i{display:block;height:100%;transition:width .25s}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+.legend{display:flex;flex-wrap:wrap;gap:6px 22px;margin-top:12px;font-size:15px}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.legend b{font-variant-numeric:tabular-nums}
+.sw{width:12px;height:12px;border-radius:3px;display:inline-block}
+aside h2{font-size:22px;letter-spacing:-.01em;margin:0 0 6px}
+aside > p{color:var(--ink-2);margin:0 0 18px}
+ol.flow{list-style:none;margin:0;padding:0;counter-reset:s}
+ol.flow li{counter-increment:s;position:relative;padding:0 0 18px 42px;border-left:2px solid var(--rule);margin-left:13px}
+ol.flow li:last-child{border-left-color:transparent;padding-bottom:0}
+ol.flow li::before{content:counter(s);position:absolute;left:-14px;top:-2px;width:26px;height:26px;border-radius:50%;
+  background:var(--surface);border:2px solid var(--spruce);color:var(--spruce);font-weight:700;font-size:13px;
+  display:flex;align-items:center;justify-content:center}
+ol.flow strong{display:block}
+ol.flow p{margin:2px 0 0;color:var(--ink-2);font-size:15.5px}
+.status{margin-top:16px;font-size:14px;color:var(--muted);min-height:1.4em}
+footer{margin-top:56px;font-size:14px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="note">Portfolio demo by Maria Driscoll. A working copy of a lead-generation calculator I built and shipped,
+    restyled and with the company removed. Nothing you type here is sent anywhere. <a href="../index.html">Back to the portfolio</a></p>
+
+  <div class="layout">
+    <main>
+      <h1>How much bonus are you missing?</h1>
+      <p class="lede">Meeting spec and earning the full incentive aren't the same thing. Four numbers put a figure on the
+        gap, sized to your own tonnage and penalties.</p>
+
+      <form class="panel" id="gate" novalidate>
+        <label for="email">Work email</label>
+        <input type="email" id="email" name="email" placeholder="you@company.com" autocomplete="off" required>
+        <div class="hp" aria-hidden="true"><label for="company_website">Company website (leave this blank)</label>
+          <input type="text" id="company_website" name="company_website" tabindex="-1" autocomplete="off"></div>
+        <button type="submit">Unlock the calculator</button>
+        <p class="small">In this demo the email is not stored or sent. Leave it blank if you like.</p>
+      </form>
+
+      <section class="panel" id="tool" hidden aria-live="polite">
+        <div class="slider"><div class="top"><label for="rTons">Tons placed on incentive jobs each year</label><output id="vTons"></output></div>
+          <input type="range" id="rTons" min="50000" max="2000000" step="10000" value="600000"></div>
+        <div class="slider"><div class="top"><label for="rCap">Share of available bonus you earn</label><output id="vCap"></output></div>
+          <input type="range" id="rCap" min="0" max="100" step="1" value="75"></div>
+        <div class="slider"><div class="top"><label for="rBpt">Full bonus value per ton</label><output id="vBpt"></output></div>
+          <input type="range" id="rBpt" min="0.5" max="8" step="0.25" value="3"></div>
+        <div class="slider"><div class="top"><label for="rPen">Penalties paid per year</label><output id="vPen"></output></div>
+          <input type="range" id="rPen" min="0" max="500000" step="5000" value="50000"></div>
+
+        <div class="result">
+          <div class="big" id="leak"></div>
+          <p class="big-l">missed each year: the bonus you don't earn at <span id="capEcho"></span> (the gap to
+            100%), plus penalties paid.</p>
+          <div class="bar" role="img" aria-label="Split of the yearly gap between unearned bonus and penalties">
+            <i id="barBonus" style="background:var(--field)"></i><i id="barPen" style="background:var(--signal)"></i></div>
+          <div class="legend">
+            <span><i class="sw" style="background:var(--field)"></i>Unearned bonus <b id="vBonus"></b></span>
+            <span><i class="sw" style="background:var(--signal)"></i>Penalties paid <b id="vPenOut"></b></span>
+          </div>
+          <p class="status" id="status"></p>
+        </div>
+      </section>
+    </main>
+
+    <aside>
+      <h2>What happens behind the form</h2>
+      <p>The interesting part of this tool is invisible. Here is the flow the live version runs.</p>
+      <ol class="flow">
+        <li><strong>Email first, behind a bot check</strong>
+          <p>A hidden honeypot field and a Cloudflare Turnstile check. Both are verified on the server, not in the page.</p></li>
+        <li><strong>A small relay, not a public form address</strong>
+          <p>The page posts to a Cloudflare Worker I wrote. The marketing platform's form address lives only in the
+            Worker's settings, so bots can't scrape it or post to it directly.</p></li>
+        <li><strong>The lead is captured, and a signed ticket comes back</strong>
+          <p>The prospect is created, the autoresponder fires and sales is notified once.</p></li>
+        <li><strong>Their real numbers follow, quietly</strong>
+          <p>When someone stops moving the sliders for a few seconds, the page sends their figures with that ticket to a
+            second handler that only writes fields. Sales sees the prospect's own figures, not the defaults, and nobody
+            gets a second email.</p></li>
+      </ol>
+      <p class="small" style="margin-top:20px">Read the relay code: <a href="../code/form-relay-worker.js">form-relay-worker.js</a></p>
+    </aside>
+  </div>
+
+  <footer>Built by Maria Driscoll. <a href="../index.html">Back to the portfolio</a></footer>
+</div>
+
+<script>
+(function () {
+  var gate = document.getElementById('gate'), tool = document.getElementById('tool');
+  gate.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (document.getElementById('company_website').value.trim() !== '') return; // honeypot
+    gate.hidden = true; tool.hidden = false;
+    update();
+    tool.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+  });
+
+  var ids = ['rTons', 'rCap', 'rBpt', 'rPen'];
+  var el = {}; ids.forEach(function (id) { el[id] = document.getElementById(id); });
+  var usd = function (n) { return '$' + Math.round(n).toLocaleString('en-US'); };
+  var compact = function (n) {
+    if (n >= 1e6) return '$' + (n / 1e6).toFixed(2) + 'M';
+    if (n >= 1e3) return '$' + (n / 1e3).toFixed(1) + 'K';
+    return '$' + Math.round(n);
+  };
+  function set(id, v) { document.getElementById(id).textContent = v; }
+
+  function update() {
+    var tons = +el.rTons.value, cap = +el.rCap.value / 100, bpt = +el.rBpt.value, pen = +el.rPen.value;
+    var bonus = tons * bpt * Math.max(0, 1 - cap), total = bonus + pen;
+    set('vTons', tons.toLocaleString('en-US')); set('vCap', el.rCap.value + '%');
+    set('vBpt', '$' + bpt.toFixed(2)); set('vPen', usd(pen)); set('capEcho', el.rCap.value + '%');
+    set('leak', usd(total)); set('vBonus', compact(bonus)); set('vPenOut', compact(pen));
+    var share = total > 0 ? bonus / total * 100 : 0;
+    document.getElementById('barBonus').style.width = share + '%';
+    document.getElementById('barPen').style.width = (100 - share) + '%';
+  }
+
+  // Stage two of the capture, simulated: wait until the visitor stops adjusting,
+  // then "send" their figures once. In production this posts to the relay with a ticket.
+  var timer = null, last = '';
+  function queue() {
+    clearTimeout(timer);
+    set('status', '');
+    timer = setTimeout(function () {
+      var sig = ids.map(function (id) { return el[id].value; }).join('|');
+      if (sig === last) return;
+      last = sig;
+      set('status', 'Your figures would be added to your record now. In this demo nothing is sent.');
+    }, 2500);
+  }
+  ids.forEach(function (id) { el[id].addEventListener('input', function () { update(); queue(); }); });
+  update();
+})();
+</script>
+</body>
+</html>

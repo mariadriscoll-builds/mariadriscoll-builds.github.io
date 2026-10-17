@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Morning Run</title>
+<meta name="description" content="Portfolio case study: scheduled AI agents that keep a customer-success team's records current, and the rules that make them trustworthy.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:light;
+  --paper:#f2f4f1; --surface:#ffffff; --ink:#1c2326; --ink-2:#3e4c50; --muted:#5e6e71;
+  --rule:#d5dcd9; --spruce:#0e5e5a; --spruce-soft:#e2efec; --lane:#e9b92e; --signal:#c8402f; --violet:#6a54c4;
+  --font:"Schibsted Grotesk","Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  color-scheme:dark;
+  --paper:#0f1a19; --surface:#152423; --ink:#e6ecea; --ink-2:#bcc9c6; --muted:#8fa19d;
+  --rule:#26403c; --spruce:#8fd3c9; --spruce-soft:#1b3330; --signal:#e4705f; --violet:#a08fe3;
+}}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --paper:#0f1a19; --surface:#152423; --ink:#e6ecea; --ink-2:#bcc9c6; --muted:#8fa19d;
+  --rule:#26403c; --spruce:#8fd3c9; --spruce-soft:#1b3330; --signal:#e4705f; --violet:#a08fe3;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.6 var(--font);-webkit-font-smoothing:antialiased}
+a{color:var(--spruce);text-underline-offset:3px}
+a:focus-visible{outline:2px solid var(--spruce);outline-offset:2px}
+.wrap{max-width:900px;margin:0 auto;padding:28px 16px 80px}
+.note{font-size:14px;color:var(--ink-2);margin:0 0 40px}
+h1{font-size:clamp(36px,6vw,58px);line-height:1.02;letter-spacing:-.03em;margin:0 0 16px;font-weight:800}
+.lede{font-size:20px;color:var(--ink-2);margin:0 0 40px;max-width:58ch}
+h2{font-size:26px;letter-spacing:-.015em;line-height:1.2;margin:56px 0 12px}
+p{max-width:68ch}
+.figure{background:var(--surface);border:1px solid var(--rule);border-radius:14px;padding:22px 18px 14px;margin:20px 0 8px}
+.figure svg{display:block;width:100%;height:auto}
+.cap{font-size:14px;color:var(--muted);margin:8px 2px 0}
+svg text{font-family:var(--font)}
+.rules{list-style:none;margin:20px 0 0;padding:0}
+.rules li{padding:20px 0;border-top:1px solid var(--rule)}
+.rules li:last-child{border-bottom:1px solid var(--rule)}
+.rules h3{font-size:19px;margin:0 0 4px;letter-spacing:-.005em}
+.rules p{margin:0;color:var(--ink-2)}
+.rules .eg{margin-top:8px;font-size:15.5px;color:var(--muted);padding-left:14px;border-left:3px solid var(--lane)}
+blockquote{margin:20px 0;padding:18px 20px;background:var(--spruce-soft);border-radius:12px;color:var(--ink);font-size:16px}
+blockquote p{margin:0 0 10px}
+blockquote p:last-child{margin:0}
+.yield{display:grid;grid-template-columns:minmax(0,13rem) minmax(0,1fr) 3rem;gap:6px 12px;align-items:center;margin:18px 0 6px;font-size:15px}
+.yield span.bar{display:block;height:12px;border-radius:3px;background:var(--spruce)}
+.yield b{font-variant-numeric:tabular-nums;text-align:right;font-weight:600}
+@media (max-width:560px){.yield{grid-template-columns:minmax(0,9rem) minmax(0,1fr) 2.6rem;font-size:14px}}
+footer{margin-top:64px;font-size:14px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="note">Portfolio case study by Maria Driscoll. Company, client and people details are removed or fictional;
+    the design and the rules are mine. <a href="../index.html">Back to the portfolio</a></p>
+
+  <h1>The morning run</h1>
+  <p class="lede">A set of scheduled AI agents that keep a customer-success team's records current every day: what each
+    client did, what was promised, what is overdue. I designed the workflow, wrote the agents' instructions and
+    tuned them against what actually went wrong.</p>
+
+  <h2>Why it exists</h2>
+  <p>A small team was serving a growing list of clients whose crews used our product in the field. The signals about
+    each client were spread across automated shift reports, daily system summaries, call recordings, calendars,
+    three mailboxes and team chat. Nobody had time to read all of it, so commitments slipped and quiet clients went
+    unnoticed until renewal.</p>
+  <p>Each client has a working file: a snapshot, an open-items list and a dated activity log. The agents keep those
+    files true, so a person can open one and walk into a call prepared.</p>
+
+  <h2>The schedule</h2>
+  <p>Order matters. Each agent runs after the one whose output it depends on, so it can check its work against
+    what the earlier one wrote instead of duplicating it.</p>
+  <div class="figure">
+    <svg viewBox="0 0 860 300" role="img" aria-labelledby="sched-t sched-d">
+      <title id="sched-t">Daily and weekly schedule of the agents</title>
+      <desc id="sched-d">On weekdays, a system summary lands about 09:10, the client-memory agent runs at 09:40,
+        and the task-sweep agent runs at 11:00. A meeting-prep brief runs early each weekday. On Mondays, a website
+        performance report and a customer-quote harvest also run.</desc>
+      <!-- time axis -->
+      <line x1="40" y1="70" x2="830" y2="70" stroke="var(--rule)" stroke-width="2"/>
+      <g fill="var(--muted)" font-size="13">
+        <text x="117" y="52">07:30</text><text x="198" y="52">08:00</text><text x="356" y="52">09:00</text>
+        <text x="672" y="52">11:00</text>
+      </g>
+      <g stroke="var(--rule)"><line x1="214" y1="62" x2="214" y2="78"/><line x1="372" y1="62" x2="372" y2="78"/>
+        <line x1="135" y1="62" x2="135" y2="78"/><line x1="688" y1="62" x2="688" y2="78"/></g>
+      <text x="40" y="24" font-size="14" font-weight="700" fill="var(--ink)">Every weekday</text>
+      <!-- events -->
+      <g>
+        <circle cx="135" cy="70" r="8" fill="var(--violet)"/>
+        <text x="100" y="104" font-size="14" font-weight="700" fill="var(--ink)">Meeting brief</text>
+        <text x="100" y="122" font-size="13" fill="var(--ink-2)">who's in today's calls,</text>
+        <text x="100" y="139" font-size="13" fill="var(--ink-2)">what's owed both ways</text>
+      </g>
+      <g>
+        <rect x="391" y="62" width="16" height="16" rx="3" fill="var(--lane)"/>
+        <text x="300" y="104" font-size="14" font-weight="700" fill="var(--ink)">Summary lands</text>
+        <text x="300" y="122" font-size="13" fill="var(--ink-2)">yesterday's field and</text>
+        <text x="300" y="139" font-size="13" fill="var(--ink-2)">system data</text>
+      </g>
+      <g>
+        <circle cx="477" cy="70" r="8" fill="var(--spruce)"/>
+        <text x="460" y="104" font-size="14" font-weight="700" fill="var(--ink)">Client memory</text>
+        <text x="460" y="122" font-size="13" fill="var(--ink-2)">activity logs, records,</text>
+        <text x="460" y="139" font-size="13" fill="var(--ink-2)">closes proven items</text>
+      </g>
+      <g>
+        <circle cx="688" cy="70" r="8" fill="var(--spruce)"/>
+        <text x="650" y="104" font-size="14" font-weight="700" fill="var(--ink)">Task sweep</text>
+        <text x="650" y="122" font-size="13" fill="var(--ink-2)">new asks and promises,</text>
+        <text x="650" y="139" font-size="13" fill="var(--ink-2)">fills the gaps above</text>
+      </g>
+      <path d="M485 70 C 560 34, 610 34, 680 70" fill="none" stroke="var(--spruce)" stroke-width="1.5" stroke-dasharray="4 4"/>
+      <text x="532" y="30" font-size="12" fill="var(--muted)">dedupes against</text>
+      <!-- weekly -->
+      <line x1="40" y1="200" x2="830" y2="200" stroke="var(--rule)" stroke-width="2"/>
+      <text x="40" y="180" font-size="14" font-weight="700" fill="var(--ink)">Mondays, as well</text>
+      <g>
+        <circle cx="214" cy="200" r="8" fill="var(--violet)"/>
+        <text x="130" y="234" font-size="14" font-weight="700" fill="var(--ink)">Website report</text>
+        <text x="130" y="252" font-size="13" fill="var(--ink-2)">reads analytics in the</text>
+        <text x="130" y="269" font-size="13" fill="var(--ink-2)">browser, flags gaps</text>
+      </g>
+      <g>
+        <circle cx="332" cy="200" r="8" fill="var(--violet)"/>
+        <text x="300" y="234" font-size="14" font-weight="700" fill="var(--ink)">Quote harvest</text>
+        <text x="300" y="252" font-size="13" fill="var(--ink-2)">customer praise from calls,</text>
+        <text x="300" y="269" font-size="13" fill="var(--ink-2)">verbatim or flagged</text>
+      </g>
+    </svg>
+  </div>
+  <p class="cap">Times are illustrative. The real schedule runs in the team's local time zone.</p>
+
+  <h2>Measured, not assumed</h2>
+  <p>After two weeks I counted which source each of about 200 activity-log entries had come from, and reordered the
+    agent's reading list by what actually produced findings. Automated shift reports came first, not the
+    convenient roll-ups.</p>
+  <div class="yield" role="img" aria-label="Share of log entries citing each source">
+    <span>Automated shift reports</span><span class="bar" style="width:92%"></span><b>46%</b>
+    <span>Calendar</span><span class="bar" style="width:74%"></span><b>37%</b>
+    <span>Call-recording summaries</span><span class="bar" style="width:40%"></span><b>20%</b>
+    <span>Daily system summary</span><span class="bar" style="width:30%"></span><b>15%</b>
+    <span>Team lead's mailbox</span><span class="bar" style="width:26%"></span><b>13%</b>
+    <span>Support inbox</span><span class="bar" style="width:6%"></span><b>3%</b>
+  </div>
+  <p class="cap">Entries can cite more than one source. The support inbox was cited rarely but carried the most
+    important customer email of one fortnight, so it stays in the sweep: cheap to read, expensive to skip.</p>
+
+  <h2>The rules that make it trustworthy</h2>
+  <p>An agent that writes confident nonsense into a client file is worse than no agent. Most of the work was finding
+    the specific ways it could be wrong and writing a rule for each.</p>
+  <ul class="rules">
+    <li><h3>Check the source is current before trusting a quiet result</h3>
+      <p>Before reporting "nothing new", the agent checks when its source last updated.</p>
+      <p class="eg">The call-transcript folder is filed by hand and once went five days stale. "No new customer quotes
+        this week" would have read as "no customer said anything good", when really nobody had filed the calls.</p></li>
+    <li><h3>Silence is not completion</h3>
+      <p>An item closes only on primary evidence that the thing happened: a document that arrived, an email actually
+        sent, a meeting that ran. The agent quotes the source and the time.</p>
+      <p class="eg">A wrongly closed item is worse than a stale open one, because a closed item stops being looked at.</p></li>
+    <li><h3>Close what the item actually promised, and say what is still open</h3>
+      <p>A shipping record proves the part reached the client. It doesn't prove anyone told them, or that it was
+        installed. Those stay open.</p></li>
+    <li><h3>Relays are leads, not facts</h3>
+      <p>Summaries written by other tools are convenient but second-hand. The calendar wins on dates and times. The
+        email wins on what a report said.</p>
+      <p class="eg">A roll-up had a client meeting at 10:30. The invite said 12:00. The rule caught it before it
+        reached the client's file.</p></li>
+    <li><h3>"Unknown" is a true answer</h3>
+      <p>A unit with no fault reported is not "working". It is unknown until something shows it working, and every
+        status carries the date it was last confirmed. An ageing date is the warning sign, so the agent never refreshes
+        one it didn't re-check.</p></li>
+    <li><h3>"Not yet due" is not "dead"</h3>
+      <p>If a daily feed hasn't arrived because the agent ran early, it says so. It doesn't raise a false outage.</p></li>
+    <li><h3>Banter is not a commitment</h3>
+      <p>Joking and thinking aloud on a call don't become tasks. One meeting or deliverable is one item, not a bullet
+        for every slide.</p></li>
+    <li><h3>Stay in your lane, and prove you did</h3>
+      <p>Three writers touch the same files, and each owns specific sections. Before tidying a list, the agent backs up
+        the file and checks afterwards that exactly the same lines exist. If they don't, it restores the file and
+        reports instead of guessing.</p></li>
+  </ul>
+
+  <h2>A sample of the instructions</h2>
+  <p>The agents run on plain-language instructions. This is a lightly edited excerpt.</p>
+  <blockquote>
+    <p>Close only on primary evidence that the thing itself happened: a document that arrived, an email actually sent,
+      a form returned, a calendar entry that exists, a meeting that ran. Quote the source and timestamp.</p>
+    <p>Never close on: the item going quiet; a call summary alone; someone asserting on a call that a thing is fine;
+      or any inference needing a chain of reasoning.</p>
+    <p>An item that became unblocked rather than completed stays open, and gets flagged in the output.</p>
+  </blockquote>
+
+  <h2>What changed</h2>
+  <p>The team lead opens the day to an up-to-date file for every client and a short list of what needs her. Promises
+    made on calls show up as open items with an owner. Quiet clients surface in days instead of at renewal, and
+    nothing is marked done without proof.</p>
+
+  <footer>Built by Maria Driscoll. <a href="../index.html">Back to the portfolio</a></footer>
+</div>
+</body>
+</html>

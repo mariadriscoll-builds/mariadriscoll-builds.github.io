@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Client Adoption Dashboard (demo)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Portfolio demo theme. Heat ramps contrast-checked against their surfaces
+   in both modes (lightest step >= 2:1). */
+:root{
+  color-scheme:light;
+  /* palette */
+  --c-blue:#0e5e5a; --c-blue-bright:#8fd3c9; --c-blue-dark:#08413e;
+  --c-blue-tint:#e6f1ef; --c-navy:#132826; --c-navy-soft:#24403d;
+  --c-white:#ffffff; --c-grey:#e4e8e6; --c-grey-line:#cfd6d3; --c-grey-text:#55666a;
+  --p-amber:#e0a419; --p-red:#c8402f; --p-green:#2f9e6a;
+  /* type */
+  --font-brand:"Schibsted Grotesk",system-ui,sans-serif;
+  --font-product:"Schibsted Grotesk","Segoe UI",system-ui,sans-serif;
+  --font-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  /* semantic */
+  --surface-1:var(--c-white); --plane:var(--c-blue-tint);
+  --ink:#000; --ink-2:var(--c-grey-text); --muted:#8a939d;
+  --grid:var(--c-grey); --rule:var(--c-grey-line); --ring:var(--c-grey-line);
+  --band:#f4f7f6;
+  /* field ramp - brand blue hue */
+  --b0:#eef1ef; --b1:#5fb8ac; --b2:#3a9c91; --b3:#1d7f76; --b4:#08615a;
+  /* office ramp - second sequential hue */
+  --u1:#a08fe3; --u2:#8069d4; --u3:#5f47b9;
+  --warn:var(--p-amber); --crit:var(--p-red);
+  --on-deep:#fff;
+  /* Status ladder - customer (filled) > paid trial (tinted) > free trial (outline).
+     Every pair contrast-checked against the white card: 7.31 / 6.03 / 6.01 text,
+     7.31 / 4.06 border-or-fill vs surface. */
+  --chip-cust-bg:#0e5e5a; --chip-cust-fg:#ffffff;
+  --chip-paid-bg:#fdf0d5; --chip-paid-bd:#b0700f; --chip-paid-fg:#8a4b00;
+  --chip-free-bd:#cfd6d3; --chip-free-fg:#55666a;
+  --shadow-1:0 1px 2px rgba(19,40,38,.06),0 1px 1px rgba(19,40,38,.04);
+  --ease:cubic-bezier(.2,.6,.2,1);
+}
+@media (prefers-color-scheme:dark){
+ :root:where(:not([data-theme="light"])){
+  color-scheme:dark;
+  --surface-1:var(--c-navy); --plane:#0d1c1b;
+  --ink:#fff; --ink-2:#b7c2cc; --muted:#8a99a6;
+  --grid:#2c4643; --rule:var(--c-navy-soft); --ring:var(--c-navy-soft);
+  --band:#1a3331;
+  --b0:#24403d; --b1:#16675f; --b2:#2a8a80; --b3:#4fb0a5; --b4:#7fd4c9;
+  --u1:#5a43b0; --u2:#7b63d0; --u3:#a08ff0;
+  --chip-cust-bg:#8fd3c9; --chip-cust-fg:#06201e;
+  --chip-paid-bg:#3a3222; --chip-paid-bd:#a9762a; --chip-paid-fg:#f0b968;
+  --chip-free-bd:#45566a; --chip-free-fg:#b7c2cc;
+  --on-deep:#08131a;
+  --shadow-1:0 1px 2px rgba(0,0,0,.3);
+ }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --surface-1:var(--c-navy); --plane:#0d1c1b;
+  --ink:#fff; --ink-2:#b7c2cc; --muted:#8a99a6;
+  --grid:#2c4643; --rule:var(--c-navy-soft); --ring:var(--c-navy-soft);
+  --band:#1a3331;
+  --b0:#24403d; --b1:#16675f; --b2:#2a8a80; --b3:#4fb0a5; --b4:#7fd4c9;
+  --u1:#5a43b0; --u2:#7b63d0; --u3:#a08ff0;
+  --chip-cust-bg:#8fd3c9; --chip-cust-fg:#06201e;
+  --chip-paid-bg:#3a3222; --chip-paid-bd:#a9762a; --chip-paid-fg:#f0b968;
+  --chip-free-bd:#45566a; --chip-free-fg:#b7c2cc;
+  --on-deep:#08131a;
+  --shadow-1:0 1px 2px rgba(0,0,0,.3);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--plane);color:var(--ink);
+ font:16px/1.5 var(--font-product);-webkit-font-smoothing:antialiased}
+.wrap{max-width:1500px;margin:0 auto;padding:32px 24px 64px}
+header{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:28px}
+h1{font-family:var(--font-brand);font-size:28px;font-weight:700;margin:0;
+ letter-spacing:0;line-height:1.2}
+.wordmark{font-family:var(--font-brand);font-weight:700;font-size:13px;padding:3px 9px;border:1px solid var(--c-blue-bright);border-radius:20px;color:var(--c-blue);letter-spacing:-.01em;line-height:1}
+.brandbar{background:var(--c-navy);border-radius:12px;padding:18px 22px;
+ margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;
+ gap:20px;flex-wrap:wrap}
+.brandbar .wordmark{color:var(--c-white)}
+.brandbar h1{color:var(--c-white);font-size:22px}
+.brandbar .sub-h{color:var(--c-blue-bright)}
+.rule{width:1px;align-self:stretch;background:var(--c-navy-soft);margin:0 4px}
+.sub-h{color:var(--ink-2);font-size:14px}
+button{font:inherit;font-size:13px;color:var(--ink-2);background:var(--surface-1);
+ border:1px solid var(--ring);border-radius:8px;padding:7px 13px;cursor:pointer}
+button:hover{color:var(--ink);border-color:var(--c-blue)}
+.ranges{display:inline-flex;gap:0;border:1px solid var(--c-navy-soft);border-radius:8px;
+ overflow:hidden}
+.ranges button{border:0;border-radius:0;padding:7px 11px}
+.ranges button+button{border-left:1px solid var(--c-navy-soft)}
+.brandbar .ranges button.on{background:var(--c-blue);color:#fff}
+.brandbar button{background:transparent;color:var(--c-blue-bright);
+ border-color:var(--c-navy-soft);transition:all var(--ease) 200ms}
+.brandbar button:hover{color:var(--c-white);border-color:var(--c-blue-bright);
+ background:rgba(143,211,201,.14)}
+.tile-when{font-size:10px;letter-spacing:.06em;text-transform:uppercase;
+ color:var(--muted);margin-bottom:6px;font-weight:600}
+.tiles-note{font-size:12.5px;color:var(--ink-2);margin:-18px 0 24px 2px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:28px}
+.tile{background:var(--surface-1);border:1px solid var(--ring);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow-1)}
+.tile-v{font-family:var(--font-brand);font-size:34px;font-weight:700;
+ letter-spacing:-.01em;line-height:1.05;color:var(--c-blue)}
+.tile-l{font-size:13px;color:var(--ink-2);margin-top:5px}
+.tile-s{font-size:12px;color:var(--muted);margin-top:1px}
+.card{background:var(--surface-1);border:1px solid var(--ring);border-radius:12px;padding:20px;margin-bottom:20px;box-shadow:var(--shadow-1)}
+h2{font-family:var(--font-brand);font-size:19px;font-weight:700;margin:0 0 3px}
+.hint{font-size:13px;color:var(--muted);margin:0 0 16px}
+/* Scroll container, so the frozen header row and client column stick against it
+   the way a frozen pane does in the spreadsheet. */
+.scroll{overflow:auto;max-height:72vh}
+table.grid{border-collapse:separate;border-spacing:2px;font-size:12px}
+.grid th{font-weight:500;text-align:left}
+.grid thead th{position:sticky;top:0;z-index:3;background:var(--surface-1)}
+.grid thead th.corner{z-index:5}
+th.dcol{color:var(--muted);font-size:11px;text-align:center;padding:4px 0 7px;min-width:34px;line-height:1.2}
+th.dcol.wk{opacity:.5}
+.dow,.dnum,.dmon{display:block}
+.dnum{font-variant-numeric:tabular-nums;color:var(--ink-2);font-size:12px;font-weight:600}
+.dmon{font-size:9px;color:var(--muted);letter-spacing:.02em;margin-top:1px}
+.dmon.newmon{color:var(--ink-2);font-weight:600}
+th.rowh{padding:8px 14px 8px 10px;vertical-align:middle;width:200px;min-width:200px;
+ position:sticky;left:0;z-index:2;background:var(--surface-1);
+ box-shadow:5px 0 0 var(--surface-1)}
+/* Alternating client bands, carried on the two frozen columns so the grouping
+   stays readable no matter how far you scroll. */
+th.rowh.alt,th.sub.alt{background:var(--band)}
+th.rowh.alt{box-shadow:5px 0 0 var(--band)}
+th.sub.alt{box-shadow:1px 0 0 var(--grid),3px 0 0 var(--band)}
+tr.gstart th,tr.gstart td{border-top:2px solid var(--rule)}
+.cname{display:block;font-weight:600;font-size:13px;color:var(--ink)}
+.chip{display:inline-block;font-size:10px;padding:1px 6px;border-radius:20px;margin-top:3px;
+ border:1px solid var(--ring);color:var(--ink-2)}
+.chip.cust{background:var(--chip-cust-bg);border-color:var(--chip-cust-bg);
+ color:var(--chip-cust-fg);font-weight:600}
+.chip.paid{background:var(--chip-paid-bg);border-color:var(--chip-paid-bd);
+ color:var(--chip-paid-fg);font-weight:600}
+.chip.free{background:transparent;border-color:var(--chip-free-bd);
+ color:var(--chip-free-fg)}
+.crew{display:block;font-size:11px;color:var(--muted);margin-top:3px}
+th.sub{font-size:10px;color:var(--muted);padding-right:9px;text-align:right;
+ width:52px;min-width:52px;white-space:nowrap;
+ position:sticky;left:var(--sub-left,204px);z-index:2;background:var(--surface-1);
+ box-shadow:1px 0 0 var(--grid),3px 0 0 var(--surface-1)}
+td.cell{width:34px;height:32px;border-radius:5px;background:var(--b0);position:relative;
+ text-align:center;cursor:pointer;outline:none;transition:width .12s}
+.mode-detail td.cell{cursor:default}
+td.cell:not(.nodata):hover{outline:2px solid var(--c-blue);outline-offset:1px}
+.mode-detail td.cell:hover{outline:none}
+/* brief highlight so the row you came from is findable after the switch */
+tr.flash td,tr.flash th{background:var(--c-blue-tint)}
+@media (prefers-reduced-motion:reduce){tr.flash td,tr.flash th{background:none}}
+/* --- Detail view: the spreadsheet's own shape, readable without hovering --- */
+.detail{display:none}
+.mode-detail td.cell{width:150px;min-width:150px;height:auto;padding:5px 7px;
+ text-align:center;background:var(--surface-1);border-left:4px solid var(--b0)}
+.mode-detail td.cell .compact{display:none}
+.mode-detail td.cell .detail{display:block;line-height:1.35}
+.mode-detail th.dcol{min-width:150px}
+.mode-detail td.cell.b1{background:var(--surface-1);border-left-color:var(--b1)}
+.mode-detail td.cell.b2{background:var(--surface-1);border-left-color:var(--b2)}
+.mode-detail td.cell.b3{background:var(--surface-1);border-left-color:var(--b3)}
+.mode-detail td.cell.b4{background:var(--surface-1);border-left-color:var(--b4)}
+.mode-detail td.cell.u1{background:var(--surface-1);border-left-color:var(--u1)}
+.mode-detail td.cell.u2{background:var(--surface-1);border-left-color:var(--u2)}
+.mode-detail td.cell.u3{background:var(--surface-1);border-left-color:var(--u3)}
+.mode-detail td.cell.blip{background:var(--surface-1);border-left-color:var(--b2);box-shadow:none}
+.mode-detail td.cell.b0,.mode-detail td.cell.u0{background:var(--surface-1);
+ border-left-color:var(--crit);box-shadow:none}
+.mode-detail td.nodata{background:transparent;border-left:4px solid transparent}
+.mode-detail .badge{top:2px;right:2px}
+.bx{display:block;font-size:11.5px;color:var(--ink);font-weight:600;margin-top:2px}
+.hr{display:block;font-size:11px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.ac{color:var(--muted)}
+.bl{color:var(--b2);font-weight:600}
+.un{display:block;font-size:11.5px;color:var(--ink)}
+.ua{color:var(--muted);font-variant-numeric:tabular-nums}
+.ua:before{content:" ("} .ua:after{content:")"}
+.none{color:var(--muted)}
+td.cell:focus-visible{box-shadow:0 0 0 2px var(--ink)}
+/* Nothing captured that day - the thing the sheet exists to catch. */
+td.cell.b0,td.cell.u0{background:var(--b0);box-shadow:inset 0 0 0 1.5px var(--crit)}
+/* No summary was logged at all - our gap, not the client's. Stays neutral. */
+td.nodata{background:transparent;border:1px dashed var(--grid);box-shadow:none}
+/* element+class, to outrank the td.cell base background */
+td.cell.b1{background:var(--b1)} td.cell.b2{background:var(--b2)}
+td.cell.b3{background:var(--b3)} td.cell.b4{background:var(--b4)}
+td.cell.u1{background:var(--u1)} td.cell.u2{background:var(--u2)}
+td.cell.u3{background:var(--u3)}
+/* Office activity not known for this day (backfilled from a source without it). */
+td.cell.unk{background:repeating-linear-gradient(45deg,var(--b0),var(--b0) 3px,transparent 3px,transparent 6px);box-shadow:none}
+.mode-detail td.cell.unk{background:var(--surface-1);border-left-color:var(--grid)}
+.unkn{color:var(--muted);font-style:italic;font-size:11px}
+/* Blip: hardware reported in, crew didn't really use it. */
+td.cell.blip{background:var(--b0);box-shadow:inset 0 0 0 1.5px var(--b2)}
+.dot{display:block;width:7px;height:7px;border-radius:50%;background:var(--b2);margin:0 auto}
+.cell .v{font-size:11px;font-variant-numeric:tabular-nums;color:var(--ink-2);opacity:.85}
+td.cell.b2 .v,td.cell.b3 .v,td.cell.b4 .v,
+td.cell.u2 .v,td.cell.u3 .v{color:var(--on-deep);opacity:1;font-weight:600}
+td.cell.u1 .v{color:#1d1240;opacity:1;font-weight:600}
+.badge{position:absolute;top:-4px;right:-4px;width:14px;height:14px;border-radius:50%;
+ font-size:9px;line-height:14px;font-weight:700;color:#0b0b0b;
+ box-shadow:0 0 0 1.5px var(--surface-1)}
+.badge.id{background:var(--warn)}
+.badge.md{background:var(--crit);color:#fff}
+/* A notice, not a report: the project was processed but no shift email
+   was generated. Neutral grey on purpose - it is a reporting gap on our
+   side, not a data-quality failure on the client's. */
+.badge.nr{background:var(--muted);color:#fff}
+.legend{display:flex;flex-direction:column;gap:8px;margin-top:18px;
+ font-size:11.5px;color:var(--muted)}
+.legend .lrow{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.legend .lrow>span{display:inline-flex;align-items:center;gap:5px}
+.legend .lkey{color:var(--ink-2);font-weight:600;width:46px;flex:0 0 46px}
+.legend .sw{display:inline-block;width:14px;height:14px;border-radius:3px;flex:0 0 14px}
+.legend .badge{position:static;font-style:normal;display:inline-flex;align-items:center;justify-content:center;
+ width:15px;height:15px;flex:0 0 15px;line-height:1;box-shadow:none;top:auto;right:auto}
+ul.watch{margin:0;padding-left:19px;font-size:13.5px;color:var(--ink-2)}
+ul.watch li{margin-bottom:7px}
+#tip{position:fixed;z-index:99;pointer-events:none;opacity:0;transition:opacity .1s;
+ background:var(--ink);color:var(--plane);font-size:11.5px;line-height:1.45;
+ padding:7px 10px;border-radius:7px;max-width:320px;white-space:pre-line}
+table.data{width:100%;border-collapse:collapse;font-size:13px}
+table.data th,table.data td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--grid);vertical-align:top}
+table.data th{color:var(--muted);font-weight:500;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em}
+#tableview[hidden]{display:none}
+footer{font-size:12px;color:var(--muted);margin-top:26px}
+footer a{color:var(--c-blue)}
+.brandbar>div{flex-wrap:wrap}
+:root[data-theme="dark"] .tile-v{color:var(--c-blue-bright)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tile-v{color:var(--c-blue-bright)}}
+:root[data-theme="dark"] footer a{color:var(--c-blue-bright)}
+</style></head><body>
+<div class="wrap">
+
+<div class="brandbar">
+  <div style="display:flex;align-items:center;gap:16px">
+    <span class="wordmark">demo</span>
+    <span class="rule"></span>
+    <div>
+      <h1>Client adoption dashboard</h1>
+      <div class="sub-h">Field telemetry and portal activity, through Friday, July 11, 2025. Every client, person and number is fictional.</div>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px">
+    <span class="ranges" role="group" aria-label="Date range">
+      <button onclick="setRange(14,this)">14d</button>
+      <button onclick="setRange(30,this)">30d</button>
+      <button onclick="setRange(90,this)">90d</button>
+      <button onclick="setRange(0,this)" class="on">All</button>
+    </span>
+    <button onclick="toLatest(true)">Jump to latest</button>
+    <button onclick="vm()" id="vmbtn">Heatmap view</button>
+    <button onclick="tv()">Table view</button>
+    <button onclick="th_()">Light / dark</button>
+  </div>
+</div>
+
+<div class="tiles"><div class="tile"><div class="tile-when">Fri 11 Jul</div><div class="tile-v">69.0</div><div class="tile-l">fleet hours on site</div><div class="tile-s">36.58 hr rolling</div></div><div class="tile"><div class="tile-when">Fri 11 Jul</div><div class="tile-v">53%</div><div class="tile-l">rolling share of time on site</div><div class="tile-s">compaction vs idle</div></div><div class="tile"><div class="tile-when">Fri 11 Jul</div><div class="tile-v">8</div><div class="tile-l">crews in the field</div><div class="tile-s">14 machines</div></div><div class="tile"><div class="tile-when">Fri 11 Jul</div><div class="tile-v">11</div><div class="tile-l">people in the portal</div><div class="tile-s">1066 actions</div></div></div>
+<p class="tiles-note">Figures are for <strong>Friday, July 11, 2025</strong>, the most recent day in the ledger.</p>
+
+<div class="card">
+  <h2>Adoption &mdash; <span id="rangelbl">5 May to 11 Jul 2025</span></h2>
+  <p class="hint">One line per crew &mdash; its boxes, hours on site and hours actually rolling &mdash;
+  plus an <strong>Office</strong> line for who worked in the portal. Field silence with the office still
+  logging in points at hardware; both dark at once is the adoption-failure pattern.
+  <strong>Heatmap view</strong> shrinks it to one square a day for spotting long-run patterns &mdash; click any square to open that day in detail.</p>
+  <noscript><p class="hint" style="color:var(--crit)">This grid is drawn by the browser - it needs JavaScript enabled. The figures above and the table view below do not.</p></noscript>
+  <div class="scroll mode-detail" id="gridwrap">
+    <table class="grid"><thead><tr>
+      <th class="corner rowh"></th><th class="corner sub"></th><th class="dcol" data-day="2025-05-05"><span class="dow">M</span><span class="dnum">5</span><span class="dmon newmon">May</span></th><th class="dcol" data-day="2025-05-06"><span class="dow">T</span><span class="dnum">6</span><span class="dmon">May</span></th><th class="dcol" data-day="2025-05-07"><span class="dow">W</span><span class="dnum">7</span><span class="dmon">May</span></th><th class="dcol" data-day="2025-05-08"><span class="dow">T</span><span class="dnum">8</span><span class="dmon">May</span></th><th class="dcol" data-day="2025-05-09"><span class="dow">F</span><span class="dnum">9</span><span class="dmon">May</span></th><th class="dcol wk" data-day="2025-05-10"><span class="dow">S</span><span class="dnum">10</span><span class="dmon">May</span></th><th class="dcol wk" data-day="2025-05-11"><span class="dow">S</span><span class="dnum">11</span><span class="dmon">May</span></th><th class="dcol" data-day="2025-05-12"><span class="dow">M</span><span class="dnum">12</span><span class="dmon">May</span></th><th class="dcol" data-day="2025-05-13"><span class="dow">T</span><span class="dnum">13</span><span class="dmon">May</span></th><th class="dcol" data-day="2025-05-14"><span class="dow">W</span><span class="dnum">14</span><span class="dmon">May</span></th><th class="dcol" data-day="2025-05-15"><span class="dow">T</span><span class="dnum">15</span><span class="dmon">May</span></th><th class="dcol" data-day="2025-05-16"><span class="dow">F</span><span class="dnum">16</span><span class="dmon">May</span></th><th class="dcol wk" data-day="2025-05-17"><span class="dow">S</span><span class="dnum">17</span><span class="dmon">May</span></th><th class="dcol wk" data-day="2025-05-18"><span class="dow">S</span><span class="dnum">18</span><span class="dmon">May</span></th><th class="dcol" data-day="2025-05-19"><span class="dow">M</span><span class="dnum">19</span><span class="dmon">May</span></th><th class="dcol" data-day="2025-05-20"><span class="dow">T</span><span class="dnum">20</span><span class="dmon">May</span></th><th class="dcol" data-day="2025-05-21"><span class="dow">W</span><span class="dnum">21</span><span class="dmon">May</span></th><th class="dcol" data-day="2025-05-22"><span class="dow">T</span><span class="dnum">22</span><span class="dmon">May</span></th><th class="dcol" data-day="2025-05-23"><span class="dow">F</span><span class="dnum">23</span><span class="dmon">May</span></th><th class="dcol wk" data-day="2025-05-24"><span class="dow">S</span><span class="dnum">24</span><span class="dmon">May</span></th><th class="dcol wk" data-day="2025-05-25"><span class="dow">S</span><span class="dnum">25</span><span class="dmon">May</span></th><th class="dcol" data-day="2025-05-26"><span class="dow">M</span><span class="dnum">26</span><span class="dmon">May</span></th><th class="dcol" data-day="2025-05-27"><span class="dow">T</span><span class="dnum">27</span><span class="dmon">May</span></th><th class="dcol" data-day="2025-05-28"><span class="dow">W</span><span class="dnum">28</span><span class="dmon">May</span></th><th class="dcol" data-day="2025-05-29"><span class="dow">T</span><span class="dnum">29</span><span class="dmon">May</span></th><th class="dcol" data-day="2025-05-30"><span class="dow">F</span><span class="dnum">30</span><span class="dmon">May</span></th><th class="dcol wk" data-day="2025-05-31"><span class="dow">S</span><span class="dnum">31</span><span class="dmon">May</span></th><th class="dcol wk" data-day="2025-06-01"><span class="dow">S</span><span class="dnum">1</span><span class="dmon newmon">Jun</span></th><th class="dcol" data-day="2025-06-02"><span class="dow">M</span><span class="dnum">2</span><span class="dmon">Jun</span></th><th class="dcol" data-day="2025-06-03"><span class="dow">T</span><span class="dnum">3</span><span class="dmon">Jun</span></th><th class="dcol" data-day="2025-06-04"><span class="dow">W</span><span class="dnum">4</span><span class="dmon">Jun</span></th><th class="dcol" data-day="2025-06-05"><span class="dow">T</span><span class="dnum">5</span><span class="dmon">Jun</span></th><th class="dcol" data-day="2025-06-06"><span class="dow">F</span><span class="dnum">6</span><span class="dmon">Jun</span></th><th class="dcol wk" data-day="2025-06-07"><span class="dow">S</span><span class="dnum">7</span><span class="dmon">Jun</span></th><th class="dcol wk" data-day="2025-06-08"><span class="dow">S</span><span class="dnum">8</span><span class="dmon">Jun</span></th><th class="dcol" data-day="2025-06-09"><span class="dow">M</span><span class="dnum">9</span><span class="dmon">Jun</span></th><th class="dcol" data-day="2025-06-10"><span class="dow">T</span><span class="dnum">10</span><span class="dmon">Jun</span></th><th class="dcol" data-day="2025-06-11"><span class="dow">W</span><span class="dnum">11</span><span class="dmon">Jun</span></th><th class="dcol" data-day="2025-06-12"><span class="dow">T</span><span class="dnum">12</span><span class="dmon">Jun</span></th><th class="dcol" data-day="2025-06-13"><span class="dow">F</span><span class="dnum">13</span><span class="dmon">Jun</span></th><th class="dcol wk" data-day="2025-06-14"><span class="dow">S</span><span class="dnum">14</span><span class="dmon">Jun</span></th><th class="dcol wk" data-day="2025-06-15"><span class="dow">S</span><span class="dnum">15</span><span class="dmon">Jun</span></th><th class="dcol" data-day="2025-06-16"><span class="dow">M</span><span class="dnum">16</span><span class="dmon">Jun</span></th><th class="dcol" data-day="2025-06-17"><span class="dow">T</span><span class="dnum">17</span><span class="dmon">Jun</span></th><th class="dcol" data-day="2025-06-18"><span class="dow">W</span><span class="dnum">18</span><span class="dmon">Jun</span></th><th class="dcol" data-day="2025-06-19"><span class="dow">T</span><span class="dnum">19</span><span class="dmon">Jun</span></th><th class="dcol" data-day="2025-06-20"><span class="dow">F</span><span class="dnum">20</span><span class="dmon">Jun</span></th><th class="dcol wk" data-day="2025-06-21"><span class="dow">S</span><span class="dnum">21</span><span class="dmon">Jun</span></th><th class="dcol wk" data-day="2025-06-22"><span class="dow">S</span><span class="dnum">22</span><span class="dmon">Jun</span></th><th class="dcol" data-day="2025-06-23"><span class="dow">M</span><span class="dnum">23</span><span class="dmon">Jun</span></th><th class="dcol" data-day="2025-06-24"><span class="dow">T</span><span class="dnum">24</span><span class="dmon">Jun</span></th><th class="dcol" data-day="2025-06-25"><span class="dow">W</span><span class="dnum">25</span><span class="dmon">Jun</span></th><th class="dcol" data-day="2025-06-26"><span class="dow">T</span><span class="dnum">26</span><span class="dmon">Jun</span></th><th class="dcol" data-day="2025-06-27"><span class="dow">F</span><span class="dnum">27</span><span class="dmon">Jun</span></th><th class="dcol wk" data-day="2025-06-28"><span class="dow">S</span><span class="dnum">28</span><span class="dmon">Jun</span></th><th class="dcol wk" data-day="2025-06-29"><span class="dow">S</span><span class="dnum">29</span><span class="dmon">Jun</span></th><th class="dcol" data-day="2025-06-30"><span class="dow">M</span><span class="dnum">30</span><span class="dmon">Jun</span></th><th class="dcol" data-day="2025-07-01"><span class="dow">T</span><span class="dnum">1</span><span class="dmon newmon">Jul</span></th><th class="dcol" data-day="2025-07-02"><span class="dow">W</span><span class="dnum">2</span><span class="dmon">Jul</span></th><th class="dcol" data-day="2025-07-03"><span class="dow">T</span><span class="dnum">3</span><span class="dmon">Jul</span></th><th class="dcol" data-day="2025-07-04"><span class="dow">F</span><span class="dnum">4</span><span class="dmon">Jul</span></th><th class="dcol wk" data-day="2025-07-05"><span class="dow">S</span><span class="dnum">5</span><span class="dmon">Jul</span></th><th class="dcol wk" data-day="2025-07-06"><span class="dow">S</span><span class="dnum">6</span><span class="dmon">Jul</span></th><th class="dcol" data-day="2025-07-07"><span class="dow">M</span><span class="dnum">7</span><span class="dmon">Jul</span></th><th class="dcol" data-day="2025-07-08"><span class="dow">T</span><span class="dnum">8</span><span class="dmon">Jul</span></th><th class="dcol" data-day="2025-07-09"><span class="dow">W</span><span class="dnum">9</span><span class="dmon">Jul</span></th><th class="dcol" data-day="2025-07-10"><span class="dow">T</span><span class="dnum">10</span><span class="dmon">Jul</span></th><th class="dcol" data-day="2025-07-11"><span class="dow">F</span><span class="dnum">11</span><span class="dmon">Jul</span></th></tr></thead>
+    <tbody id="gridbody"></tbody></table>
+  </div>
+  <div class="legend">
+    <div class="lrow"><span class="lkey">Field</span>
+      <span><i class="sw" style="background:var(--b0)"></i>none</span>
+      <span><i class="sw" style="background:var(--b1)"></i>under 2 hr</span>
+      <span><i class="sw" style="background:var(--b2)"></i>2-5 hr</span>
+      <span><i class="sw" style="background:var(--b3)"></i>5-9 hr</span>
+      <span><i class="sw" style="background:var(--b4)"></i>9 hr and over</span>
+      <span><i class="sw" style="background:var(--b0);box-shadow:inset 0 0 0 1.5px var(--b2)"></i>blip &mdash; connected, no real paving</span></div>
+    <div class="lrow"><span class="lkey">Office</span>
+      <span><i class="sw" style="background:var(--u1)"></i>light</span>
+      <span><i class="sw" style="background:var(--u2)"></i>steady</span>
+      <span><i class="sw" style="background:var(--u3)"></i>heavy</span>
+      <span><i class="sw" style="background:repeating-linear-gradient(45deg,var(--b0),var(--b0) 3px,transparent 3px,transparent 6px)"></i>not known &mdash; backfilled day</span></div>
+    <div class="lrow"><span class="lkey">Flags</span>
+      <span><i class="badge id">I</i>incomplete data</span>
+      <span><i class="badge md">M</i>missing data</span>
+      <span><i class="badge nr">N</i>no shift report sent</span>
+      <span><i class="sw" style="background:var(--b0);box-shadow:inset 0 0 0 1.5px var(--crit)"></i>nothing captured</span>
+      <span>Hover a red square for how many days that run has lasted.</span>
+      <span><i class="sw" style="background:transparent;border:1px dashed var(--grid)"></i>no summary logged</span></div>
+  </div>
+</div>
+
+<div class="card" id="tableview" hidden>
+  <h2>Friday, July 11, 2025 in full</h2>
+  <p class="hint">The same numbers as text, for screen readers and for copying out.</p>
+  <table class="data"><thead><tr><th>Client</th><th>Code</th><th>Boxes</th><th>Portal users</th></tr></thead>
+  <tbody><tr><td>Harrow Ridge Paving</td><td>-</td><td>Osprey 6.67 hr on site / 3.81 hr active; Plover 6.32 hr on site / 3.6 hr active</td><td>Priya Raman (217)</td></tr><tr><td>Belltide Asphalt</td><td>MD</td><td>Curlew 9.07 hr on site / 5.75 hr active</td><td>Tom Ashby (67)</td></tr><tr><td>Quillan Roadworks</td><td>-</td><td>Lapwing 10.29 hr on site / 5.7 hr active; Godwit 10.17 hr on site / 5.64 hr active</td><td>Leon Baptiste (99); Hannah Ostrowski (119)</td></tr><tr><td>Marrow Creek Construction</td><td>-</td><td>-</td><td>-</td></tr><tr><td>Tessaly Paving</td><td>ID</td><td>Petrel 9.94 hr on site / 5.82 hr active; Dunlin 9.49 hr on site / 5.55 hr active</td><td>Owen Pritchard (86)</td></tr><tr><td>Dunmere Materials</td><td>-</td><td>-</td><td>-</td></tr><tr><td>Pellbrook Asphalt</td><td>-</td><td>Bittern 9.39 hr on site / 4.3 hr active; Gannet 9.05 hr on site / 4.15 hr active; Fulmar 6.85 hr on site / 3.44 hr active</td><td>Grace Nakamura (42); Ines Moreau (114)</td></tr><tr><td>Corvane Civil</td><td>-</td><td>Tern 7.9 hr on site / 3.72 hr active; Whimbrel 7.33 hr on site / 3.45 hr active</td><td>Victor Szabo (89)</td></tr><tr><td>Wrenfield Paving</td><td>-</td><td>-</td><td>-</td></tr><tr><td>Lowmere Contracting</td><td>-</td><td>Sanderling 8.92 hr on site / 4.04 hr active; Corncrake 8.62 hr on site / 3.91 hr active</td><td>Patrick Doyle (91); Nadia Haddad (33); Sam Okafor (109)</td></tr></tbody></table>
+</div>
+
+<div class="card">
+  <h2>Watch items</h2>
+  <p class="hint">Written from the day's data. Verify before acting.</p>
+  <ul class="watch"><li>Belltide Asphalt: the Merlin box has not sent a pass since Jun 2. The crew has run on the Curlew alone ever since, so the field row still looks healthy. A box that stops appearing is not alternation. Ask what happened to it.</li><li>Belltide Asphalt, mid-June: the field went dark for a full working week while the office kept logging in to the portal every day. That is the hardware pattern, not abandonment, and it is why the office row exists.</li><li>Marrow Creek Construction is the adoption-failure pattern: no field data since May 26 and nobody in the portal since May 30. 34 working days dark on both halves. Call the sponsor this week, not at renewal.</li><li>Quillan Roadworks turned a corner: a month of blips and half-days, then both boxes rolling full shifts from Jun 9. Worth a short note to their champion and a case-study ask.</li><li>Tessaly Paving runs nights, and 13 of its 48 shifts came through flagged incomplete. The crew is using it; the data is not all landing. That is ours to chase, not theirs.</li><li>Wrenfield Paving: 32 days of portal activity and no field data at all. Confirm the unit actually reached the job before reading this as a usage problem.</li><li>Dunmere Materials: 15 days of blips, never a real shift. The hardware is alive and the crew is not using it. A training visit, not a hardware ticket.</li><li>Corvane Civil started on Jun 9; 4 early shifts arrived with missing data, clearing as the uplink settled. Keep watching the next two weeks.</li></ul>
+</div>
+
+<footer>Portfolio demo by Maria Driscoll. The renderer, layout and logic are the production build; the data is generated and fictional. <a href="../index.html">Back to the portfolio</a></footer>
+</div>
+
+<div id="tip"></div>
+<script>
+// The grid is rendered from this data island - see grid_render.js for why.
+const __D={"ax":["2025-05-05","2025-05-06","2025-05-07","2025-05-08","2025-05-09","2025-05-10","2025-05-11","2025-05-12","2025-05-13","2025-05-14","2025-05-15","2025-05-16","2025-05-17","2025-05-18","2025-05-19","2025-05-20","2025-05-21","2025-05-22","2025-05-23","2025-05-24","2025-05-25","2025-05-26","2025-05-27","2025-05-28","2025-05-29","2025-05-30","2025-05-31","2025-06-01","2025-06-02","2025-06-03","2025-06-04","2025-06-05","2025-06-06","2025-06-07","2025-06-08","2025-06-09","2025-06-10","2025-06-11","2025-06-12","2025-06-13","2025-06-14","2025-06-15","2025-06-16","2025-06-17","2025-06-18","2025-06-19","2025-06-20","2025-06-21","2025-06-22","2025-06-23","2025-06-24","2025-06-25","2025-06-26","2025-06-27","2025-06-28","2025-06-29","2025-06-30","2025-07-01","2025-07-02","2025-07-03","2025-07-04","2025-07-05","2025-07-06","2025-07-07","2025-07-08","2025-07-09","2025-07-10","2025-07-11"],"B":["Kestrel","Heron","Osprey","Plover","Curlew","Merlin","Lapwing","Godwit","Shrike","Petrel","Dunlin","Avocet","Bittern","Gannet","Fulmar","Tern","Whimbrel","Redshank","Sanderling","Corncrake"],"U":["Dana Whitlock","Marcus Ferreira","Priya Raman","Tom Ashby","Lena Kowalczyk","Leon Baptiste","Hannah Ostrowski","Kofi Mensah","Rita Vasquez","Owen Pritchard","Sofia Lindqvist","Jamal Carter","Grace Nakamura","Ben Halloran","Ines Moreau","Victor Szabo","Carla Brennan","Eli Thornton","Mei Chen","Patrick Doyle","Nadia Haddad","Sam Okafor","Lucy Pembroke","Ray Castillo"],"g":[[["","16.62",[[0,"7.98","5.01"],[1,"7.53","4.73"],[2,"8.64","4.64"],[3,"8.09","4.34"]],null],["","19.91",[[0,"10.25","5.37"],[1,"9.92","5.2"],[2,"9.66","5.91"],[3,"9.48","5.8"]],null],["","15.83",[[0,"7.13","3.61"],[1,"6.53","3.31"],[2,"8.7","5.45"],[3,"8.15","5.1"]],null],["","10",[[0,"10","6.51"],[1,"9.67","6.29"]],null],["","18.32",[[0,"9","5.94"],[1,"8.83","5.82"],[2,"9.32","5.71"],[3,"9.14","5.6"]],null],["","0",[],null],["","0",[],null],["ID","17.83",[[0,"7.6","4.12"],[1,"7","3.8"],[2,"10.23","4.64"],[3,"10.18","4.62"]],null],["","10.1",[[0,"10.1","4.86"],[1,"9.51","4.57"]],null],["","18.59",[[0,"9.63","5.44"],[1,"9.21","5.21"],[2,"8.96","4.52"],[3,"8.55","4.31"]],[[0,84],[1,93],[2,171]]],["","14.84",[[0,"7.1","3.42"],[1,"6.84","3.3"],[2,"7.74","4.48"],[3,"7.28","4.22"]],[[0,194]]],["","17.33",[[0,"9.57","4.92"],[1,"9.33","4.8"],[2,"7.76","3.67"],[3,"7.74","3.66"]],[[0,64]]],["","0",[],[]],["","0",[],[]],["","9.64",[[2,"9.64","5.6"],[3,"9.53","5.53"]],[[1,177],[2,202]]],["","0",[],[[0,26],[2,182]]],["","19.13",[[0,"9.06","4.51"],[1,"8.88","4.42"],[2,"10.07","4.72"],[3,"9.88","4.63"]],[[0,165],[2,16]]],["","15.62",[[0,"8.24","5.03"],[1,"8.17","4.98"],[2,"7.37","3.72"],[3,"6.99","3.52"]],[[1,4]]],["","17.05",[[0,"7.26","4.72"],[1,"7.14","4.64"],[2,"9.79","4.69"],[3,"9.47","4.54"]],[[0,13],[2,214]]],null,["","0",[],[]],["","18.19",[[0,"7.93","4.24"],[1,"7.34","3.92"],[2,"10.25","5.44"],[3,"10.23","5.43"]],[[0,26],[1,45]]],["","17.73",[[0,"9.75","5.78"],[1,"9.64","5.71"],[2,"7.98","4.75"],[3,"7.93","4.72"]],[[0,133]]],["","16.21",[[0,"7.48","3.86"],[1,"7.29","3.76"],[2,"8.73","4.35"],[3,"8.35","4.16"]],[[0,12],[1,156]]],["","17.29",[[0,"10.04","4.63"],[1,"9.87","4.55"],[2,"7.24","4"],[3,"6.88","3.8"]],[[1,123]]],["","16.19",[[0,"6.66","3.97"],[1,"6.14","3.66"],[2,"9.54","6.06"],[3,"9.38","5.96"]],[[0,137],[1,72]]],["","0",[],[[1,41]]],["","0",[],[]],["","10.23",[[0,"10.23","5.84"],[1,"10.22","5.84"]],[[1,166],[2,5]]],["","0",[],[[0,65],[1,184]]],["","0",[],[[2,15]]],["","17.04",[[0,"9.61","4.86"],[1,"9.52","4.81"],[2,"7.42","3.78"],[3,"7.11","3.62"]],[[0,84],[1,74]]],["","14.14",[[0,"7.48","4.83"],[1,"7.25","4.68"],[2,"6.65","3.65"],[3,"6.16","3.38"]],[[0,192],[1,107],[2,193]]],["","0",[],[[0,151],[1,203]]],["","0",[],[]],["","15.32",[[0,"6.84","3.95"],[1,"6.29","3.63"],[2,"8.48","5.28"],[3,"7.99","4.98"]],[[1,64]]],["","19.41",[[0,"9.39","5.28"],[1,"8.98","5.04"],[2,"10.02","5.71"],[3,"9.92","5.65"]],[[0,202]]],["","15.43",[[0,"7.89","4.07"],[1,"7.63","3.93"],[2,"7.53","4.67"],[3,"7.4","4.59"]],[[0,151],[1,62],[2,85]]],["","16.93",[[0,"7.04","3.52"],[1,"6.48","3.25"],[2,"9.89","5.88"],[3,"9.4","5.59"]],[[0,83],[2,209]]],["","17.46",[[0,"8.94","5.84"],[1,"8.43","5.51"],[2,"8.52","5.49"],[3,"8.01","5.16"]],[[0,46],[2,190]]],["","0",[],[[0,123]]],["","0",[],[]],["","18.42",[[0,"9.65","5.65"],[1,"9.24","5.41"],[2,"8.77","4.51"],[3,"8.22","4.23"]],[[0,204]]],["","20.77",[[0,"10.28","5.5"],[1,"10.15","5.43"],[2,"10.49","6.25"],[3,"10.38","6.19"]],[[0,15],[1,10]]],["","10.24",[[2,"10.24","6.19"],[3,"9.91","5.99"]],[[0,210],[1,28]]],["","19",[[0,"10.13","5.01"],[1,"9.75","4.82"],[2,"8.86","5.67"],[3,"8.28","5.29"]],[[0,142],[2,158]]],["","18.7",[[0,"8.68","3.94"],[1,"8.38","3.81"],[2,"10.02","5.87"],[3,"10.01","5.86"]],[[0,88]]],null,["","0",[],[[0,24]]],["","14.99",[[0,"7.07","3.44"],[1,"6.56","3.19"],[2,"7.92","4.65"],[3,"7.51","4.41"]],[[1,204],[2,12]]],["","15.39",[[0,"7.21","3.42"],[1,"7.15","3.39"],[2,"8.18","4.2"],[3,"7.78","3.99"]],[[0,154],[2,138]]],["","16.62",[[0,"6.66","3.36"],[1,"6.07","3.06"],[2,"9.97","5.13"],[3,"9.75","5.02"]],[[0,65]]],["","0",[],[[0,66],[1,74],[2,71]]],["","18.05",[[0,"8.43","5.55"],[1,"8.18","5.38"],[2,"9.62","6.26"],[3,"9.56","6.23"]],[[1,92]]],["","0",[],[]],["","0",[],[]],["","17.98",[[0,"10.38","6.75"],[1,"10.08","6.55"],[2,"7.6","4.69"],[3,"7.17","4.43"]],[[0,205]]],["","9.69",[[2,"9.69","4.39"],[3,"9.62","4.36"]],[[0,157],[1,94]]],["","19.52",[[0,"9.6","4.4"],[1,"9.43","4.32"],[2,"9.92","5.16"],[3,"9.71","5.05"]],[[0,18],[1,122]]],["","16.24",[[0,"6.6","3.04"],[1,"6.17","2.84"],[2,"9.63","4.72"],[3,"9.04","4.43"]],[[0,22],[2,199]]],["","17.85",[[0,"8.9","5.85"],[1,"8.45","5.56"],[2,"8.96","5.52"],[3,"8.41","5.19"]],[[2,173]]],["","0",[],[[0,102]]],["","0",[],[]],["","16.98",[[0,"7.71","3.86"],[1,"7.11","3.56"],[2,"9.28","4.34"],[3,"9.25","4.33"]],[[0,208],[2,120]]],["","19.18",[[0,"8.83","5.26"],[1,"8.63","5.13"],[2,"10.35","4.71"],[3,"10.17","4.63"]],[[0,105],[1,101]]],["ID","13.74",[[0,"6.86","4.32"],[1,"6.81","4.29"],[2,"6.89","4.08"],[3,"6.5","3.86"]],[]],["","15.87",[[0,"7.09","3.64"],[1,"6.91","3.54"],[2,"8.78","5.5"],[3,"8.34","5.23"]],[[0,157]]],["","6.67",[[2,"6.67","3.81"],[3,"6.32","3.6"]],[[2,217]]]],[["","7.79",[[4,"7.79","4.43"],[5,"7.55","4.3"]],null],["","0",[],null],["","9.82",[[4,"9.82","5.41"],[5,"9.52","5.24"]],null],["","9.14",[[4,"9.14","4.16"],[5,"8.67","3.95"]],null],["","6.62",[[4,"6.62","4.23"],[5,"6.56","4.19"]],null],["","0",[],null],["","0",[],null],["","9.38",[[4,"9.38","5.26"],[5,"9.34","5.24"]],null],["","0",[],null],["","8.88",[[4,"8.88","4.8"],[5,"8.68","4.69"]],[[3,131],[4,15]]],["","0",[],[[3,80],[4,175]]],["","9.92",[[4,"9.92","4.64"],[5,"9.34","4.37"]],[[3,211],[4,111]]],["","0",[],[]],["","0",[],[]],["","8.28",[[4,"8.28","5.3"],[5,"8.09","5.18"]],[[3,202]]],["","0",[],[]],["","0",[],[]],["","7.32",[[4,"7.32","3.66"],[5,"7.03","3.52"]],[[3,7]]],["","9.16",[[4,"9.16","5.64"],[5,"8.82","5.44"]],[]],null,["","0",[],[]],["","0",[],[[3,157],[4,159]]],["","7.28",[[4,"7.28","3.88"],[5,"6.94","3.69"]],[[3,122]]],["","7.2",[[4,"7.2","3.43"],[5,"6.74","3.21"]],[[3,202]]],["","7.5",[[4,"7.5","3.44"],[5,"7.15","3.28"]],[[3,199]]],["","6.62",[[4,"6.62","3.73"],[5,"6.29","3.55"]],[[3,204],[4,217]]],["","0",[],[[3,196]]],["","0",[],[]],["","9.83",[[4,"9.83","5.2"],[5,"9.69","5.13"]],[[3,18]]],["","0",[],[[4,187]]],["","0",[],[[3,109]]],["","8.78",[[4,"8.78","4.09"]],[[3,149],[4,6]]],["","6.75",[[4,"6.75","3.86"]],[[3,190]]],["","0",[],[[3,204]]],["","0",[],[[3,116]]],["","7.9",[[4,"7.9","3.67"]],[[3,61]]],["","9.41",[[4,"9.41","4.83"]],[[3,107]]],["","10.15",[[4,"10.15","6.21"]],[[3,59]]],["","0",[],[]],["","0",[],[[3,159]]],["","0",[],[]],["","0",[],[[3,49]]],["","8.5",[[4,"8.5","4.71"]],[[3,72]]],["ID","6.72",[[4,"6.72","3.79"]],[[3,208]]],["","0",[],[[3,171],[4,99]]],["","0",[],[[3,194],[4,154]]],["","0",[],[[3,96],[4,82]]],null,["","0",[],[]],["","0",[],[[3,59],[4,112]]],["","0",[],[[3,22]]],["","6.8",[[4,"6.8","3.88"]],[]],["","0",[],[[3,39]]],["","7.72",[[4,"7.72","4.69"]],[[3,70]]],["","0",[],[]],["","0",[],[]],["","9.26",[[4,"9.26","5.64"]],[[3,77]]],["","9.78",[[4,"9.78","5.81"]],[[3,132]]],["ID","10.48",[[4,"10.48","6.7"]],[[3,31]]],["","9.59",[[4,"9.59","6.19"]],[[3,116]]],["","8.55",[[4,"8.55","5.24"]],[[3,149],[4,172]]],["","0",[],[[3,131]]],["","0",[],[]],["","7.88",[[4,"7.88","4.61"]],[[3,65],[4,157]]],["","7.91",[[4,"7.91","4.99"]],[[3,204]]],["","9.44",[[4,"9.44","4.77"]],[[3,138]]],["","8.04",[[4,"8.04","5.14"]],[[3,127],[4,180]]],["MD","9.07",[[4,"9.07","5.75"]],[[3,67]]]],[["","0.4",[[6,"0.4","0.08"]],null],["","0.15",[[6,"0.15","0.03"]],null],["","0.3",[[6,"0.3","0.06"]],null],["","0.42",[[6,"0.42","0.08"]],null],["","0.44",[[6,"0.44","0.09"]],null],["","0",[],null],["","0",[],null],["","0",[],null],["","0",[],null],["","0.15",[[6,"0.15","0.03"]],[]],["","0.38",[[6,"0.38","0.08"]],[[5,18]]],["","0.27",[[6,"0.27","0.05"]],[[5,77],[6,99]]],["","0",[],[]],["","0",[],[]],["","0.28",[[6,"0.28","0.06"]],[[6,23]]],["","0",[],[]],["","0.15",[[6,"0.15","0.03"]],[[6,56]]],["","4.73",[[6,"4.73","2.07"]],[[5,100]]],["","3.6",[[6,"3.6","1.22"]],[[5,66]]],null,["","0",[],[[5,108]]],["","0",[],[[5,96]]],["","3.43",[[6,"3.43","1.27"]],[[6,30]]],["","0",[],[]],["","3.89",[[6,"3.89","1.84"]],[]],["","3.71",[[6,"3.71","1.2"]],[[5,92]]],["","0",[],[]],["","0",[],[]],["","5.76",[[6,"5.76","2.2"]],[]],["","0",[],[]],["","0",[],[[5,117],[6,5]]],["","5.63",[[6,"5.63","2.21"]],[[6,14]]],["","5.78",[[6,"5.78","2.8"]],[[5,77]]],["","0",[],[[5,27]]],["","0",[],[[6,62]]],["","8.25",[[6,"8.25","5.1"],[7,"8.16","5.05"]],[[6,37]]],["","9.62",[[6,"9.62","6.05"],[7,"9.16","5.76"]],[[5,94]]],["","7.46",[[6,"7.46","4.35"],[7,"7.03","4.1"]],[[5,113]]],["","9.31",[[6,"9.31","5.94"],[7,"9.11","5.81"]],[[5,14]]],["","8.8",[[6,"8.8","4.43"],[7,"8.5","4.28"]],[[5,41]]],["","0",[],[]],["","0",[],[[5,18]]],["","8.01",[[6,"8.01","4.68"],[7,"7.51","4.39"]],[[5,119]]],["","9.93",[[6,"9.93","6.21"],[7,"9.46","5.91"]],[[5,110]]],["","10.29",[[6,"10.29","5.34"],[7,"10.19","5.29"]],[[5,76],[6,80]]],["","10.24",[[6,"10.24","5.58"],[7,"10.09","5.49"]],[]],["","9.25",[[6,"9.25","4.88"],[7,"8.67","4.57"]],[[5,37]]],null,["","0",[],[]],["","7.1",[[6,"7.1","4.06"],[7,"6.77","3.88"]],[[5,66],[6,71]]],["","7.73",[[6,"7.73","4.82"],[7,"7.25","4.52"]],[]],["","9.19",[[6,"9.19","4.68"],[7,"8.98","4.57"]],[]],["","0",[],[[5,30]]],["","7.6",[[6,"7.6","3.95"],[7,"7.35","3.83"]],[[5,96],[6,14]]],["","0",[],[[5,97]]],["","0",[],[]],["","7.09",[[6,"7.09","3.57"],[7,"7.08","3.57"]],[[5,27]]],["","0",[],[[5,115]]],["","8.86",[[6,"8.86","4.43"],[7,"8.83","4.42"]],[[5,14]]],["","10.17",[[6,"10.17","6.38"],[7,"9.59","6.02"]],[[6,10]]],["MD","9.29",[[6,"9.29","4.79"],[7,"9.11","4.7"]],[[5,83],[6,6]]],["","0",[],[[6,102]]],["","0",[],[]],["","9.97",[[6,"9.97","5.24"],[7,"9.92","5.21"]],[[5,102],[6,75]]],["ID","7.96",[[6,"7.96","4.25"],[7,"7.63","4.08"]],[[5,85]]],["","7.06",[[6,"7.06","3.56"],[7,"6.69","3.37"]],[]],["","9.99",[[6,"9.99","6.42"],[7,"9.42","6.05"]],[[5,120],[6,111]]],["","10.29",[[6,"10.29","5.7"],[7,"10.17","5.64"]],[[5,99],[6,119]]]],[["","8.09",[[8,"8.09","3.8"]],null],["","0",[],null],["","7.09",[[8,"7.09","3.8"]],null],["","10.03",[[8,"10.03","4.92"]],null],["","7.33",[[8,"7.33","4.57"]],null],["","0",[],null],["","0",[],null],["ID","10.37",[[8,"10.37","5.97"]],null],["","8.21",[[8,"8.21","5.42"]],null],["ID","8.25",[[8,"8.25","4.13"]],[[7,51]]],["","0",[],[[7,85]]],["","8.27",[[8,"8.27","4.5"]],[[7,26]]],["","0",[],[]],["","0",[],[]],["","9.28",[[8,"9.28","5.82"]],[[7,20]]],["","0",[],[[7,50]]],["","7.07",[[8,"7.07","4.21"]],[[7,76]]],["","6.71",[[8,"6.71","3.77"]],[]],["ID","6.93",[[8,"6.93","3.42"]],[]],null,["","0",[],[]],["","9.86",[[8,"9.86","5.32"]],[[7,58],[8,89]]],["","0",[],[[7,4]]],["","0",[],[]],["","0",[],[[7,29]]],["","0",[],[[7,115],[8,68]]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],null,["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]]],[["","11.39",[[9,"11.39","6.21"],[10,"10.92","5.95"]],null],["","10.16",[[9,"10.16","6.35"],[10,"9.81","6.13"]],null],["","10.15",[[9,"10.15","5.25"],[10,"10.09","5.22"]],null],["ID","9.41",[[9,"9.41","6.44"],[10,"9.01","6.16"]],null],["ID","8.89",[[9,"8.89","4.96"],[10,"8.83","4.93"]],null],["","0",[],null],["","10.29",[[9,"10.29","6.49"],[10,"10.03","6.32"]],null],["ID","10.03",[[9,"10.03","5.28"],[10,"9.56","5.03"]],null],["","9.06",[[9,"9.06","6.31"],[10,"8.7","6.05"]],null],["","9.14",[[9,"9.14","5.61"],[10,"8.89","5.45"]],[[9,9]]],["","9.41",[[9,"9.41","6.56"],[10,"9.35","6.53"]],[[10,32]]],["","9.09",[[9,"9.09","5.94"],[10,"8.56","5.59"]],[]],["","0",[],[]],["ID","9.4",[[9,"9.4","6.22"],[10,"9.27","6.14"]],[]],["","10.6",[[9,"10.6","5.83"],[10,"10.37","5.7"]],[]],["","0",[],[[9,105],[10,11]]],["","0",[],[[9,84]]],["","0",[],[]],["","11.73",[[9,"11.73","7.88"],[10,"11.71","7.87"]],[[10,33]]],null,["","9.59",[[9,"9.59","5.98"],[10,"9.2","5.73"]],[]],["","9.93",[[9,"9.93","5.57"],[10,"9.39","5.26"]],[[9,13]]],["ID","11.85",[[9,"11.85","5.94"],[10,"11.59","5.81"]],[]],["","10.4",[[9,"10.4","6.26"],[10,"9.87","5.94"]],[]],["","8.99",[[9,"8.99","6.17"],[10,"8.69","5.97"]],[[9,14],[10,55]]],["","9.25",[[9,"9.25","4.67"],[10,"8.89","4.48"]],[[9,37]]],["","0",[],[]],["ID","10.92",[[9,"10.92","6.07"],[10,"10.41","5.79"]],[[9,97]]],["","10.05",[[9,"10.05","6.62"],[10,"9.82","6.47"]],[[10,33]]],["","0",[],[[9,20]]],["","0",[],[]],["","9.5",[[9,"9.5","6.52"],[10,"9.13","6.27"]],[[9,93]]],["","9.85",[[9,"9.85","5.88"],[10,"9.75","5.83"]],[]],["","0",[],[]],["","11.83",[[9,"11.83","8.16"],[10,"11.25","7.76"]],[]],["","0",[],[]],["ID","11.77",[[9,"11.77","7.69"],[10,"11.18","7.3"]],[]],["","0",[],[[9,12],[10,68]]],["","9.78",[[9,"9.78","6.76"],[10,"9.63","6.66"]],[]],["","8.91",[[9,"8.91","5.1"],[10,"8.47","4.85"]],[[9,98]]],["","0",[],[[10,102]]],["","8.92",[[9,"8.92","5.63"],[10,"8.55","5.4"]],[]],["","9.92",[[9,"9.92","5.89"],[10,"9.52","5.66"]],[[9,65]]],["","9.62",[[9,"9.62","6.42"],[10,"9.2","6.14"]],[]],["","8.8",[[9,"8.8","4.75"],[10,"8.64","4.66"]],[]],["","11.06",[[9,"11.06","6.51"],[10,"10.67","6.28"]],[[9,29]]],["ID","10.46",[[9,"10.46","6.38"],[10,"10.34","6.31"]],[[9,60]]],null,["","11.49",[[9,"11.49","6.62"],[10,"11.4","6.56"]],[]],["","10.4",[[9,"10.4","7.08"],[10,"9.95","6.77"]],[[9,79],[10,79]]],["","10.16",[[9,"10.16","5.4"],[10,"9.96","5.29"]],[]],["","0",[],[[9,11]]],["","0",[],[]],["","11.98",[[9,"11.98","6.68"],[10,"11.98","6.68"]],[[9,27],[10,18]]],["","0",[],[]],["","0",[],[]],["ID","10.38",[[9,"10.38","5.93"],[10,"10.34","5.91"]],[[9,43],[10,8]]],["","9.31",[[9,"9.31","5.09"],[10,"8.98","4.91"]],[]],["ID","9.11",[[9,"9.11","5.93"],[10,"8.81","5.74"]],[]],["","10.54",[[9,"10.54","5.82"],[10,"10","5.52"]],[[9,45]]],["ID","11.2",[[9,"11.2","7.15"],[10,"10.86","6.94"]],[[9,93]]],["","0",[],[]],["ID","8.5",[[9,"8.5","4.28"],[10,"8.15","4.11"]],[[10,76]]],["","11.96",[[9,"11.96","7.86"],[10,"11.71","7.69"]],[[9,87]]],["","0",[],[]],["","9.21",[[9,"9.21","4.76"],[10,"8.95","4.62"]],[[9,64]]],["","11.89",[[9,"11.89","6.66"],[10,"11.82","6.62"]],[[9,54]]],["ID","9.94",[[9,"9.94","5.82"],[10,"9.49","5.55"]],[[9,86]]]],[["","0.57",[[11,"0.57","0.04"]],null],["","0",[],null],["","0.06",[[11,"0.06","0.02"]],null],["","0.22",[[11,"0.22","0.03"]],null],["","0",[],null],["","0",[],null],["","0",[],null],["","0.39",[[11,"0.39","0.1"]],null],["","0",[],null],["","0.45",[[11,"0.45","0.04"]],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0.52",[[11,"0.52","0.13"]],[]],["","0",[],[]],["","0",[],[[11,46]]],["","0.28",[[11,"0.28","0.03"]],[]],["","0.28",[[11,"0.28","0.05"]],[]],null,["","0",[],[]],["","0",[],[]],["","0.2",[[11,"0.2","0.01"]],[]],["","0",[],[]],["","0",[],[[11,4]]],["ID","0.4",[[11,"0.4","0.04"]],[[11,85]]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0.48",[[11,"0.48","0.05"]],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[[11,49]]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[[11,67]]],["","0",[],[]],["","0.16",[[11,"0.16","0.02"]],[]],null,["","0",[],[]],["","0",[],[[11,117]]],["","0.55",[[11,"0.55","0.06"]],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0.51",[[11,"0.51","0.1"]],[[11,104]]],["","0.45",[[11,"0.45","0.07"]],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]]],[["","16.69",[[12,"6.98","3.41"],[13,"6.82","3.33"],[14,"9.72","5.59"]],null],["","18.22",[[12,"10.08","5.06"],[13,"9.48","4.76"],[14,"8.15","4.33"]],null],["","16.78",[[12,"6.85","3.38"],[13,"6.41","3.16"],[14,"9.94","5.55"]],null],["","9.67",[[12,"9.67","6"],[13,"9.21","5.71"]],null],["","18.61",[[12,"8.69","4.75"],[13,"8.15","4.46"],[14,"9.91","4.87"]],null],["","0",[],null],["","0",[],null],["","15.83",[[12,"8.02","5"],[13,"7.56","4.71"],[14,"7.81","3.94"]],null],["NR","18.59",[[12,"10.49","6.15"],[13,"10.45","6.13"],[14,"8.1","4.12"]],null],["","18.36",[[12,"10.22","5.99"],[13,"9.78","5.73"],[14,"8.14","5.18"]],[[12,44],[13,53],[14,39]]],["","15.68",[[12,"8.36","4.79"],[13,"8.06","4.63"],[14,"7.32","4.38"]],[]],["","20.46",[[12,"10.33","5.76"],[13,"9.81","5.47"],[14,"10.13","5.28"]],[[13,27],[14,5]]],["","6.67",[[12,"6.67","3.31"],[13,"6.6","3.28"]],[]],["","0",[],[]],["NR","18.52",[[12,"10.01","4.68"],[13,"9.49","4.44"],[14,"8.51","5.19"]],[[12,76],[13,78],[14,85]]],["","0",[],[]],["","17.41",[[12,"8.59","4.15"],[13,"8.1","3.91"],[14,"8.82","4.62"]],[[12,87],[13,33]]],["","18.06",[[12,"8.33","4.23"],[13,"8.24","4.19"],[14,"9.73","4.81"]],[[12,19],[13,90]]],["","14.84",[[12,"8.04","4.81"],[13,"7.64","4.57"],[14,"6.8","3.27"]],[[12,109]]],null,["","0",[],[[12,9]]],["","14.48",[[12,"7.5","3.9"],[13,"7.39","3.84"],[14,"6.98","3.53"]],[[13,108]]],["NR","18.31",[[12,"8.71","4.91"],[13,"8.21","4.63"],[14,"9.61","4.49"]],[[12,38],[13,44]]],["","9.56",[[14,"9.56","5.94"]],[[12,28],[13,118],[14,83]]],["","14.3",[[12,"7.01","3.29"],[13,"6.91","3.24"],[14,"7.29","4.31"]],[[12,110],[13,116]]],["","8.73",[[12,"8.73","4.55"],[13,"8.37","4.37"]],[[12,115],[14,21]]],["","0",[],[]],["","0",[],[]],["","14.89",[[12,"8.3","5.41"],[13,"7.71","5.03"],[14,"6.6","3.07"]],[[12,93],[13,40],[14,65]]],["","0",[],[[12,27],[13,59],[14,24]]],["","0",[],[[12,103]]],["","17.52",[[12,"10.28","5.74"],[13,"9.92","5.54"],[14,"7.24","3.79"]],[[13,50]]],["","14.93",[[12,"7.05","3.38"],[13,"6.48","3.11"],[14,"7.88","4.19"]],[[13,72],[14,45]]],["","0",[],[]],["","0",[],[]],["NR","15.55",[[12,"7.29","3.42"],[13,"7.26","3.41"],[14,"8.26","4.53"]],[[12,54],[13,75],[14,42]]],["","6.58",[[14,"6.58","3.69"]],[[12,94]]],["","15.56",[[12,"8.45","4.08"],[13,"8.06","3.89"],[14,"7.11","4.43"]],[[13,120]]],["NR","8.27",[[12,"8.27","4.48"],[13,"8.18","4.43"]],[]],["","18.82",[[12,"10.45","5.73"],[13,"10.24","5.61"],[14,"8.36","5.12"]],[[12,113]]],["","0",[],[]],["","0",[],[]],["","15.7",[[12,"7.4","4.4"],[13,"7.07","4.21"],[14,"8.3","4.68"]],[[12,94],[14,41]]],["","17.94",[[12,"7.48","3.9"],[13,"7.08","3.69"],[14,"10.46","5.67"]],[[12,17],[14,76]]],["","15.39",[[12,"6.55","3.7"],[13,"6.15","3.48"],[14,"8.84","4.74"]],[[13,100],[14,21]]],["","16.94",[[12,"7.12","3.28"],[13,"6.76","3.12"],[14,"9.82","6.39"]],[[12,17],[13,12]]],["","18.61",[[12,"9.17","4.83"],[13,"9","4.74"],[14,"9.44","4.63"]],[[12,46]]],null,["","0",[],[]],["","20.14",[[12,"10.38","6.76"],[13,"10.34","6.73"],[14,"9.76","5.12"]],[[12,34]]],["","18.14",[[12,"10.28","5.24"],[13,"10.14","5.17"],[14,"7.86","3.64"]],[[12,113],[13,118],[14,84]]],["","18.27",[[12,"10.33","5.83"],[13,"10.16","5.74"],[14,"7.94","3.78"]],[[12,75]]],["","0",[],[[13,61]]],["","15.77",[[12,"8.17","4.39"],[13,"8.15","4.38"],[14,"7.59","3.62"]],[[12,29]]],["","6.99",[[12,"6.99","3.19"],[13,"6.7","3.06"]],[]],["","0",[],[]],["","17.35",[[12,"9.39","4.35"],[13,"9.27","4.29"],[14,"7.97","4.83"]],[[12,114],[13,82]]],["","14.96",[[12,"7.16","4.29"],[13,"7.12","4.27"],[14,"7.8","4.05"]],[[12,58]]],["","15.59",[[12,"8.93","4.11"],[13,"8.86","4.08"],[14,"6.66","3.94"]],[[12,19]]],["NR","17.6",[[12,"7.52","3.42"],[13,"7.22","3.28"],[14,"10.07","5.15"]],[[14,116]]],["","18.38",[[12,"10.06","5.72"],[13,"9.64","5.48"],[14,"8.32","4.69"]],[[13,25],[14,20]]],["","4.63",[[12,"4.63","2.55"],[13,"4.53","2.5"]],[]],["","0",[],[]],["","16.52",[[12,"7.89","3.63"],[13,"7.49","3.45"],[14,"8.63","4.9"]],[[14,18]]],["","15.1",[[12,"6.65","3.26"],[13,"6.48","3.18"],[14,"8.45","5.13"]],[]],["","19.47",[[12,"9.67","6.23"],[13,"9.67","6.23"],[14,"9.8","5.18"]],[[12,19]]],["","18",[[12,"9.24","5.62"],[13,"9.06","5.51"],[14,"8.76","4.49"]],[[12,19]]],["","16.24",[[12,"9.39","4.3"],[13,"9.05","4.15"],[14,"6.85","3.44"]],[[12,42],[14,114]]]],[["","0",[],null],["","0",[],null],["","0",[],null],["","0",[],null],["","0",[],null],["","0",[],null],["","0",[],null],["","0",[],null],["","0",[],null],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],null,["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","9.06",[[15,"9.06","5.31"],[16,"8.75","5.13"]],[]],["MD","7.68",[[15,"7.68","4.71"],[16,"7.41","4.54"]],[[15,90]]],["","7.5",[[15,"7.5","3.97"],[16,"7.27","3.85"]],[[16,60]]],["MD","7.77",[[15,"7.77","4.38"],[16,"7.26","4.09"]],[[15,94]]],["","8.33",[[15,"8.33","4.76"],[16,"7.88","4.5"]],[[16,53]]],["","0",[],[]],["","0",[],[]],["","9.65",[[15,"9.65","5.44"],[16,"9.16","5.16"]],[[16,76]]],["","8.23",[[15,"8.23","4.27"],[16,"7.98","4.14"]],[]],["MD","9.9",[[15,"9.9","4.67"],[16,"9.82","4.63"]],[[15,43]]],["","6.98",[[15,"6.98","4.11"],[16,"6.49","3.82"]],[]],["","6.24",[[15,"6.24","3.9"],[16,"6.13","3.83"]],[[15,34]]],null,["","0",[],[]],["","9.97",[[15,"9.97","6.35"],[16,"9.91","6.31"]],[[15,12],[16,73]]],["","6.63",[[15,"6.63","3.81"],[16,"6.44","3.71"]],[[15,92]]],["","6.02",[[15,"6.02","2.78"],[16,"5.73","2.64"]],[[15,102],[16,93]]],["","0",[],[]],["","6.28",[[15,"6.28","3.26"],[16,"6.12","3.17"]],[[16,50]]],["","0",[],[]],["","0",[],[]],["","6.5",[[15,"6.5","3.04"],[16,"6.09","2.85"]],[[15,14]]],["","6.05",[[15,"6.05","3.34"],[16,"5.53","3.05"]],[[15,23]]],["","7.94",[[15,"7.94","3.7"],[16,"7.42","3.45"]],[[15,75],[16,32]]],["","6.7",[[15,"6.7","3.82"],[16,"6.52","3.72"]],[[16,4]]],["","7.29",[[15,"7.29","3.94"],[16,"7.04","3.81"]],[[15,7],[16,63]]],["","0",[],[]],["","0",[],[]],["MD","8.2",[[15,"8.2","5.03"],[16,"7.87","4.83"]],[[15,55],[16,38]]],["","7.09",[[15,"7.09","3.44"],[16,"6.55","3.18"]],[[15,53],[16,53]]],["","8.97",[[15,"8.97","4.86"],[16,"8.67","4.7"]],[[15,77]]],["","9.92",[[15,"9.92","4.84"],[16,"9.38","4.58"]],[[15,11],[16,77]]],["","7.9",[[15,"7.9","3.72"],[16,"7.33","3.45"]],[[15,89]]]],[["","0",[],null],["","0",[],null],["","0",[],null],["","0",[],null],["","0",[],null],["","0",[],null],["","0",[],null],["","0",[],null],["","0",[],null],["","0",[],[[17,122]]],["","0",[],[[17,89],[18,217]]],["","0",[],[[17,176]]],["","0",[],[[18,168]]],["","0",[],[]],["","0",[],[]],["","0",[],[[17,133]]],["","0",[],[]],["","0",[],[[18,19]]],["","0",[],[[17,218]]],null,["","0",[],[[17,55]]],["","0",[],[]],["","0",[],[[17,20]]],["","0",[],[[18,18]]],["","0",[],[[17,28]]],["","0",[],[[17,62]]],["","0",[],[]],["","0",[],[]],["","0",[],[[17,144]]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[[18,206]]],["","0",[],[]],["","0",[],[]],["","0",[],[[17,112],[18,10]]],["","0",[],[[17,74]]],["","0",[],[[17,162]]],["","0",[],[[18,22]]],["","0",[],[[17,59],[18,45]]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[[17,198]]],["","0",[],[[17,193]]],["","0",[],[[17,51],[18,187]]],null,["","0",[],[]],["","0",[],[[17,85]]],["","0",[],[[18,77]]],["","0",[],[[17,192],[18,25]]],["","0",[],[[17,108],[18,108]]],["","0",[],[[17,173]]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[[17,106],[18,98]]],["","0",[],[[17,107]]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[]],["","0",[],[[17,218]]],["","0",[],[[17,32],[18,107]]],["","0",[],[]],["","0",[],[[18,49]]],["","0",[],[]]],[["","6.72",[[18,"6.72","3.2"],[19,"6.69","3.19"]],null],["","10.42",[[18,"10.42","6.62"],[19,"10.36","6.58"]],null],["","9.39",[[18,"9.39","5.53"],[19,"9.34","5.51"]],null],["","7.24",[[18,"7.24","4.52"],[19,"7.04","4.39"]],null],["","7",[[18,"7","3.33"],[19,"6.94","3.3"]],null],["","0",[],null],["","0",[],null],["","8.95",[[18,"8.95","4.48"],[19,"8.47","4.24"]],null],["","7.74",[[18,"7.74","4.98"],[19,"7.17","4.61"]],null],["","9.56",[[18,"9.56","5.7"],[19,"9.44","5.63"]],[]],["","9.2",[[18,"9.2","5.27"],[19,"8.86","5.08"]],[[19,45]]],["","10.35",[[18,"10.35","6.45"],[19,"10.13","6.31"]],[[19,42],[20,51],[21,30]]],["","0",[],[]],["","0",[],[]],["","9.58",[[18,"9.58","5.31"],[19,"9.57","5.3"]],[[19,114],[21,82]]],["","0",[],[[19,78],[21,9]]],["","6.86",[[18,"6.86","3.69"],[19,"6.46","3.47"]],[[19,116],[20,24]]],["","7.86",[[18,"7.86","4.72"],[19,"7.6","4.57"]],[[19,33],[20,45],[21,34]]],["","7.98",[[18,"7.98","3.66"],[19,"7.93","3.64"]],[[19,68],[21,10]]],null,["","0",[],[]],["","8.81",[[18,"8.81","4.59"],[19,"8.8","4.58"]],[[19,82],[20,30]]],["","0",[],[[19,57],[21,109]]],["","9.32",[[18,"9.32","4.37"],[19,"8.87","4.16"]],[[19,12],[21,103]]],["","7.38",[[18,"7.38","3.57"],[19,"6.95","3.36"]],[[20,95],[21,22]]],["","6.6",[[18,"6.6","3.9"],[19,"6.31","3.73"]],[[19,51],[21,59]]],["","0",[],[[20,60]]],["","0",[],[]],["","6.74",[[18,"6.74","3.7"],[19,"6.52","3.58"]],[[19,90],[20,99]]],["","0",[],[[19,80],[20,114]]],["","0",[],[[19,21]]],["","8.01",[[18,"8.01","4.22"],[19,"7.82","4.12"]],[[20,16]]],["","7.89",[[18,"7.89","3.61"],[19,"7.75","3.54"]],[[19,108]]],["","0",[],[[21,82]]],["","0",[],[[19,41]]],["","0",[],[[19,96],[20,71]]],["","0",[],[[19,115],[20,36]]],["","8.95",[[18,"8.95","4.73"],[19,"8.35","4.41"]],[[19,78],[20,23]]],["","9.32",[[18,"9.32","5.51"],[19,"8.77","5.19"]],[[19,11]]],["","8.14",[[18,"8.14","4.75"],[19,"7.57","4.42"]],[[20,61]]],["","0",[],[]],["","0",[],[]],["","8.67",[[18,"8.67","5.06"],[19,"8.64","5.04"]],[[19,27],[20,109]]],["","7.5",[[18,"7.5","4.4"],[19,"7.1","4.17"]],[[19,75]]],["","8.23",[[18,"8.23","5.26"],[19,"8.02","5.12"]],[[20,100]]],["","6.54",[[18,"6.54","3.9"],[19,"6.51","3.88"]],[[19,83],[21,23]]],["","8.64",[[18,"8.64","5.6"],[19,"8.36","5.41"]],[[19,92],[20,79],[21,47]]],null,["","0",[],[]],["","8.65",[[18,"8.65","4.56"],[19,"8.08","4.26"]],[[19,35],[20,69],[21,78]]],["","10.36",[[18,"10.36","5.13"],[19,"10.35","5.13"]],[[19,67],[20,23]]],["","8.36",[[18,"8.36","5.26"],[19,"8.13","5.12"]],[[19,86],[21,108]]],["","0",[],[[20,32]]],["","9.97",[[18,"9.97","5.05"],[19,"9.86","4.99"]],[[19,77]]],["","0",[],[]],["","0",[],[]],["","0",[],[[19,62]]],["","7.6",[[18,"7.6","4.68"],[19,"7.08","4.36"]],[[19,34],[20,53]]],["","9.56",[[18,"9.56","6.04"],[19,"9.34","5.9"]],[[19,41]]],["","7.19",[[18,"7.19","3.91"],[19,"6.82","3.72"]],[[19,105],[20,46],[21,59]]],["","8.88",[[18,"8.88","4.57"],[19,"8.4","4.33"]],[[20,32]]],["","0",[],[]],["","0",[],[]],["","9.95",[[18,"9.95","4.6"],[19,"9.76","4.51"]],[]],["","0",[],[[20,49],[21,55]]],["","9.83",[[18,"9.83","6.35"],[19,"9.28","6"]],[[19,118],[21,67]]],["","7.71",[[18,"7.71","3.63"],[19,"7.31","3.44"]],[]],["","8.92",[[18,"8.92","4.04"],[19,"8.62","3.91"]],[[19,91],[20,33],[21,109]]]]],"cl":[{"n":"Harrow Ridge Paving","st":"Client","cr":[{"l":"Crew 1","h":"2 units","b":["Kestrel","Heron"]},{"l":"Crew 2","h":"2 units","b":["Osprey","Plover"]}]},{"n":"Belltide Asphalt","st":"Client","cr":[{"l":"Crew 1","h":"2 units","b":["Curlew","Merlin"]}]},{"n":"Quillan Roadworks","st":"Paid Trial","cr":[{"l":"Crew 1","h":"2 units","b":["Lapwing","Godwit"]}]},{"n":"Marrow Creek Construction","st":"Client","cr":[{"l":"Crew 1","h":"1 unit","b":["Shrike"]}]},{"n":"Tessaly Paving","st":"Client","cr":[{"l":"Crew 1","h":"2 units","b":["Petrel","Dunlin"]}]},{"n":"Dunmere Materials","st":"Free Trial","cr":[{"l":"Crew 1","h":"1 unit","b":["Avocet"]}]},{"n":"Pellbrook Asphalt","st":"Client","cr":[{"l":"Crew 1","h":"2 units","b":["Bittern","Gannet"]},{"l":"Crew 2","h":"1 unit","b":["Fulmar"]}]},{"n":"Corvane Civil","st":"Paid Trial","cr":[{"l":"Crew 1","h":"2 units","b":["Tern","Whimbrel"]}]},{"n":"Wrenfield Paving","st":"Free Trial","cr":[{"l":"Crew 1","h":"1 unit","b":["Redshank"]}]},{"n":"Lowmere Contracting","st":"Client","cr":[{"l":"Crew 1","h":"2 units","b":["Sanderling","Corncrake"]}]}],"co":{"ID":"Incomplete Data - the shift report came through flagged [Incomplete]","MD":"Missing Data - expected data did not arrive at all","NR":"No report - field data was processed but no shift report email was generated","?":"Unexplained / connection issue","":"No code - clean capture, report sent, nothing flagged"},"bl":{"s":0.5,"a":0.25}};
+/* grid_render.js - the grid <tbody>, rendered in the browser from a data island.
+ *
+ * This is a line-by-line port of the cell logic in build_dashboard.py. It has
+ * to agree with that file BYTE FOR BYTE: verify_island.py renders the grid both
+ * ways and fails the build on any diff, so treat the Python as the spec and
+ * change the two together.
+ *
+ * Why a port at all: the page used to ship its grid as a gzip+base64 blob, and
+ * the daily run publishes through a connector that only takes file *content*
+ * inline - so 25,000 characters of random base64 had to be reproduced exactly
+ * by a language model, which does not work. Structured JSON does.
+ *
+ * Numbers are carried as STRING literals ("0" vs "0.0"), because the tooltip
+ * prints them verbatim and JSON.parse() would collapse the two. See numstr()
+ * in build_data.py.
+ */
+(function (root) {
+  'use strict';
+
+  // ---- Python number semantics -------------------------------------------
+  // Python rounds half to EVEN, on the exact binary value of the double.
+  // toFixed(20) gives us that exact expansion to work from; anything simpler
+  // (toFixed(1), Math.round) disagrees on ties like 0.25 and on values like
+  // 0.15 whose double sits just under the tie.
+  function pyFixed(x, nd) {
+    var neg = x < 0;
+    var s = Math.abs(x).toFixed(20);
+    var dot = s.indexOf('.');
+    var ip = s.slice(0, dot), fr = s.slice(dot + 1);
+    var digits = (ip + fr.slice(0, nd)).split('');
+    var rest = fr.slice(nd);
+    var f0 = rest.charCodeAt(0) - 48;
+    var up = false;
+    if (f0 > 5) up = true;
+    else if (f0 === 5) {
+      if (/[1-9]/.test(rest.slice(1))) up = true;
+      else up = ((digits[digits.length - 1].charCodeAt(0) - 48) % 2) === 1;
+    }
+    if (up) {
+      var i = digits.length - 1;
+      for (; i >= 0; i--) {
+        if (digits[i] === '9') digits[i] = '0';
+        else { digits[i] = String.fromCharCode(digits[i].charCodeAt(0) + 1); break; }
+      }
+      if (i < 0) digits.unshift('1');
+    }
+    var all = digits.join('');
+    var intLen = all.length - nd;
+    var out = nd ? all.slice(0, intLen) + '.' + all.slice(intLen) : all;
+    out = out.replace(/^0+(?=\d)/, '');
+    return (neg && /[1-9]/.test(out) ? '-' : '') + out;
+  }
+
+  function pyRoundInt(x) { return parseInt(pyFixed(x, 0), 10); }
+
+  // build_dashboard.fmt_hours
+  function fmtHours(v) {
+    if (v === null || v === undefined) return '?';
+    var f = parseFloat(v);
+    var r = pyRoundInt(f);
+    return Math.abs(f - r) < 0.05 ? String(r) : pyFixed(f, 1);
+  }
+
+  // Python str() of the stored literal. null prints as "None", as it would in
+  // an f-string, rather than as JavaScript's "null".
+  function pyStr(v) { return v === null || v === undefined ? 'None' : String(v); }
+  function num(v) { return v === null || v === undefined ? null : parseFloat(v); }
+
+  function esc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  var BANDS = [[0.01, 'b1'], [2.0, 'b2'], [5.0, 'b3'], [9.0, 'b4']];
+
+  function bandFor(h) {
+    if (h === null || h === undefined || h <= 0) return 'b0';
+    var out = 'b1';
+    for (var i = 0; i < BANDS.length; i++) if (h >= BANDS[i][0]) out = BANDS[i][1];
+    return out;
+  }
+
+  // Connected and reported in, but no real paving happened. Kept distinct from
+  // an empty day on purpose - different problem, different follow-up.
+  function isBlip(b, bl) {
+    var site = num(b.on_site_hr);
+    if (site === null) return false;
+    var active = num(b.active_hr);
+    if (!site) site = 0;
+    if (site <= 0) return false;
+    if (site <= bl.s) return true;
+    return active !== null && active <= bl.a;
+  }
+
+  var CHIP = { 'Client': 'cust', 'Paid Trial': 'paid', 'Free Trial': 'free' };
+
+  /* D = { ax, B, U, C, g, cl, co, bl }
+   *   ax  full contiguous date axis (the grid's columns)
+   *   g   g[configClientIdx][dateIdx] := null (no ledger day)
+   *                             |  0    (client absent from that day)
+   *                             | [code, on_site, [[boxIdx,on,act]...], users]
+   *   cl  client config rows: {n, st, cr:[{l, h, b:[boxName...]}]}
+   */
+  function renderGrid(D) {
+    var rows = [];
+
+    for (var ci = 0; ci < D.cl.length; ci++) {
+      var client = D.cl[ci];
+      var name = client.n, status = client.st;
+      var chip = CHIP[status] || 'free';
+      var alt = ci % 2 ? ' alt' : '';
+      // g is built in config order by island_dashboard.py, so g[ci] lines up
+      // with cl[ci]. An entry is null when no ledger day exists for that date
+      // at all (our gap, drawn neutral) and 0 when the day exists but this
+      // client has no row in it.
+      var row = D.g[ci];
+      function entryAt(di) { return row[di]; }
+
+      var crewRows = [];
+      for (var k = 0; k < client.cr.length; k++) {
+        var crew = client.cr[k];
+        var crewBoxes = {};
+        for (var q = 0; q < crew.b.length; q++) crewBoxes[crew.b[q]] = 1;
+        var cells = [];
+        var darkRun = 0;
+
+        for (var di = 0; di < D.ax.length; di++) {
+          var dk = D.ax[di];
+          var e = entryAt(di);
+          if (e === null) {
+            darkRun = 0;
+            cells.push('<td class="cell nodata" data-day="' + dk + '"></td>');
+            continue;
+          }
+          var code = '', onSite = null, allBoxes = [], rawUsers = [];
+          if (e !== 0) {
+            code = e[0]; onSite = e[1];
+            for (var bi = 0; bi < e[2].length; bi++) {
+              allBoxes.push({ box: D.B[e[2][bi][0]], on_site_hr: e[2][bi][1],
+                              active_hr: e[2][bi][2] });
+            }
+          }
+          var boxes = allBoxes.filter(function (b) { return crewBoxes[b.box]; });
+
+          // Wall clock, not machine-hours: two rollers on one 9-hour shift is a
+          // 9-hour day, not 18.
+          var reporting = allBoxes.filter(function (b) {
+            return b.on_site_hr === null || parseFloat(b.on_site_hr) !== 0;
+          });
+          var ownsAll = reporting.length > 0 && reporting.every(function (b) {
+            return crewBoxes[b.box];
+          });
+          var hrs;
+          if (ownsAll && onSite !== null) {
+            hrs = num(onSite);
+          } else {
+            hrs = 0;
+            for (var m = 0; m < boxes.length; m++) {
+              var hv = num(boxes[m].on_site_hr) || 0;
+              if (m === 0 || hv > hrs) hrs = hv;
+            }
+          }
+
+          var badge = '';
+          if (boxes.length) {
+            if (code === 'ID') badge = '<span class="badge id" aria-label="Incomplete data">I</span>';
+            else if (code === 'MD') badge = '<span class="badge md" aria-label="Missing data">M</span>';
+            else if (code === 'NR') badge = '<span class="badge nr" aria-label="No shift report sent">N</span>';
+          }
+
+          var detail;
+          if (boxes.length) {
+            detail = boxes.map(function (b) {
+              return b.box + ': ' + pyStr(b.on_site_hr) + ' hr on site, ' +
+                pyStr(b.active_hr) + ' hr active';
+            }).join(' / ');
+          } else {
+            detail = crew.b.length ? 'no telemetry from ' + crew.b.join(', ')
+                                   : 'no hardware assigned';
+          }
+
+          // A blip = every box that reported did so without really working.
+          var blip = boxes.length > 0 && boxes.every(function (b) {
+            return isBlip(b, D.bl);
+          });
+
+          // A run of dark days is the pattern worth catching - one quiet day is
+          // weather, nine in a row is a client slipping away.
+          if (boxes.length) darkRun = 0; else darkRun += 1;
+
+          var tip = name + ' ' + crew.l + ' - ' + dk + '\n' + detail;
+          if (darkRun > 1) tip += '\n' + darkRun + 'th consecutive day with no telemetry';
+          if (blip) tip += '\nBlip - connection established, no real paving';
+          if (code && boxes.length) tip += '\n' + (D.co[code] !== undefined ? D.co[code] : code);
+
+          var cls = blip ? 'blip' : bandFor(hrs);
+          var compact = blip ? '<span class="dot" aria-label="blip"></span>'
+            : '<span class="v">' + (hrs ? pyFixed(hrs, 1) : '') + '</span>';
+
+          var dhtml;
+          if (boxes.length) {
+            dhtml = boxes.map(function (b) {
+              var tag = isBlip(b, D.bl) ? ' <span class="bl">blip</span>' : '';
+              var hrline;
+              if (b.on_site_hr === null) {
+                // Two rollers shared one project and the source only gave a
+                // project total - say so rather than inventing a split.
+                hrline = '<span class="hr"><span class="ac">hours not split</span></span>';
+              } else {
+                hrline = '<span class="hr">' + fmtHours(b.on_site_hr) + ' hr' +
+                  ' <span class="ac">' + fmtHours(b.active_hr) + ' active</span>' +
+                  tag + '</span>';
+              }
+              return '<span class="bx">' + esc(b.box) + '</span>' + hrline;
+            }).join('');
+          } else {
+            dhtml = '<span class="none">&ndash;</span>';
+          }
+
+          cells.push('<td class="cell ' + cls + '" data-day="' + dk +
+            '" data-tip="' + esc(tip) + '" tabindex="0">' + badge +
+            '<span class="compact">' + compact + '</span>' +
+            '<span class="detail">' + dhtml + '</span></td>');
+        }
+        crewRows.push([crew.l, cells.join('')]);
+      }
+
+      // ---- one Office row ----
+      var officeCells = [];
+      var quietRun = 0;
+      for (var dj = 0; dj < D.ax.length; dj++) {
+        var dkey = D.ax[dj];
+        var ee = entryAt(dj);
+        if (ee === null) {
+          quietRun = 0;
+          officeCells.push('<td class="cell nodata" data-day="' + dkey + '"></td>');
+          continue;
+        }
+        var ru = ee === 0 ? [] : ee[3];
+        var unknown = ru === null;   // backfilled day - not the same as zero
+        var users = (ru || []).map(function (u) {
+          return { name: D.U[u[0]], actions: u[1] };
+        });
+        var acts = 0;
+        for (var ui = 0; ui < users.length; ui++) acts += (users[ui].actions || 0);
+        var band;
+        if (unknown) band = 'unk';
+        else if (!users.length) band = 'u0';
+        else band = acts < 40 ? 'u1' : (acts < 150 ? 'u2' : 'u3');
+
+        var otip = name + ' office - ' + dkey + '\n' + (unknown
+          ? "Portal activity not available for this day - backfilled from shift " +
+            "emails, which don't carry it"
+          : (users.length
+              ? users.map(function (u) {
+                  return u.name + ': ' + (u.actions === undefined ? '?' : pyStr(u.actions)) +
+                    ' actions';
+                }).join('\n')
+              : 'nobody in the portal'));
+
+        // Only count a run across days we actually know about - a stretch of
+        // "not backfilled" says nothing about whether anyone logged in.
+        if (unknown) quietRun = 0;
+        else if (users.length) quietRun = 0;
+        else {
+          quietRun += 1;
+          if (quietRun > 1) otip += '\n' + quietRun + 'th consecutive day with nobody in the portal';
+        }
+
+        var udetail;
+        if (unknown) udetail = '<span class="unkn">not backfilled</span>';
+        else if (users.length) {
+          udetail = users.map(function (u) {
+            return '<span class="un">' + esc(u.name) + '<span class="ua">' +
+              (u.actions === undefined ? '?' : pyStr(u.actions)) + '</span></span>';
+          }).join('');
+        } else udetail = '<span class="none">&ndash;</span>';
+
+        var cv = unknown ? '?' : (users.length ? users.length : '');
+        officeCells.push('<td class="cell ' + band + '" data-day="' + dkey +
+          '" data-tip="' + esc(otip) + '" tabindex="0">' +
+          '<span class="compact"><span class="v">' + cv + '</span></span>' +
+          '<span class="detail">' + udetail + '</span></td>');
+      }
+
+      var hw = client.cr.map(function (c) { return c.l + ' ' + c.h; }).join(', ');
+      var rowspan = crewRows.length + 1;
+      var out = ['<tr class="gstart' + alt + '"><th class="rowh' + alt +
+        '" rowspan="' + rowspan + '">' +
+        '<span class="cname">' + esc(name) + '</span>' +
+        '<span class="chip ' + chip + '">' + esc(status) + '</span>' +
+        '<span class="crew">' + esc(hw) + '</span></th>' +
+        '<th class="sub' + alt + '">' + esc(crewRows[0][0]) + '</th>' + crewRows[0][1] + '</tr>'];
+      for (var r = 1; r < crewRows.length; r++) {
+        out.push('<tr class="' + alt.trim() + '"><th class="sub' + alt + '">' +
+          esc(crewRows[r][0]) + '</th>' + crewRows[r][1] + '</tr>');
+      }
+      out.push('<tr class="' + alt.trim() + '"><th class="sub office' + alt +
+        '">Office</th>' + officeCells.join('') + '</tr>');
+      rows.push(out.join(''));
+    }
+    return rows.join('');
+  }
+
+  root.__renderGrid = renderGrid;
+  if (typeof module !== 'undefined' && module.exports) module.exports = { renderGrid: renderGrid };
+})(typeof globalThis !== 'undefined' ? globalThis : this);
+addEventListener('DOMContentLoaded',()=>{
+  const host=document.getElementById('gridbody');
+  try{
+    host.outerHTML='<tbody>'+__renderGrid(__D)+'</tbody>';
+  }catch(err){
+    host.innerHTML='<tr><td style="padding:16px;color:var(--crit)">The grid could not be rendered in this browser.</td></tr>';
+    console.error('dashboard: grid render failed',err);
+    return;
+  }
+  __init();
+});
+</script>
+<script>
+function __init(){
+
+const tip=document.getElementById('tip');
+document.querySelectorAll('[data-tip]').forEach(el=>{
+  const show=e=>{tip.textContent=el.dataset.tip;tip.style.opacity=1;
+    const r=el.getBoundingClientRect();
+    tip.style.left=Math.min(r.left,innerWidth-tip.offsetWidth-12)+'px';
+    tip.style.top=(r.bottom+8)+'px';};
+  const hide=()=>tip.style.opacity=0;
+  el.addEventListener('mouseenter',show);el.addEventListener('focus',show);
+  el.addEventListener('mouseleave',hide);el.addEventListener('blur',hide);
+});
+// The newest day is the rightmost column, and it's the one you open the
+// dashboard to see. Park the grid at the right edge instead of at the first day.
+const grid=document.getElementById('gridwrap');
+// Pin the second frozen column to the real width of the first. Hard-coding it
+// leaves a seam as soon as a client name is long enough to widen the column.
+function pinFrozen(){
+  const h=grid.querySelector('th.rowh');
+  if(!h) return;
+  const gap=parseFloat(getComputedStyle(grid.querySelector('table')).borderSpacing)||0;
+  grid.style.setProperty('--sub-left',(h.getBoundingClientRect().width+gap*2)+'px');
+}
+pinFrozen();
+addEventListener('resize',pinFrozen);
+function toLatest(smooth){
+  grid.scrollTo({left:grid.scrollWidth,behavior:smooth?'smooth':'auto'});
+}
+// Run once now (in case layout is already settled), again after the webfont
+// swap reflows column widths, and once more on full load.
+toLatest(false);
+requestAnimationFrame(()=>{pinFrozen();toLatest(false);});
+addEventListener('load',()=>{pinFrozen();toLatest(false);});
+if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>{pinFrozen();toLatest(false);});
+
+function setMode(detail){
+  grid.classList.toggle('mode-detail',detail);
+  document.getElementById('vmbtn').textContent=detail?'Heatmap view':'Detail view';
+}
+function vm(){
+  setMode(!grid.classList.contains('mode-detail'));
+  // Cell widths change with the view, so re-pin to the newest day.
+  requestAnimationFrame(()=>{pinFrozen();toLatest(false);});
+}
+
+// Width of the two frozen columns, so a scrolled-to column lands clear of them.
+function frozenWidth(){
+  const rowh=grid.querySelector('th.rowh'), sub=grid.querySelector('th.sub');
+  if(!rowh||!sub) return 0;
+  const g=grid.getBoundingClientRect();
+  return sub.getBoundingClientRect().right-g.left;
+}
+function scrollToDay(day,smooth){
+  const th=grid.querySelector('thead th.dcol[data-day="'+day+'"]');
+  if(!th) return;
+  const g=grid.getBoundingClientRect(), r=th.getBoundingClientRect();
+  const target=grid.scrollLeft+(r.left-g.left)-frozenWidth()-10;
+  grid.scrollTo({left:Math.max(0,target),behavior:smooth?'smooth':'auto'});
+}
+
+// In heatmap view a square is a summary; clicking it opens that same day in
+// detail view with the row still under the cursor, so you can go from "something
+// happened here" to the actual boxes and hours without hunting for the column.
+function openDay(cell){
+  const day=cell.dataset.day; if(!day) return;
+  const wasHeatmap=!grid.classList.contains('mode-detail');
+  if(wasHeatmap) setMode(true);
+  const row=cell.closest('tr');
+  requestAnimationFrame(()=>{
+    pinFrozen();
+    scrollToDay(day,!wasHeatmap);
+    if(row){
+      row.classList.add('flash');
+      setTimeout(()=>row.classList.remove('flash'),1400);
+      const rr=row.getBoundingClientRect();
+      if(rr.top<80||rr.bottom>innerHeight-20)
+        row.scrollIntoView({block:'center',behavior:'smooth'});
+    }
+  });
+}
+// Every day in the ledger is rendered; this narrows what's on screen.
+// 0 = show everything, which is the default so the view grows by itself.
+const ALL_DAYS=[...grid.querySelectorAll('thead th.dcol')].map(t=>t.dataset.day);
+function setRange(n,btn){
+  const keep=n>0?new Set(ALL_DAYS.slice(-n)):null;
+  grid.querySelectorAll('[data-day]').forEach(el=>{
+    el.style.display=(keep&&!keep.has(el.dataset.day))?'none':'';
+  });
+  const shown=keep?ALL_DAYS.filter(d=>keep.has(d)):ALL_DAYS;
+  const lbl=document.getElementById('rangelbl');
+  if(lbl&&shown.length){
+    const f=d=>new Date(d+'T00:00:00').toLocaleDateString(undefined,
+      {day:'numeric',month:'short'});
+    lbl.textContent=f(shown[0])+' to '+f(shown[shown.length-1])+
+      ' ('+shown.length+' days)';
+  }
+  if(btn) btn.parentNode.querySelectorAll('button').forEach(b=>
+    b.classList.toggle('on',b===btn));
+  requestAnimationFrame(()=>{pinFrozen();toLatest(false);});
+}
+// Label the full span on first paint.
+setRange(0,null);
+
+grid.addEventListener('click',e=>{
+  const cell=e.target.closest('td.cell'); if(cell) openDay(cell);
+});
+grid.addEventListener('keydown',e=>{
+  if(e.key!=='Enter'&&e.key!==' ') return;
+  const cell=e.target.closest('td.cell'); if(!cell) return;
+  e.preventDefault(); openDay(cell);
+});
+function tv(){const t=document.getElementById('tableview');t.hidden=!t.hidden;}
+function th_(){const r=document.documentElement;
+  const dark=r.dataset.theme==='dark'||(!r.dataset.theme&&matchMedia('(prefers-color-scheme:dark)').matches);
+  r.dataset.theme=dark?'light':'dark';}
+
+window.setRange=setRange;window.toLatest=toLatest;window.vm=vm;window.tv=tv;window.th_=th_;window.openDay=openDay;
+}
+</script>
+</body></html>

@@ -1,0 +1,867 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Logins Aren't Usage (demo)</title></head><body>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&display=swap">
+
+<style>
+  :root {
+    --ground:    #EDEFEF;
+    --surface:   #FFFFFF;
+    --surface-2: #F5F7F7;
+    --ink:       #14181A;
+    --ink-2:     #3D4A4F;
+    --muted:     #5F6E74;
+    --rule:      #D8DDDE;
+    --rule-soft: #E6EAEB;
+    --customer:  #0E5E5A;
+    --internal:  #BA4A22;
+    --flag:      #8A3D1C;
+    --warn:      #8A5A00;
+    --warn-bg:   #FBF4E4;
+
+    --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+    --body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+    --measure: 68ch;
+    --pad: clamp(1.25rem, 4vw, 3.25rem);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:    #101416;
+      --surface:   #171D20;
+      --surface-2: #1D2529;
+      --ink:       #E4EAEB;
+      --ink-2:     #BCC8CB;
+      --muted:     #8FA0A6;
+      --rule:      #283236;
+      --rule-soft: #202A2E;
+      --customer:  #8FD3C9;
+      --internal:  #D9713F;
+      --flag:      #E08A5C;
+      --warn:      #D9A441;
+      --warn-bg:   #241E12;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground:    #101416;
+    --surface:   #171D20;
+    --surface-2: #1D2529;
+    --ink:       #E4EAEB;
+    --ink-2:     #BCC8CB;
+    --muted:     #8FA0A6;
+    --rule:      #283236;
+    --rule-soft: #202A2E;
+    --customer:  #8FD3C9;
+    --internal:  #D9713F;
+    --flag:      #E08A5C;
+    --warn:      #D9A441;
+    --warn-bg:   #241E12;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 17px;
+    line-height: 1.6;
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .sheet {
+    max-width: 1080px;
+    margin: 0 auto;
+    background: var(--surface);
+    border-left: 1px solid var(--rule-soft);
+    border-right: 1px solid var(--rule-soft);
+    min-height: 100vh;
+    padding: 0 var(--pad) 5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 3.25rem;
+  }
+
+  /* ---------- masthead ---------- */
+
+  .masthead {
+    padding-top: clamp(2.5rem, 6vw, 4.5rem);
+    display: flex;
+    flex-direction: column;
+    gap: 1.15rem;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 1.75rem;
+  }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.25rem;
+  }
+
+  h1 {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(2.4rem, 7vw, 4rem);
+    line-height: 0.98;
+    letter-spacing: -0.025em;
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  .standfirst {
+    font-size: clamp(1.05rem, 2.2vw, 1.2rem);
+    line-height: 1.5;
+    color: var(--ink-2);
+    max-width: var(--measure);
+    margin: 0;
+  }
+
+  /* ---------- readout strip ---------- */
+
+  .readout {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+  }
+
+  .tile {
+    background: var(--surface-2);
+    padding: 1.25rem 1.15rem 1.35rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .tile .figure {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 2.5rem;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .tile .label {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    line-height: 1.35;
+  }
+
+  .tile.is-internal .figure { color: var(--internal); }
+  .tile.is-warn { background: var(--warn-bg); }
+  .tile.is-warn .figure { color: var(--warn); }
+
+  .tile .tag {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--warn);
+    font-weight: 600;
+  }
+
+  /* ---------- sections ---------- */
+
+  section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+  }
+
+  h2 {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: clamp(1.35rem, 3vw, 1.7rem);
+    letter-spacing: -0.015em;
+    line-height: 1.15;
+    margin: 0;
+    padding-bottom: 0.55rem;
+    border-bottom: 1px solid var(--rule);
+    text-wrap: balance;
+  }
+
+  h3 {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 1.02rem;
+    letter-spacing: 0.005em;
+    margin: 0;
+  }
+
+  p { margin: 0; max-width: var(--measure); }
+
+  .note {
+    font-size: 0.92rem;
+    color: var(--muted);
+    max-width: var(--measure);
+  }
+
+  strong { font-weight: 600; }
+  em { font-style: italic; }
+
+  .num {
+    font-family: var(--mono);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---------- evidence list ---------- */
+
+  .evidence {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+  }
+
+  .evidence > li {
+    background: var(--surface);
+    padding: 1.15rem 1.15rem 1.3rem;
+    display: grid;
+    grid-template-columns: 3rem 1fr;
+    gap: 0.4rem 0.5rem;
+    align-items: baseline;
+  }
+
+  .ev-id {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--warn);
+  }
+
+  .ev-body { display: flex; flex-direction: column; gap: 0.55rem; }
+  .ev-body p { max-width: 62ch; font-size: 0.96rem; }
+
+  .hypothesis {
+    font-size: 0.9rem;
+    color: var(--muted);
+    border-left: 2px solid var(--rule);
+    padding-left: 0.85rem;
+    max-width: 62ch;
+  }
+
+  .hypothesis strong { color: var(--ink-2); }
+
+  /* ---------- mismatch table ---------- */
+
+  .scroller {
+    overflow-x: auto;
+    border: 1px solid var(--rule);
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 520px;
+    font-size: 0.94rem;
+  }
+
+  caption {
+    text-align: left;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding-bottom: 0.6rem;
+  }
+
+  th, td {
+    text-align: left;
+    padding: 0.6rem 0.9rem;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+
+  thead th {
+    font-family: var(--mono);
+    font-size: 0.67rem;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--rule);
+    white-space: nowrap;
+  }
+
+  tbody tr:last-child td { border-bottom: none; }
+
+  td.n, th.n {
+    text-align: right;
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+  }
+
+  td.total { font-weight: 600; }
+
+  tbody tr:nth-child(even) td { background: color-mix(in srgb, var(--surface-2) 55%, transparent); }
+
+  .rowname { font-weight: 600; }
+  .sub { color: var(--muted); font-size: 0.88rem; }
+
+  tfoot td {
+    border-top: 1px solid var(--rule);
+    font-weight: 600;
+    background: var(--surface-2);
+  }
+
+  /* ---------- roster ---------- */
+
+  .roster {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+  }
+
+  .roster div {
+    background: var(--surface);
+    padding: 0.7rem 0.9rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.75rem;
+  }
+
+  .roster .who { font-weight: 600; font-size: 0.92rem; }
+  .roster .ct {
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--internal);
+  }
+
+  /* ---------- asks ---------- */
+
+  .asks {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+  }
+
+  .asks > li {
+    background: var(--surface);
+    padding: 1.15rem 1.15rem 1.3rem;
+    display: grid;
+    grid-template-columns: 3.25rem 1fr;
+    gap: 0.35rem 0.5rem;
+    align-items: baseline;
+  }
+
+  .ask-id {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--flag);
+  }
+
+  .ask-body { display: flex; flex-direction: column; gap: 0.5rem; }
+  .ask-body p { max-width: 62ch; font-size: 0.96rem; }
+
+  .why {
+    font-size: 0.9rem;
+    color: var(--muted);
+    border-left: 2px solid var(--rule);
+    padding-left: 0.85rem;
+    max-width: 62ch;
+  }
+
+  code {
+    font-family: var(--mono);
+    font-size: 0.86em;
+    background: var(--surface-2);
+    border: 1px solid var(--rule-soft);
+    border-radius: 3px;
+    padding: 0.08em 0.34em;
+  }
+
+  ul.plain {
+    margin: 0;
+    padding-left: 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    max-width: var(--measure);
+    font-size: 0.96rem;
+  }
+
+  ul.plain li::marker { color: var(--muted); }
+
+  .callout {
+    background: var(--warn-bg);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--warn);
+    padding: 1.1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .callout p { max-width: 62ch; font-size: 0.98rem; }
+  .callout h3 { color: var(--ink); }
+
+  .stamp {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    align-self: flex-start;
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--warn);
+    border: 1px solid var(--warn);
+    border-radius: 2px;
+    padding: 0.28rem 0.55rem;
+  }
+
+  footer {
+    border-top: 1px solid var(--rule);
+    padding-top: 1.25rem;
+    font-size: 0.88rem;
+    color: var(--muted);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  footer p { max-width: var(--measure); font-size: 0.88rem; }
+
+  a { color: var(--customer); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  a:focus-visible, [tabindex]:focus-visible {
+    outline: 2px solid var(--customer);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+  .demo-note{margin-top:1.25rem;padding:.7rem 1rem;background:var(--surface-2);border:1px solid var(--rule);border-radius:6px;font-size:.9rem;color:var(--ink-2)}
+  .evidence > li{grid-template-columns:3rem minmax(0,1fr)}
+  .asks > li{grid-template-columns:3.25rem minmax(0,1fr)}
+</style>
+
+<div class="sheet">
+<div class="demo-note">Portfolio demo by Maria Driscoll. The analysis is real work; every company, person and date has been replaced with a fictional one. <a href="../index.html">Back to the portfolio</a></div>
+
+
+  <header class="masthead">
+    <div class="eyebrow">
+      <span>Customer portal · System Activity</span>
+      <span>Window: Jun 8 – Jun 14, 2025</span>
+      <span>Bug report + instrumentation request</span>
+    </div>
+    <h1>Logins aren't usage</h1>
+    <p class="standfirst">
+      This is not a usage report. The System Activity dashboard is telling us things we know to be
+      false — most importantly that no customer has the mobile app installed, when we are in direct
+      contact with customers who use it. The numbers here are included as evidence of what's broken,
+      not as findings about our accounts.
+    </p>
+    <span class="stamp">Do not use these figures in client records or reviews</span>
+  </header>
+
+  <div class="readout">
+    <div class="tile is-warn">
+      <span class="figure">0</span>
+      <span class="label">Customer app installs<br>the dashboard reports</span>
+      <span class="tag">Known false</span>
+    </div>
+    <div class="tile">
+      <span class="figure">200</span>
+      <span class="label">Row cap on the<br>sign-in log</span>
+    </div>
+    <div class="tile is-internal">
+      <span class="figure">82.5%</span>
+      <span class="label">Of logged sign-ins<br>are internal staff</span>
+    </div>
+    <div class="tile is-warn">
+      <span class="figure">5/5</span>
+      <span class="label">Staff whose tenant<br>differs between views</span>
+      <span class="tag">Unexplained</span>
+    </div>
+  </div>
+
+  <section>
+    <h2>The headline problem</h2>
+    <div class="callout">
+      <h3>The dashboard reports zero customer mobile app installs. We know that's wrong.</h3>
+      <p>
+        The Mobile Apps tab lists <span class="num">52</span> registered devices across
+        <span class="num">6</span> people, and all six are internal staff. But we are in ongoing
+        contact with customers who are actively using the app in the field. Their installs, their
+        devices, and their sessions are not reaching this dashboard at all.
+      </p>
+      <p>
+        That single contradiction is what this document is for. It means the mobile telemetry
+        pipeline is dropping or misattributing customer data — and once that's established, nothing
+        else on the page can be trusted without validation either.
+      </p>
+    </div>
+    <p>
+      Everything below is organised around that: first the observations that corroborate a data
+      problem, then the raw counts the log currently produces (for reference only), then what we
+      need changed.
+    </p>
+  </section>
+
+  <section>
+    <h2>What else points to a data problem</h2>
+    <ol class="evidence">
+
+      <li>
+        <span class="ev-id">E1</span>
+        <div class="ev-body">
+          <h3>Customer app installs are absent entirely</h3>
+          <p>
+            Not under-counted — absent. Zero of the 52 registered devices belong to a customer,
+            across every tenant. A partial pipeline failure would show a few; showing none suggests
+            customer devices never register, or register somewhere this view doesn't read.
+          </p>
+          <p class="hypothesis">
+            <strong>Worth checking:</strong> whether device registration is gated on something
+            customers routinely skip — push-notification consent, a permission prompt, a specific
+            onboarding path — so their installs never create a record.
+          </p>
+        </div>
+      </li>
+
+      <li>
+        <span class="ev-id">E2</span>
+        <div class="ev-body">
+          <h3>The same person shows a different tenant in different views</h3>
+          <p>
+            Every staff member we checked appears under one tenant in the Logins tab and a different
+            one in the Mobile Apps tab. Five out of five. Staff do work across tenants, but that
+            wouldn't produce a clean one-to-one disagreement between two views of the same week.
+          </p>
+          <div class="scroller">
+            <table>
+              <caption>Tenant reported per view, same user, same week</caption>
+              <thead>
+                <tr>
+                  <th scope="col">User</th>
+                  <th scope="col">Logins tab says</th>
+                  <th scope="col">Mobile Apps tab says</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td class="rowname">Theo Marsh</td><td>Harrow Ridge Paving</td><td>Belltide Asphalt</td></tr>
+                <tr><td class="rowname">Iris Calder</td><td>Harrow Ridge Paving</td><td>Quillan Roadworks</td></tr>
+                <tr><td class="rowname">Jonah Reyes</td><td>Marrow Creek Construction</td><td>Tessaly Paving</td></tr>
+                <tr><td class="rowname">Ruth Okonjo</td><td>Pellbrook Asphalt</td><td>Corvane Civil</td></tr>
+                <tr><td class="rowname">Felix Brandt</td><td>Pellbrook Asphalt</td><td>Marrow Creek Construction</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="hypothesis">
+            <strong>Worth checking:</strong> whether one of these views joins on the wrong tenant
+            key — last-used, first-registered, or a default — rather than the tenant the event
+            actually occurred in. If tenant attribution is unreliable, per-account numbers are
+            unreliable by extension.
+          </p>
+        </div>
+      </li>
+
+      <li>
+        <span class="ev-id">E3</span>
+        <div class="ev-body">
+          <h3>The log excludes exactly the traffic the app generates</h3>
+          <p>
+            The Logins tab states it counts password and SSO sign-ins and excludes silent token
+            refreshes. A native app that keeps a user signed in indefinitely produces almost nothing
+            but silent refreshes — so a customer using the app daily for months can generate zero
+            rows, while a browser user who gets logged out weekly looks like a power user.
+          </p>
+          <p class="hypothesis">
+            <strong>Consequence:</strong> the browser-vs-app split in any login-derived report is
+            structurally biased toward browser, independent of the registration bug above. This is
+            the strongest argument for measuring activity instead — see A2.
+          </p>
+        </div>
+      </li>
+
+      <li>
+        <span class="ev-id">E4</span>
+        <div class="ev-body">
+          <h3>"Client" is a two-way guess from the User-Agent</h3>
+          <p>
+            The page states Client is derived from the login User-Agent, browser vs mobile app. If
+            the app authenticates through a webview or an HTTP client that doesn't set a distinctive
+            UA, its sessions are silently classified as browser — and there is currently no way to
+            audit that, because the raw UA isn't exposed anywhere in the UI.
+          </p>
+          <p class="hypothesis">
+            <strong>Worth checking:</strong> what UA string the current app build actually sends,
+            and whether the classifier recognises it. This would also explain app activity appearing
+            as browser activity.
+          </p>
+        </div>
+      </li>
+
+      <li>
+        <span class="ev-id">E5</span>
+        <div class="ev-body">
+          <h3>Device registration churn and version drift</h3>
+          <p>
+            <span class="num">52</span> registered devices across <span class="num">6</span> people
+            is roughly nine registrations each, which reads as re-registration churn rather than nine phones. Eight app versions are live in the field, with the current
+            <code>2.3.2</code> on only <span class="num">7</span> of 52 devices while
+            <code>2.2.0</code> holds <span class="num">15</span>.
+          </p>
+          <p class="hypothesis">
+            <strong>Worth checking:</strong> whether stale device records are ever retired, and
+            whether the update path is actually reaching installed devices. Either issue would also
+            distort any device-count metric built on this table.
+          </p>
+        </div>
+      </li>
+
+    </ol>
+  </section>
+
+  <section>
+    <h2>What the log currently reports</h2>
+    <span class="stamp">Reference only — not validated, not for client use</span>
+    <p>
+      These are the raw counts after removing internal staff. Given E1–E4 they almost certainly
+      understate customer activity, and the browser/app split in particular should not be read as
+      real. They're here so dev can reproduce what we saw, and so we have a baseline to compare
+      against once the pipeline is fixed.
+    </p>
+
+    <div class="scroller">
+      <table>
+        <caption>Sign-ins by person · staff excluded · Jun 8–14, 2025</caption>
+        <thead>
+          <tr>
+            <th scope="col">Person</th>
+            <th scope="col">Account</th>
+            <th scope="col" class="n">Browser</th>
+            <th scope="col" class="n">Mobile app</th>
+            <th scope="col" class="n">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="rowname">Calum Fraser</td><td class="sub">Harrow Ridge Paving</td><td class="n">8</td><td class="n">0</td><td class="n total">8</td></tr>
+          <tr><td class="rowname">Nina Petrov</td><td class="sub">Marrow Creek Construction</td><td class="n">3</td><td class="n">0</td><td class="n total">3</td></tr>
+          <tr><td class="rowname">Hugo Lambert</td><td class="sub">Tessaly Paving</td><td class="n">2</td><td class="n">1</td><td class="n total">3</td></tr>
+          <tr><td class="rowname">Tess Albright</td><td class="sub">Lowmere Contracting</td><td class="n">2</td><td class="n">1</td><td class="n total">3</td></tr>
+          <tr><td class="rowname">Omar Siddiqui</td><td class="sub">Dunmere Materials</td><td class="n">2</td><td class="n">1</td><td class="n total">3</td></tr>
+          <tr><td class="rowname">Kit Delaney</td><td class="sub">Lowmere Contracting</td><td class="n">2</td><td class="n">0</td><td class="n total">2</td></tr>
+          <tr><td class="rowname">Marta Ilic</td><td class="sub">Quillan Roadworks</td><td class="n">2</td><td class="n">0</td><td class="n total">2</td></tr>
+          <tr><td class="rowname">Rowan Hale</td><td class="sub">Quillan Roadworks</td><td class="n">1</td><td class="n">1</td><td class="n total">2</td></tr>
+          <tr><td class="rowname">Diego Serrano</td><td class="sub">Lowmere Contracting</td><td class="n">1</td><td class="n">0</td><td class="n total">1</td></tr>
+          <tr><td class="rowname">Rufus Whitcombe</td><td class="sub">Pellbrook Asphalt</td><td class="n">1</td><td class="n">0</td><td class="n total">1</td></tr>
+          <tr><td class="rowname">Jade Fenwick</td><td class="sub">Pellbrook Asphalt</td><td class="n">1</td><td class="n">0</td><td class="n total">1</td></tr>
+          <tr><td class="rowname">Simon Avery</td><td class="sub">Marrow Creek Construction</td><td class="n">1</td><td class="n">0</td><td class="n total">1</td></tr>
+          <tr><td class="rowname">Clara Novak</td><td class="sub">Belltide Asphalt</td><td class="n">1</td><td class="n">0</td><td class="n total">1</td></tr>
+          <tr><td class="rowname">Yusuf Aydin</td><td class="sub">Corvane Civil</td><td class="n">1</td><td class="n">0</td><td class="n total">1</td></tr>
+          <tr><td class="rowname">Elodie Marchand</td><td class="sub">Wrenfield Paving</td><td class="n">1</td><td class="n">0</td><td class="n total">1</td></tr>
+          <tr><td class="rowname">R Valdez</td><td class="sub">Corvane Civil</td><td class="n">0</td><td class="n">1</td><td class="n total">1</td></tr>
+          <tr><td class="rowname">Ivy Langford</td><td class="sub">Dunmere Materials</td><td class="n">0</td><td class="n">1</td><td class="n total">1</td></tr>
+        </tbody>
+        <tfoot>
+          <tr><td>Total</td><td class="sub">10 accounts</td><td class="n">29</td><td class="n">6</td><td class="n">35</td></tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <div class="scroller">
+      <table>
+        <caption>Sign-ins by account · staff excluded · Jun 8–14, 2025</caption>
+        <thead>
+          <tr>
+            <th scope="col">Account</th>
+            <th scope="col" class="n">Browser</th>
+            <th scope="col" class="n">Mobile app</th>
+            <th scope="col" class="n">Total</th>
+            <th scope="col" class="n">Before excluding staff</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="rowname">Harrow Ridge Paving</td><td class="n">8</td><td class="n">0</td><td class="n total">8</td><td class="n sub">71</td></tr>
+          <tr><td class="rowname">Lowmere Contracting</td><td class="n">5</td><td class="n">1</td><td class="n total">6</td><td class="n sub">8</td></tr>
+          <tr><td class="rowname">Marrow Creek Construction</td><td class="n">4</td><td class="n">0</td><td class="n total">4</td><td class="n sub">27</td></tr>
+          <tr><td class="rowname">Quillan Roadworks</td><td class="n">3</td><td class="n">1</td><td class="n total">4</td><td class="n sub">4</td></tr>
+          <tr><td class="rowname">Dunmere Materials</td><td class="n">2</td><td class="n">2</td><td class="n total">4</td><td class="n sub">4</td></tr>
+          <tr><td class="rowname">Tessaly Paving</td><td class="n">2</td><td class="n">1</td><td class="n total">3</td><td class="n sub">3</td></tr>
+          <tr><td class="rowname">Pellbrook Asphalt</td><td class="n">2</td><td class="n">0</td><td class="n total">2</td><td class="n sub">76</td></tr>
+          <tr><td class="rowname">Corvane Civil</td><td class="n">1</td><td class="n">1</td><td class="n total">2</td><td class="n sub">2</td></tr>
+          <tr><td class="rowname">Belltide Asphalt</td><td class="n">1</td><td class="n">0</td><td class="n total">1</td><td class="n sub">1</td></tr>
+          <tr><td class="rowname">Wrenfield Paving</td><td class="n">1</td><td class="n">0</td><td class="n total">1</td><td class="n sub">1</td></tr>
+        </tbody>
+        <tfoot>
+          <tr><td>Total</td><td class="n">29</td><td class="n">6</td><td class="n">35</td><td class="n">200</td></tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <p class="note">
+      Staff sign-ins excluded from both tables: Felix Brandt 46, Iris Calder 44, Ruth Okonjo 27, Jonah Reyes 23, Theo Marsh 19, App Review 3, Desmond Pike 2, Leo Grant 1.
+      There is no <code>is_internal</code> flag in the product, so this roster was assembled by
+      hand — see A6.
+    </p>
+  </section>
+
+  <section>
+    <h2>What we need from dev</h2>
+    <p>
+      Six asks in priority order. A1 is the blocker: until customer app usage appears at all,
+      nothing built on this data can be believed.
+    </p>
+    <ol class="asks">
+
+      <li>
+        <span class="ask-id">A1</span>
+        <div class="ask-body">
+          <h3>Find out why customer app installs never reach the dashboard</h3>
+          <p>
+            Take a customer we can confirm is using the app in the field, and trace that install
+            end to end — device registration, session creation, and how both are attributed to a
+            tenant. We need to know whether the data is never captured, captured and dropped, or
+            captured and attributed somewhere this view doesn't read.
+          </p>
+          <p class="why">
+            This is the whole reason for the request. Everything else is refinement; this one is a
+            correctness bug, and it's currently hiding real product adoption from us.
+          </p>
+        </div>
+      </li>
+
+      <li>
+        <span class="ask-id">A2</span>
+        <div class="ask-body">
+          <h3>Log activity events, not just authentications</h3>
+          <p>
+            A per-user activity signal — route views, or meaningful actions (project opened, mix
+            design edited, report generated) — with timestamp, user, tenant, and client. Even a
+            coarse active-session heartbeat every 15 minutes would be a step change.
+          </p>
+          <p class="why">
+            Sessions persist on devices, so a login count can't tell a daily user from someone who
+            authenticated once in July. Per E3 this bias falls hardest on exactly the app users we
+            most need to see.
+          </p>
+        </div>
+      </li>
+
+      <li>
+        <span class="ask-id">A3</span>
+        <div class="ask-body">
+          <h3>Split "Browser" into desktop browser and mobile browser</h3>
+          <p>
+            Widen the Client field to <code>desktop-browser</code>, <code>mobile-browser</code>,
+            <code>native-app</code>, and expose the raw User-Agent on the record so the
+            classification can be audited rather than trusted.
+          </p>
+          <p class="why">
+            Highest-value ask for product. Anything customers do in a mobile browser is a job they
+            need to do on a phone in the field — a direct candidate for an app feature. And per E4,
+            exposing the UA is also how we find out whether app traffic is being mislabelled as
+            browser.
+          </p>
+        </div>
+      </li>
+
+      <li>
+        <span class="ask-id">A4</span>
+        <div class="ask-body">
+          <h3>Reconcile tenant attribution across views</h3>
+          <p>
+            Establish which tenant a login and a device registration are each attributed to, make
+            the two views agree, and document the rule. See the mismatch table in E2.
+          </p>
+          <p class="why">
+            Per-account reporting is meaningless if the same user lands in different accounts
+            depending on which tab you open — and account-level numbers are what we'd actually use.
+          </p>
+        </div>
+      </li>
+
+      <li>
+        <span class="ask-id">A5</span>
+        <div class="ask-body">
+          <h3>Replace the 200-row cap with a date range</h3>
+          <p>
+            An explicit from/to range on the Logins and activity views, plus CSV export. The view's existing date
+            control suggests some of this already exists behind the scenes.
+          </p>
+          <p class="why">
+            The cap is a hard blocker on looking back as far as we need — at current volume the log
+            only reaches six days, and the window shrinks as traffic grows. There's no workaround
+            from the UI side.
+          </p>
+        </div>
+      </li>
+
+      <li>
+        <span class="ask-id">A6</span>
+        <div class="ask-body">
+          <h3>Flag internal users at the account level</h3>
+          <p>
+            An <code>is_internal</code> flag on the user record and a toggle to exclude internal
+            traffic from these views.
+          </p>
+          <p class="why">
+            Staff sit inside customer tenants, so the tenant name can't be used to infer this.
+            Right now <span class="num">82.5%</span> of what the dashboard shows is us, with
+            nothing in the UI to signal it.
+          </p>
+        </div>
+      </li>
+
+    </ol>
+  </section>
+
+  <footer>
+    <p>
+      <strong>Method.</strong> Portal admin → System Activity → Logins ("recent sign-ins, all
+      tenants, last 200") and Mobile Apps, read on Jun 14, 2025. The log spans Jun 8 10:06 to
+      Jun 14 06:24 local. Internal accounts were identified manually; every other row was treated
+      as a customer.
+    </p>
+    <p>
+      <strong>Status of the numbers.</strong> Treated as suspect throughout. The zero-customer-app
+      figure is known to be false from direct customer contact, and E2–E4 give reason to doubt the
+      tenant attribution and the client classification as well. Nothing here should be read as an
+      account's real engagement, recorded against a client, or used in a review or renewal
+      conversation.
+    </p>
+  </footer>
+
+</div>
+
+</body></html>

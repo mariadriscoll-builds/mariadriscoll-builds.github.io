@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Maria Driscoll</title>
+<meta name="description" content="Maria Driscoll: customer success and go-to-market leader with 15+ years across public health, medical technology, executive consulting and B2B technology. She builds the dashboards, AI automations and tools her teams run on.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:light;
+  --paper:#f2f4f1; --surface:#ffffff; --ink:#1c2326; --ink-2:#3e4c50; --muted:#5e6e71;
+  --rule:#d5dcd9; --spruce:#0e5e5a; --spruce-soft:#e2efec; --lane:#e9b92e; --signal:#c8402f;
+  --b0:#e4e9e6; --b1:#5fb8ac; --b2:#3a9c91; --b3:#1d7f76; --b4:#08615a;
+  --font:"Schibsted Grotesk","Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  color-scheme:dark;
+  --paper:#0f1a19; --surface:#152423; --ink:#e6ecea; --ink-2:#bcc9c6; --muted:#8fa19d;
+  --rule:#26403c; --spruce:#8fd3c9; --spruce-soft:#1b3330; --signal:#e4705f;
+  --b0:#1d3532; --b1:#16675f; --b2:#2a8a80; --b3:#4fb0a5; --b4:#7fd4c9;
+}}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --paper:#0f1a19; --surface:#152423; --ink:#e6ecea; --ink-2:#bcc9c6; --muted:#8fa19d;
+  --rule:#26403c; --spruce:#8fd3c9; --spruce-soft:#1b3330; --signal:#e4705f;
+  --b0:#1d3532; --b1:#16675f; --b2:#2a8a80; --b3:#4fb0a5; --b4:#7fd4c9;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font:18px/1.6 var(--font);-webkit-font-smoothing:antialiased}
+a{color:var(--spruce);text-underline-offset:3px;text-decoration-thickness:1px}
+a:focus-visible{outline:2px solid var(--spruce);outline-offset:3px;border-radius:2px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 16px}
+@media (min-width:700px){.wrap{padding:0 32px}}
+
+/* ---------- top ---------- */
+.top{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;padding-top:28px}
+.name{font-weight:700;font-size:18px;letter-spacing:-.01em}
+.top nav{display:flex;gap:20px;flex-wrap:wrap;font-size:16px}
+
+/* ---------- hero ---------- */
+.hero{padding:clamp(48px,9vw,104px) 0 0}
+h1{font-size:clamp(40px,7.4vw,86px);line-height:.98;letter-spacing:-.035em;font-weight:800;margin:0;max-width:15ch}
+.intro{font-size:clamp(18px,2.2vw,21px);color:var(--ink-2);max-width:58ch;margin:28px 0 0}
+
+/* the strip: one square per crew-day from the demo dashboard */
+.strip{margin:56px 0 0}
+.grid{--cols:68;display:grid;grid-template-columns:repeat(var(--cols),minmax(0,1fr));gap:3px}
+.grid i{display:block;aspect-ratio:1;border-radius:2px;background:var(--b0);
+  animation:in .5s cubic-bezier(.2,.6,.2,1) both;animation-delay:calc(var(--c) * 14ms)}
+.grid i.b1{background:var(--b1)} .grid i.b2{background:var(--b2)}
+.grid i.b3{background:var(--b3)} .grid i.b4{background:var(--b4)}
+.grid i.w{background:transparent;box-shadow:inset 0 0 0 1px var(--rule)}
+.grid i.d{background:var(--b0);box-shadow:inset 0 0 0 1.5px var(--signal)}
+.grid i.bl{background:var(--b0);box-shadow:inset 0 0 0 1.5px var(--b2)}
+.grid i.n{background:transparent}
+@keyframes in{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.grid i{animation:none}}
+@media (max-width:760px){.grid{--cols:34;gap:2px}.grid i.old{display:none}}
+.strip-cap{display:flex;justify-content:space-between;gap:12px 28px;flex-wrap:wrap;margin-top:14px;font-size:15px;color:var(--muted)}
+.strip-cap p{margin:0;max-width:62ch}
+.key{display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+.key span{display:inline-flex;align-items:center;gap:6px}
+.key i{display:inline-block;width:11px;height:11px;border-radius:2px}
+
+/* ---------- work ---------- */
+h2{font-size:clamp(28px,3.6vw,38px);letter-spacing:-.025em;line-height:1.1;margin:0}
+.section{padding:clamp(72px,10vw,120px) 0 0}
+.section > .wrap > p.sub{color:var(--ink-2);max-width:60ch;margin:12px 0 0}
+.project{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(24px,4vw,56px);align-items:start;
+  padding:48px 0;border-top:1px solid var(--rule)}
+.project:first-of-type{margin-top:36px}
+@media (max-width:860px){.project{grid-template-columns:1fr}}
+.project h3{font-size:clamp(24px,2.6vw,30px);letter-spacing:-.02em;line-height:1.12;margin:0 0 6px}
+.project .what{color:var(--muted);font-size:16px;margin:0 0 18px}
+.project p{margin:0 0 14px;color:var(--ink-2);max-width:60ch}
+.project p strong{color:var(--ink);font-weight:600}
+.skills{font-size:15.5px;color:var(--muted)}
+.skills strong{color:var(--ink-2)}
+.go{display:inline-block;margin-top:8px;font-weight:700;color:var(--surface);background:var(--spruce);
+  padding:11px 18px;border-radius:9px;text-decoration:none}
+.go:hover{filter:brightness(1.08)}
+.go + .go2{margin-left:14px}
+.go2{font-weight:600}
+.shot{display:block;border-radius:12px;overflow:hidden;border:1px solid var(--rule);background:var(--surface);
+  box-shadow:0 18px 40px -24px rgba(16,40,38,.35)}
+.shot img{display:block;width:100%;height:auto}
+
+/* ---------- experience ---------- */
+.career{list-style:none;margin:36px 0 0;padding:0}
+.career li{display:grid;grid-template-columns:9.5rem minmax(0,1fr);gap:8px 32px;padding:22px 0;border-top:1px solid var(--rule)}
+.career li:last-child{border-bottom:1px solid var(--rule)}
+@media (max-width:640px){.career li{grid-template-columns:1fr}}
+.career .yrs{color:var(--muted);font-size:16px;font-variant-numeric:tabular-nums;padding-top:3px}
+.career h3{font-size:20px;letter-spacing:-.01em;margin:0}
+.career .org{color:var(--spruce);font-weight:600;font-size:16px;margin:2px 0 8px}
+.career p{margin:0;color:var(--ink-2);max-width:64ch}
+.career .org + p{margin-top:0}
+.creds{margin:24px 0 0;color:var(--ink-2);max-width:72ch;font-size:16.5px}
+.creds strong{color:var(--ink)}
+
+/* ---------- also ---------- */
+.also{list-style:none;margin:36px 0 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 48px}
+@media (max-width:760px){.also{grid-template-columns:1fr}}
+.also li{padding:18px 0;border-top:1px solid var(--rule)}
+.also strong{display:block;font-size:17.5px}
+.also span{color:var(--ink-2);font-size:16px}
+
+/* ---------- principles ---------- */
+.principles{margin:32px 0 0;max-width:72ch}
+.principles p{margin:0 0 18px;color:var(--ink-2)}
+.principles strong{color:var(--ink)}
+
+/* ---------- contact ---------- */
+.contact{padding:clamp(72px,10vw,120px) 0 64px}
+.contact .big{font-size:clamp(28px,4.4vw,48px);font-weight:800;letter-spacing:-.03em;line-height:1.08;margin:0 0 18px;max-width:20ch}
+.contact .links{display:flex;gap:24px;flex-wrap:wrap;font-size:19px;font-weight:600}
+.fine{margin-top:56px;padding-top:20px;border-top:1px solid var(--rule);font-size:14px;color:var(--muted)}
+.fine p{margin:0;max-width:80ch}
+</style>
+</head>
+<body>
+
+<div class="wrap top">
+  <span class="name">Maria Driscoll</span>
+  <nav aria-label="Sections"><a href="#work">Work</a><a href="#experience">Experience</a><a href="#how">How I work</a><a href="#contact">Contact</a></nav>
+</div>
+
+<header class="hero">
+  <div class="wrap">
+    <h1>I help people adopt new ways of working, and build the tools that prove they have.</h1>
+    <p class="intro">Customer success and go-to-market leader with more than 15 years in public health, medical
+      technology, executive consulting and B2B technology. The thread through all of it is behaviour change: getting
+      busy, sceptical professionals to try something new and keep using it. These days I also build the tools that
+      run that work, from adoption dashboards to AI agents, and I make them honest about what the data does and
+      doesn't say.</p>
+
+    <figure class="strip" aria-labelledby="strip-cap">
+      <div class="grid" role="img" aria-label="A grid of coloured squares: ten fictional client accounts by 68 days of product use, with red-outlined squares on days nothing was used.">
+<i class="b4 old" style="--c:0"></i><i class="b4 old" style="--c:1"></i><i class="b4 old" style="--c:2"></i><i class="b4 old" style="--c:3"></i><i class="b4 old" style="--c:4"></i><i class="w old" style="--c:5"></i><i class="w old" style="--c:6"></i><i class="b4 old" style="--c:7"></i><i class="b4 old" style="--c:8"></i><i class="b4 old" style="--c:9"></i><i class="b4 old" style="--c:10"></i><i class="b4 old" style="--c:11"></i><i class="w old" style="--c:12"></i><i class="w old" style="--c:13"></i><i class="b4 old" style="--c:14"></i><i class="d old" style="--c:15"></i><i class="b4 old" style="--c:16"></i><i class="b4 old" style="--c:17"></i><i class="b4 old" style="--c:18"></i><i class="n old" style="--c:19"></i><i class="w old" style="--c:20"></i><i class="b4 old" style="--c:21"></i><i class="b4 old" style="--c:22"></i><i class="b4 old" style="--c:23"></i><i class="b4 old" style="--c:24"></i><i class="b4 old" style="--c:25"></i><i class="w old" style="--c:26"></i><i class="w old" style="--c:27"></i><i class="b4 old" style="--c:28"></i><i class="d old" style="--c:29"></i><i class="d old" style="--c:30"></i><i class="b4 old" style="--c:31"></i><i class="b4 old" style="--c:32"></i><i class="w old" style="--c:33"></i><i class="w" style="--c:34"></i><i class="b4" style="--c:35"></i><i class="b4" style="--c:36"></i><i class="b4" style="--c:37"></i><i class="b4" style="--c:38"></i><i class="b4" style="--c:39"></i><i class="w" style="--c:40"></i><i class="w" style="--c:41"></i><i class="b4" style="--c:42"></i><i class="b4" style="--c:43"></i><i class="b4" style="--c:44"></i><i class="b4" style="--c:45"></i><i class="b4" style="--c:46"></i><i class="n" style="--c:47"></i><i class="w" style="--c:48"></i><i class="b4" style="--c:49"></i><i class="b4" style="--c:50"></i><i class="b4" style="--c:51"></i><i class="d" style="--c:52"></i><i class="b4" style="--c:53"></i><i class="w" style="--c:54"></i><i class="w" style="--c:55"></i><i class="b4" style="--c:56"></i><i class="b4" style="--c:57"></i><i class="b4" style="--c:58"></i><i class="b4" style="--c:59"></i><i class="b4" style="--c:60"></i><i class="w" style="--c:61"></i><i class="w" style="--c:62"></i><i class="b4" style="--c:63"></i><i class="b4" style="--c:64"></i><i class="b4" style="--c:65"></i><i class="b4" style="--c:66"></i><i class="b3" style="--c:67"></i>
+<i class="b3 old" style="--c:0"></i><i class="d old" style="--c:1"></i><i class="b4 old" style="--c:2"></i><i class="b4 old" style="--c:3"></i><i class="b3 old" style="--c:4"></i><i class="w old" style="--c:5"></i><i class="w old" style="--c:6"></i><i class="b4 old" style="--c:7"></i><i class="d old" style="--c:8"></i><i class="b3 old" style="--c:9"></i><i class="d old" style="--c:10"></i><i class="b4 old" style="--c:11"></i><i class="w old" style="--c:12"></i><i class="w old" style="--c:13"></i><i class="b3 old" style="--c:14"></i><i class="d old" style="--c:15"></i><i class="d old" style="--c:16"></i><i class="b3 old" style="--c:17"></i><i class="b4 old" style="--c:18"></i><i class="n old" style="--c:19"></i><i class="w old" style="--c:20"></i><i class="d old" style="--c:21"></i><i class="b3 old" style="--c:22"></i><i class="b3 old" style="--c:23"></i><i class="b3 old" style="--c:24"></i><i class="b3 old" style="--c:25"></i><i class="w old" style="--c:26"></i><i class="w old" style="--c:27"></i><i class="b4 old" style="--c:28"></i><i class="d old" style="--c:29"></i><i class="d old" style="--c:30"></i><i class="b3 old" style="--c:31"></i><i class="b3 old" style="--c:32"></i><i class="w old" style="--c:33"></i><i class="w" style="--c:34"></i><i class="b3" style="--c:35"></i><i class="b4" style="--c:36"></i><i class="b4" style="--c:37"></i><i class="d" style="--c:38"></i><i class="d" style="--c:39"></i><i class="w" style="--c:40"></i><i class="w" style="--c:41"></i><i class="b3" style="--c:42"></i><i class="b3" style="--c:43"></i><i class="d" style="--c:44"></i><i class="d" style="--c:45"></i><i class="d" style="--c:46"></i><i class="n" style="--c:47"></i><i class="w" style="--c:48"></i><i class="d" style="--c:49"></i><i class="d" style="--c:50"></i><i class="b3" style="--c:51"></i><i class="d" style="--c:52"></i><i class="b3" style="--c:53"></i><i class="w" style="--c:54"></i><i class="w" style="--c:55"></i><i class="b4" style="--c:56"></i><i class="b4" style="--c:57"></i><i class="b4" style="--c:58"></i><i class="b4" style="--c:59"></i><i class="b3" style="--c:60"></i><i class="w" style="--c:61"></i><i class="w" style="--c:62"></i><i class="b3" style="--c:63"></i><i class="b3" style="--c:64"></i><i class="b4" style="--c:65"></i><i class="b3" style="--c:66"></i><i class="b4" style="--c:67"></i>
+<i class="bl old" style="--c:0"></i><i class="bl old" style="--c:1"></i><i class="bl old" style="--c:2"></i><i class="bl old" style="--c:3"></i><i class="bl old" style="--c:4"></i><i class="w old" style="--c:5"></i><i class="w old" style="--c:6"></i><i class="d old" style="--c:7"></i><i class="d old" style="--c:8"></i><i class="bl old" style="--c:9"></i><i class="bl old" style="--c:10"></i><i class="bl old" style="--c:11"></i><i class="w old" style="--c:12"></i><i class="w old" style="--c:13"></i><i class="bl old" style="--c:14"></i><i class="d old" style="--c:15"></i><i class="bl old" style="--c:16"></i><i class="b2 old" style="--c:17"></i><i class="b2 old" style="--c:18"></i><i class="n old" style="--c:19"></i><i class="w old" style="--c:20"></i><i class="d old" style="--c:21"></i><i class="b2 old" style="--c:22"></i><i class="d old" style="--c:23"></i><i class="b2 old" style="--c:24"></i><i class="b2 old" style="--c:25"></i><i class="w old" style="--c:26"></i><i class="w old" style="--c:27"></i><i class="b3 old" style="--c:28"></i><i class="d old" style="--c:29"></i><i class="d old" style="--c:30"></i><i class="b3 old" style="--c:31"></i><i class="b3 old" style="--c:32"></i><i class="w old" style="--c:33"></i><i class="w" style="--c:34"></i><i class="b3" style="--c:35"></i><i class="b4" style="--c:36"></i><i class="b3" style="--c:37"></i><i class="b4" style="--c:38"></i><i class="b3" style="--c:39"></i><i class="w" style="--c:40"></i><i class="w" style="--c:41"></i><i class="b3" style="--c:42"></i><i class="b4" style="--c:43"></i><i class="b4" style="--c:44"></i><i class="b4" style="--c:45"></i><i class="b4" style="--c:46"></i><i class="n" style="--c:47"></i><i class="w" style="--c:48"></i><i class="b3" style="--c:49"></i><i class="b3" style="--c:50"></i><i class="b4" style="--c:51"></i><i class="d" style="--c:52"></i><i class="b3" style="--c:53"></i><i class="w" style="--c:54"></i><i class="w" style="--c:55"></i><i class="b3" style="--c:56"></i><i class="d" style="--c:57"></i><i class="b3" style="--c:58"></i><i class="b4" style="--c:59"></i><i class="b4" style="--c:60"></i><i class="w" style="--c:61"></i><i class="w" style="--c:62"></i><i class="b4" style="--c:63"></i><i class="b3" style="--c:64"></i><i class="b3" style="--c:65"></i><i class="b4" style="--c:66"></i><i class="b4" style="--c:67"></i>
+<i class="b3 old" style="--c:0"></i><i class="d old" style="--c:1"></i><i class="b3 old" style="--c:2"></i><i class="b4 old" style="--c:3"></i><i class="b3 old" style="--c:4"></i><i class="w old" style="--c:5"></i><i class="w old" style="--c:6"></i><i class="b4 old" style="--c:7"></i><i class="b3 old" style="--c:8"></i><i class="b3 old" style="--c:9"></i><i class="d old" style="--c:10"></i><i class="b3 old" style="--c:11"></i><i class="w old" style="--c:12"></i><i class="w old" style="--c:13"></i><i class="b4 old" style="--c:14"></i><i class="d old" style="--c:15"></i><i class="b3 old" style="--c:16"></i><i class="b3 old" style="--c:17"></i><i class="b3 old" style="--c:18"></i><i class="n old" style="--c:19"></i><i class="w old" style="--c:20"></i><i class="b4 old" style="--c:21"></i><i class="d old" style="--c:22"></i><i class="d old" style="--c:23"></i><i class="d old" style="--c:24"></i><i class="d old" style="--c:25"></i><i class="w old" style="--c:26"></i><i class="w old" style="--c:27"></i><i class="d old" style="--c:28"></i><i class="d old" style="--c:29"></i><i class="d old" style="--c:30"></i><i class="d old" style="--c:31"></i><i class="d old" style="--c:32"></i><i class="w old" style="--c:33"></i><i class="w" style="--c:34"></i><i class="d" style="--c:35"></i><i class="d" style="--c:36"></i><i class="d" style="--c:37"></i><i class="d" style="--c:38"></i><i class="d" style="--c:39"></i><i class="w" style="--c:40"></i><i class="w" style="--c:41"></i><i class="d" style="--c:42"></i><i class="d" style="--c:43"></i><i class="d" style="--c:44"></i><i class="d" style="--c:45"></i><i class="d" style="--c:46"></i><i class="n" style="--c:47"></i><i class="w" style="--c:48"></i><i class="d" style="--c:49"></i><i class="d" style="--c:50"></i><i class="d" style="--c:51"></i><i class="d" style="--c:52"></i><i class="d" style="--c:53"></i><i class="w" style="--c:54"></i><i class="w" style="--c:55"></i><i class="d" style="--c:56"></i><i class="d" style="--c:57"></i><i class="d" style="--c:58"></i><i class="d" style="--c:59"></i><i class="d" style="--c:60"></i><i class="w" style="--c:61"></i><i class="w" style="--c:62"></i><i class="d" style="--c:63"></i><i class="d" style="--c:64"></i><i class="d" style="--c:65"></i><i class="d" style="--c:66"></i><i class="d" style="--c:67"></i>
+<i class="b4 old" style="--c:0"></i><i class="b4 old" style="--c:1"></i><i class="b4 old" style="--c:2"></i><i class="b4 old" style="--c:3"></i><i class="b3 old" style="--c:4"></i><i class="w old" style="--c:5"></i><i class="b4 old" style="--c:6"></i><i class="b4 old" style="--c:7"></i><i class="b4 old" style="--c:8"></i><i class="b4 old" style="--c:9"></i><i class="b4 old" style="--c:10"></i><i class="b4 old" style="--c:11"></i><i class="w old" style="--c:12"></i><i class="b4 old" style="--c:13"></i><i class="b4 old" style="--c:14"></i><i class="d old" style="--c:15"></i><i class="d old" style="--c:16"></i><i class="d old" style="--c:17"></i><i class="b4 old" style="--c:18"></i><i class="n old" style="--c:19"></i><i class="b4 old" style="--c:20"></i><i class="b4 old" style="--c:21"></i><i class="b4 old" style="--c:22"></i><i class="b4 old" style="--c:23"></i><i class="b3 old" style="--c:24"></i><i class="b4 old" style="--c:25"></i><i class="w old" style="--c:26"></i><i class="b4 old" style="--c:27"></i><i class="b4 old" style="--c:28"></i><i class="d old" style="--c:29"></i><i class="d old" style="--c:30"></i><i class="b4 old" style="--c:31"></i><i class="b4 old" style="--c:32"></i><i class="w old" style="--c:33"></i><i class="b4" style="--c:34"></i><i class="d" style="--c:35"></i><i class="b4" style="--c:36"></i><i class="d" style="--c:37"></i><i class="b4" style="--c:38"></i><i class="b3" style="--c:39"></i><i class="w" style="--c:40"></i><i class="b3" style="--c:41"></i><i class="b4" style="--c:42"></i><i class="b4" style="--c:43"></i><i class="b3" style="--c:44"></i><i class="b4" style="--c:45"></i><i class="b4" style="--c:46"></i><i class="n" style="--c:47"></i><i class="b4" style="--c:48"></i><i class="b4" style="--c:49"></i><i class="b4" style="--c:50"></i><i class="d" style="--c:51"></i><i class="d" style="--c:52"></i><i class="b4" style="--c:53"></i><i class="w" style="--c:54"></i><i class="w" style="--c:55"></i><i class="b4" style="--c:56"></i><i class="b4" style="--c:57"></i><i class="b4" style="--c:58"></i><i class="b4" style="--c:59"></i><i class="b4" style="--c:60"></i><i class="w" style="--c:61"></i><i class="b3" style="--c:62"></i><i class="b4" style="--c:63"></i><i class="d" style="--c:64"></i><i class="b4" style="--c:65"></i><i class="b4" style="--c:66"></i><i class="b4" style="--c:67"></i>
+<i class="bl old" style="--c:0"></i><i class="d old" style="--c:1"></i><i class="bl old" style="--c:2"></i><i class="bl old" style="--c:3"></i><i class="d old" style="--c:4"></i><i class="w old" style="--c:5"></i><i class="w old" style="--c:6"></i><i class="bl old" style="--c:7"></i><i class="d old" style="--c:8"></i><i class="bl old" style="--c:9"></i><i class="d old" style="--c:10"></i><i class="d old" style="--c:11"></i><i class="w old" style="--c:12"></i><i class="w old" style="--c:13"></i><i class="bl old" style="--c:14"></i><i class="d old" style="--c:15"></i><i class="d old" style="--c:16"></i><i class="bl old" style="--c:17"></i><i class="bl old" style="--c:18"></i><i class="n old" style="--c:19"></i><i class="w old" style="--c:20"></i><i class="d old" style="--c:21"></i><i class="bl old" style="--c:22"></i><i class="d old" style="--c:23"></i><i class="d old" style="--c:24"></i><i class="bl old" style="--c:25"></i><i class="w old" style="--c:26"></i><i class="w old" style="--c:27"></i><i class="d old" style="--c:28"></i><i class="d old" style="--c:29"></i><i class="d old" style="--c:30"></i><i class="bl old" style="--c:31"></i><i class="d old" style="--c:32"></i><i class="w old" style="--c:33"></i><i class="w" style="--c:34"></i><i class="d" style="--c:35"></i><i class="d" style="--c:36"></i><i class="d" style="--c:37"></i><i class="d" style="--c:38"></i><i class="d" style="--c:39"></i><i class="w" style="--c:40"></i><i class="w" style="--c:41"></i><i class="d" style="--c:42"></i><i class="d" style="--c:43"></i><i class="d" style="--c:44"></i><i class="d" style="--c:45"></i><i class="bl" style="--c:46"></i><i class="n" style="--c:47"></i><i class="w" style="--c:48"></i><i class="d" style="--c:49"></i><i class="bl" style="--c:50"></i><i class="d" style="--c:51"></i><i class="d" style="--c:52"></i><i class="d" style="--c:53"></i><i class="w" style="--c:54"></i><i class="w" style="--c:55"></i><i class="d" style="--c:56"></i><i class="d" style="--c:57"></i><i class="d" style="--c:58"></i><i class="bl" style="--c:59"></i><i class="bl" style="--c:60"></i><i class="w" style="--c:61"></i><i class="w" style="--c:62"></i><i class="d" style="--c:63"></i><i class="d" style="--c:64"></i><i class="d" style="--c:65"></i><i class="d" style="--c:66"></i><i class="d" style="--c:67"></i>
+<i class="b4 old" style="--c:0"></i><i class="b4 old" style="--c:1"></i><i class="b4 old" style="--c:2"></i><i class="b4 old" style="--c:3"></i><i class="b4 old" style="--c:4"></i><i class="w old" style="--c:5"></i><i class="w old" style="--c:6"></i><i class="b4 old" style="--c:7"></i><i class="b4 old" style="--c:8"></i><i class="b4 old" style="--c:9"></i><i class="b4 old" style="--c:10"></i><i class="b4 old" style="--c:11"></i><i class="b3 old" style="--c:12"></i><i class="w old" style="--c:13"></i><i class="b4 old" style="--c:14"></i><i class="d old" style="--c:15"></i><i class="b4 old" style="--c:16"></i><i class="b4 old" style="--c:17"></i><i class="b4 old" style="--c:18"></i><i class="n old" style="--c:19"></i><i class="w old" style="--c:20"></i><i class="b4 old" style="--c:21"></i><i class="b4 old" style="--c:22"></i><i class="b4 old" style="--c:23"></i><i class="b4 old" style="--c:24"></i><i class="b3 old" style="--c:25"></i><i class="w old" style="--c:26"></i><i class="w old" style="--c:27"></i><i class="b4 old" style="--c:28"></i><i class="d old" style="--c:29"></i><i class="d old" style="--c:30"></i><i class="b4 old" style="--c:31"></i><i class="b4 old" style="--c:32"></i><i class="w old" style="--c:33"></i><i class="w" style="--c:34"></i><i class="b4" style="--c:35"></i><i class="b3" style="--c:36"></i><i class="b4" style="--c:37"></i><i class="b3" style="--c:38"></i><i class="b4" style="--c:39"></i><i class="w" style="--c:40"></i><i class="w" style="--c:41"></i><i class="b4" style="--c:42"></i><i class="b4" style="--c:43"></i><i class="b4" style="--c:44"></i><i class="b4" style="--c:45"></i><i class="b4" style="--c:46"></i><i class="n" style="--c:47"></i><i class="w" style="--c:48"></i><i class="b4" style="--c:49"></i><i class="b4" style="--c:50"></i><i class="b4" style="--c:51"></i><i class="d" style="--c:52"></i><i class="b4" style="--c:53"></i><i class="b3" style="--c:54"></i><i class="w" style="--c:55"></i><i class="b4" style="--c:56"></i><i class="b4" style="--c:57"></i><i class="b4" style="--c:58"></i><i class="b4" style="--c:59"></i><i class="b4" style="--c:60"></i><i class="b2" style="--c:61"></i><i class="w" style="--c:62"></i><i class="b4" style="--c:63"></i><i class="b4" style="--c:64"></i><i class="b4" style="--c:65"></i><i class="b4" style="--c:66"></i><i class="b4" style="--c:67"></i>
+<i class="d old" style="--c:0"></i><i class="d old" style="--c:1"></i><i class="d old" style="--c:2"></i><i class="d old" style="--c:3"></i><i class="d old" style="--c:4"></i><i class="w old" style="--c:5"></i><i class="w old" style="--c:6"></i><i class="d old" style="--c:7"></i><i class="d old" style="--c:8"></i><i class="d old" style="--c:9"></i><i class="d old" style="--c:10"></i><i class="d old" style="--c:11"></i><i class="w old" style="--c:12"></i><i class="w old" style="--c:13"></i><i class="d old" style="--c:14"></i><i class="d old" style="--c:15"></i><i class="d old" style="--c:16"></i><i class="d old" style="--c:17"></i><i class="d old" style="--c:18"></i><i class="n old" style="--c:19"></i><i class="w old" style="--c:20"></i><i class="d old" style="--c:21"></i><i class="d old" style="--c:22"></i><i class="d old" style="--c:23"></i><i class="d old" style="--c:24"></i><i class="d old" style="--c:25"></i><i class="w old" style="--c:26"></i><i class="w old" style="--c:27"></i><i class="d old" style="--c:28"></i><i class="d old" style="--c:29"></i><i class="d old" style="--c:30"></i><i class="d old" style="--c:31"></i><i class="d old" style="--c:32"></i><i class="w old" style="--c:33"></i><i class="w" style="--c:34"></i><i class="b4" style="--c:35"></i><i class="b3" style="--c:36"></i><i class="b3" style="--c:37"></i><i class="b3" style="--c:38"></i><i class="b3" style="--c:39"></i><i class="w" style="--c:40"></i><i class="w" style="--c:41"></i><i class="b4" style="--c:42"></i><i class="b3" style="--c:43"></i><i class="b4" style="--c:44"></i><i class="b3" style="--c:45"></i><i class="b3" style="--c:46"></i><i class="n" style="--c:47"></i><i class="w" style="--c:48"></i><i class="b4" style="--c:49"></i><i class="b3" style="--c:50"></i><i class="b3" style="--c:51"></i><i class="d" style="--c:52"></i><i class="b3" style="--c:53"></i><i class="w" style="--c:54"></i><i class="w" style="--c:55"></i><i class="b3" style="--c:56"></i><i class="b3" style="--c:57"></i><i class="b3" style="--c:58"></i><i class="b3" style="--c:59"></i><i class="b3" style="--c:60"></i><i class="w" style="--c:61"></i><i class="w" style="--c:62"></i><i class="b3" style="--c:63"></i><i class="b3" style="--c:64"></i><i class="b3" style="--c:65"></i><i class="b4" style="--c:66"></i><i class="b3" style="--c:67"></i>
+<i class="d old" style="--c:0"></i><i class="d old" style="--c:1"></i><i class="d old" style="--c:2"></i><i class="d old" style="--c:3"></i><i class="d old" style="--c:4"></i><i class="w old" style="--c:5"></i><i class="w old" style="--c:6"></i><i class="d old" style="--c:7"></i><i class="d old" style="--c:8"></i><i class="d old" style="--c:9"></i><i class="d old" style="--c:10"></i><i class="d old" style="--c:11"></i><i class="w old" style="--c:12"></i><i class="w old" style="--c:13"></i><i class="d old" style="--c:14"></i><i class="d old" style="--c:15"></i><i class="d old" style="--c:16"></i><i class="d old" style="--c:17"></i><i class="d old" style="--c:18"></i><i class="n old" style="--c:19"></i><i class="w old" style="--c:20"></i><i class="d old" style="--c:21"></i><i class="d old" style="--c:22"></i><i class="d old" style="--c:23"></i><i class="d old" style="--c:24"></i><i class="d old" style="--c:25"></i><i class="w old" style="--c:26"></i><i class="w old" style="--c:27"></i><i class="d old" style="--c:28"></i><i class="d old" style="--c:29"></i><i class="d old" style="--c:30"></i><i class="d old" style="--c:31"></i><i class="d old" style="--c:32"></i><i class="w old" style="--c:33"></i><i class="w" style="--c:34"></i><i class="d" style="--c:35"></i><i class="d" style="--c:36"></i><i class="d" style="--c:37"></i><i class="d" style="--c:38"></i><i class="d" style="--c:39"></i><i class="w" style="--c:40"></i><i class="w" style="--c:41"></i><i class="d" style="--c:42"></i><i class="d" style="--c:43"></i><i class="d" style="--c:44"></i><i class="d" style="--c:45"></i><i class="d" style="--c:46"></i><i class="n" style="--c:47"></i><i class="w" style="--c:48"></i><i class="d" style="--c:49"></i><i class="d" style="--c:50"></i><i class="d" style="--c:51"></i><i class="d" style="--c:52"></i><i class="d" style="--c:53"></i><i class="w" style="--c:54"></i><i class="w" style="--c:55"></i><i class="d" style="--c:56"></i><i class="d" style="--c:57"></i><i class="d" style="--c:58"></i><i class="d" style="--c:59"></i><i class="d" style="--c:60"></i><i class="w" style="--c:61"></i><i class="w" style="--c:62"></i><i class="d" style="--c:63"></i><i class="d" style="--c:64"></i><i class="d" style="--c:65"></i><i class="d" style="--c:66"></i><i class="d" style="--c:67"></i>
+<i class="b3 old" style="--c:0"></i><i class="b4 old" style="--c:1"></i><i class="b4 old" style="--c:2"></i><i class="b3 old" style="--c:3"></i><i class="b3 old" style="--c:4"></i><i class="w old" style="--c:5"></i><i class="w old" style="--c:6"></i><i class="b3 old" style="--c:7"></i><i class="b3 old" style="--c:8"></i><i class="b4 old" style="--c:9"></i><i class="b4 old" style="--c:10"></i><i class="b4 old" style="--c:11"></i><i class="w old" style="--c:12"></i><i class="w old" style="--c:13"></i><i class="b4 old" style="--c:14"></i><i class="d old" style="--c:15"></i><i class="b3 old" style="--c:16"></i><i class="b3 old" style="--c:17"></i><i class="b3 old" style="--c:18"></i><i class="n old" style="--c:19"></i><i class="w old" style="--c:20"></i><i class="b3 old" style="--c:21"></i><i class="d old" style="--c:22"></i><i class="b4 old" style="--c:23"></i><i class="b3 old" style="--c:24"></i><i class="b3 old" style="--c:25"></i><i class="w old" style="--c:26"></i><i class="w old" style="--c:27"></i><i class="b3 old" style="--c:28"></i><i class="d old" style="--c:29"></i><i class="d old" style="--c:30"></i><i class="b3 old" style="--c:31"></i><i class="b3 old" style="--c:32"></i><i class="w old" style="--c:33"></i><i class="w" style="--c:34"></i><i class="d" style="--c:35"></i><i class="d" style="--c:36"></i><i class="b3" style="--c:37"></i><i class="b4" style="--c:38"></i><i class="b3" style="--c:39"></i><i class="w" style="--c:40"></i><i class="w" style="--c:41"></i><i class="b3" style="--c:42"></i><i class="b3" style="--c:43"></i><i class="b3" style="--c:44"></i><i class="b3" style="--c:45"></i><i class="b3" style="--c:46"></i><i class="n" style="--c:47"></i><i class="w" style="--c:48"></i><i class="b3" style="--c:49"></i><i class="b4" style="--c:50"></i><i class="b3" style="--c:51"></i><i class="d" style="--c:52"></i><i class="b4" style="--c:53"></i><i class="w" style="--c:54"></i><i class="w" style="--c:55"></i><i class="d" style="--c:56"></i><i class="b3" style="--c:57"></i><i class="b4" style="--c:58"></i><i class="b3" style="--c:59"></i><i class="b3" style="--c:60"></i><i class="w" style="--c:61"></i><i class="w" style="--c:62"></i><i class="b4" style="--c:63"></i><i class="d" style="--c:64"></i><i class="b4" style="--c:65"></i><i class="b3" style="--c:66"></i><i class="b3" style="--c:67"></i>
+      </div>
+      <figcaption class="strip-cap" id="strip-cap">
+        <p>Ten fictional client accounts over 68 days. Each square is one account-day of product use. The red outlines
+          are what I built the dashboard to catch: working days when a customer used nothing.
+          <a href="demos/adoption-dashboard.html">Open the full dashboard</a></p>
+        <span class="key" aria-hidden="true">
+          <span><i style="background:var(--b4)"></i>9+ hrs</span>
+          <span><i style="background:var(--b1)"></i>short day</span>
+          <span><i style="background:var(--b0);box-shadow:inset 0 0 0 1.5px var(--signal)"></i>nothing captured</span>
+        </span>
+      </figcaption>
+    </figure>
+  </div>
+</header>
+
+<section class="section" id="work" aria-labelledby="work-h">
+  <div class="wrap">
+    <h2 id="work-h">Selected work</h2>
+    <p class="sub">Every demo runs in your browser. Client names, people and numbers are fictional; the design, logic and
+      writing are mine.</p>
+
+    <article class="project">
+      <div>
+        <h3>Client adoption dashboard</h3>
+        <p class="what">Customer success operations</p>
+        <p><strong>The problem.</strong> Customers were paying for a hardware-and-software product their teams were
+          meant to use every working day. Whether they actually did was scattered across system summaries, automated
+          report emails and portal logins, so nobody could see an account slipping until renewal.</p>
+        <p><strong>What I built.</strong> A daily record, one file per day, answering seven fixed questions per account,
+          and a dashboard drawn from it: one row per team in the field, one row for office activity. Field silent
+          while the office keeps logging in points to a hardware fault. Both dark at once is a customer walking away.
+          The publish step checks its own output before it goes live.</p>
+        <p><strong>What changed.</strong> It replaced a hand-kept spreadsheet tab as the team's record of customer
+          adoption, and a run of red squares became the cue to call an account.</p>
+        <p class="skills"><strong>Shows:</strong> adoption and account-health monitoring, data modelling, Python, data
+          visualisation. The same approach works for any product that leaves a usage trail.</p>
+        <a class="go" href="demos/adoption-dashboard.html">Open the live demo</a>
+      </div>
+      <a class="shot" href="demos/adoption-dashboard.html" aria-label="Open the adoption dashboard demo">
+        <img src="img/adoption-dashboard.jpg" width="1400" height="880" loading="lazy"
+             alt="Heatmap of crews by day, teal squares for field hours and violet for office activity, with red outlines on dark days."></a>
+    </article>
+
+    <article class="project">
+      <div>
+        <h3>The morning run</h3>
+        <p class="what">AI workflow design</p>
+        <p><strong>The problem.</strong> Signals about each client lived in call recordings, three mailboxes, calendars,
+          team chat and automated reports. Promises made on calls slipped, and nobody had time to read everything.</p>
+        <p><strong>What I built.</strong> Scheduled AI agents, run in sequence, that update every client's working file,
+          raise new commitments as tasks, prepare meeting briefs and harvest customer quotes. Most of the work was
+          the rules: close nothing without primary evidence, treat second-hand summaries as leads, and check a source
+          is current before trusting a quiet result.</p>
+        <p><strong>What changed.</strong> Each morning starts with current client files and a short list of what needs
+          attention, and nothing is marked done without proof.</p>
+        <p class="skills"><strong>Shows:</strong> process design, writing precise instructions for AI agents, data
+          governance, measuring what works.</p>
+        <a class="go" href="demos/morning-run.html">Read the case study</a>
+      </div>
+      <a class="shot" href="demos/morning-run.html" aria-label="Read the morning run case study">
+        <img src="img/morning-run.jpg" width="868" height="328" loading="lazy"
+             alt="Timeline of the agents' daily and weekly schedule."></a>
+    </article>
+
+    <article class="project">
+      <div>
+        <h3>Logins aren't usage</h3>
+        <p class="what">Analysis and a request to engineering</p>
+        <p><strong>The problem.</strong> The product's activity screen was about to be used to judge which clients were
+          engaged. It said no customer had the mobile app installed, while I was talking to customers who used it daily.</p>
+        <p><strong>What I built.</strong> A short evidence report: five observations showing why the numbers couldn't be
+          trusted, from mis-attributed accounts to a log that ignores exactly the traffic the app generates, and six
+          prioritised asks for the developers.</p>
+        <p><strong>What changed.</strong> The figures stayed out of client records and reviews, and the developers got
+          a ranked list to work from instead of a vague complaint.</p>
+        <p class="skills"><strong>Shows:</strong> analytical scepticism, writing for engineers, turning a finding into
+          a decision.</p>
+        <a class="go" href="demos/logins-arent-usage.html">Read the report</a>
+      </div>
+      <a class="shot" href="demos/logins-arent-usage.html" aria-label="Read the Logins aren't usage report">
+        <img src="img/logins-arent-usage.jpg" width="1200" height="880" loading="lazy"
+             alt="Report titled Logins aren't usage, with four headline figures."></a>
+    </article>
+
+    <article class="project">
+      <div>
+        <h3>Website, calculators and lead capture</h3>
+        <p class="what">Marketing, built end to end</p>
+        <p><strong>The problem.</strong> A startup's new website needed to turn readers into qualified leads, and its
+          forms were getting hit by spam bots.</p>
+        <p><strong>What I built.</strong> The marketing site itself, shipped and maintained across more than twenty
+          releases with a change log. Gated ROI calculators that show a prospect what they're losing, and a small
+          Cloudflare relay that blocks bots and hides the form addresses. It captures the lead first, then quietly
+          records the prospect's own numbers once they stop adjusting, so sales sees real figures without sending
+          anyone a second email.</p>
+        <p class="skills"><strong>Shows:</strong> web build, JavaScript, marketing automation, conversion design.</p>
+        <a class="go" href="demos/bonus-calculator.html">Try the calculator</a>
+        <a class="go2" href="code/form-relay-worker.js">Read the relay code</a>
+      </div>
+      <a class="shot" href="demos/bonus-calculator.html" aria-label="Try the calculator demo">
+        <img src="img/bonus-calculator.jpg" width="1280" height="1000" loading="lazy"
+             alt="Calculator with four sliders and a large estimated annual figure, beside a four-step explanation of the lead capture."></a>
+    </article>
+  </div>
+</section>
+
+<section class="section" id="experience" aria-labelledby="exp-h">
+  <div class="wrap">
+    <h2 id="exp-h">Experience</h2>
+    <p class="sub">Different industries, one job underneath: understand what people actually do, help them change it,
+      and show the result.</p>
+    <ol class="career">
+      <li><span class="yrs">2024 to now</span>
+        <div><h3>Director of Client Engagement</h3>
+          <p class="org">Construction-technology startup, hardware and SaaS</p>
+          <p>Joined as founding marketer; the role grew into customer success. I own every enterprise account, from
+            onboarding through adoption, renewal and expansion, with 100% gross revenue and customer retention so far.
+            I built the support function, onboarding and training programmes, monthly business reviews and the CRM,
+            plus the AI-powered usage monitoring on this page.</p></div></li>
+      <li><span class="yrs">2019 to now</span>
+        <div><h3>Private sector consultant, consortium member</h3>
+          <p class="org">David P. Walker &amp; Associates</p>
+          <p>Referral-only engagements with CEOs, founders and executive teams. We use diagnostics drawn from
+            organisational psychology, behavioural neuroscience and business science to find the root cause of
+            leadership and business problems, then design and deliver leadership training and assess psychological
+            safety in teams.</p></div></li>
+      <li><span class="yrs">2019 to now</span>
+        <div><h3>Founder</h3>
+          <p class="org">MD Business Development</p>
+          <p>A small, referral-based practice advising founders and senior leaders on growth and go-to-market
+            strategy.</p></div></li>
+      <li><span class="yrs">2019 to 2022</span>
+        <div><h3>Business Development and Marketing Lead</h3>
+          <p class="org">BreatheSuite, medical technology</p>
+          <p>Promoted from Marketing and Growth Specialist. Ran the sales process from lead generation to close across
+            Canada and the US while the company grew from 4 to 30 people, sat on the cross-functional strategy team,
+            implemented HubSpot, and hired and led staff, contractors and PR firms.</p></div></li>
+      <li><span class="yrs">2010 to 2017</span>
+        <div><h3>Social Marketing Consultant</h3>
+          <p class="org">Eastern Health, public health</p>
+          <p>Applied marketing to behaviour change. I led research, programme design, delivery and evaluation for
+            public health initiatives in a regulated setting, and developed award-winning targeted campaigns.</p></div></li>
+      <li><span class="yrs">2007 to 2010</span>
+        <div><h3>Marketing and Communications Specialist</h3>
+          <p class="org">SAIT Polytechnic</p></div></li>
+    </ol>
+    <p class="creds"><strong>Education and certification.</strong> MBA and Bachelor of Commerce (Honours, Co-operative),
+      Memorial University. Communication Management Professional (CMP), the first in Newfoundland and Labrador.</p>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="also-h">
+  <div class="wrap">
+    <h2 id="also-h">Also built</h2>
+    <ul class="also">
+      <li><strong>Award-winning public health campaigns</strong><span>Behaviour-change programmes taken from research
+        through design, delivery and evaluation.</span></li>
+      <li><strong>Two CRMs, set up and run</strong><span>HubSpot for a growing medtech startup, and Salesforce for
+        a hardware and SaaS company, kept accurate enough to run renewals from.</span></li>
+      <li><strong>Leadership training for senior teams</strong><span>Modules for executives and managers, and
+        assessments of psychological safety and team effectiveness.</span></li>
+      <li><strong>Onboarding and training programmes</strong><span>Playbooks, a feature training menu and bilingual
+        quick-reference cards for frontline users, in English and Spanish.</span></li>
+      <li><strong>A video content series</strong><span>The framework behind it, a full episode cut into short clips for
+        square and vertical feeds, captions, a content calendar and a launch-day runbook.</span></li>
+      <li><strong>Client-health screens</strong><span>Designs for the overview and calendar screens in a company's
+        internal client app, since built into the product.</span></li>
+      <li><strong>A customer email programme</strong><span>Release-update emails and reusable templates, a contact-list
+        audit, and a sending-domain warm-up plan.</span></li>
+      <li><strong>A customer quote bank</strong><span>Harvested weekly from call records, with every quote marked as
+        verbatim, relayed or paraphrased before anyone uses it in marketing.</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="section" id="how" aria-labelledby="how-h">
+  <div class="wrap">
+    <h2 id="how-h">How I work</h2>
+    <div class="principles">
+      <p><strong>Start with the people whose behaviour has to change.</strong> Public health taught me that a good
+        product or message isn't enough. Adoption happens when the new way fits how people already work, so that's
+        where I start.</p>
+      <p><strong>Diagnose before prescribing.</strong> Most problems I'm asked to fix turn out to be a symptom of
+        something else. I find the root cause before I build anything.</p>
+      <p><strong>A quiet result needs checking before it's believed.</strong> "Nothing new this week" sometimes means
+        nothing happened, and sometimes means nobody filed the data. I check which before I report it.</p>
+      <p><strong>Silence is not completion.</strong> A task is done when there's evidence it happened, not when it
+        stops coming up.</p>
+      <p><strong>Fix the rules, not the output.</strong> When a report or an agent gets something wrong, I change the
+        instruction or the template that produced it, so it doesn't happen again next week.</p>
+      
+    </div>
+  </div>
+</section>
+
+<footer class="contact" id="contact">
+  <div class="wrap">
+    <p class="big">Looking for someone who can lead the work and build the tools for it?</p>
+    <div class="links">
+      <a href="mailto:edwards.maria@gmail.com">edwards.maria@gmail.com</a>
+      <a href="https://www.linkedin.com/in/maria-driscoll">LinkedIn</a>
+      <a href="https://github.com/mariadriscoll-builds">GitHub</a>
+    </div>
+    <div class="fine"><p>All client names, people, places and figures in these demos are fictional, and company details
+      have been removed. The code, designs and writing are my own work.</p></div>
+  </div>
+</footer>
+
+</body>
+</html>
